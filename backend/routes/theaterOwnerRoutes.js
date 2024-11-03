@@ -1,8 +1,11 @@
 import { Router } from "express";
 const router = Router();
+import {
+	viewTheaterOwners,
+	addTheaterOwner,
+} from "../controllers/theaterOwnerController.js";
 
-router.get("/", (req, res) => {
-	res.send("Theater Owner Routes Working");
-});
+router.get("/", viewTheaterOwners);
+router.post("/newTheaterOwner", addTheaterOwner);
 
 export default router;
