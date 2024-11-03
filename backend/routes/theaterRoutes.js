@@ -1,9 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const theaterController = require("../controllers/theaterController");
+import { Router } from "express";
+const router = Router();
 
 router.get("/", (req, res) => {
 	res.send("Theater Routes Working");
 });
 
-module.exports = router;
+export default router;

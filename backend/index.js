@@ -1,23 +1,23 @@
-const express = require("express");
-const dotenv = require("dotenv");
+import express, { json } from "express";
+import { config } from "dotenv";
 
-const connectDB = require("./configs/db");
+import connectDB from "./configs/db.js";
 
-const userRouter = require("./routes/userRoutes");
-const adminRouter = require("./routes/adminRoutes");
-const bookingRouter = require("./routes/bookingRoutes");
-const movieRouter = require("./routes/movieRoutes");
-const reviewRouter = require("./routes/reviewRoutes");
-const theaterOwnerRouter = require("./routes/theaterOwnerRoutes");
-const theaterRouter = require("./routes/theaterRoutes");
+import userRouter from "./routes/userRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
+import bookingRouter from "./routes/bookingRoutes.js";
+import movieRouter from "./routes/movieRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
+import theaterOwnerRouter from "./routes/theaterOwnerRoutes.js";
+import theaterRouter from "./routes/theaterRoutes.js";
 
-dotenv.config();
+config();
 const app = express();
 connectDB();
 
 const port = process.env.PORT || 5000;
 
-app.use(express.json());
+app.use(json());
 
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);

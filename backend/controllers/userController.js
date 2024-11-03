@@ -1,12 +1,32 @@
-const express = require("express");
+import { User } from "../models/User.js";
 
-const viewUsers = (req, res, next) => {
-	res.send("User Controller in Action");
+export const viewUsers = async (req, res, next) => {
+	try {
+		const users = await User.find();
+		res.json(users);
+	} catch (err) {
+		console.log("Unable to get user Data");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
 };
 
-const addUsers = (req, res, next) => {
-	res.send("User Controller in Action for Add");
+export const addUser = async (req, res, next) => {
+	const { username, email, passwordHash, bookingHistory, moviePreferences } =
+		req.body;
+	try {
+		const user = new User({
+			username,
+			email,
+			passwordHash,
+			bookingHistory,
+			moviePreferences,
+		});
+		await user.save();
+		return res.send("Success");
+	} catch (err) {
+		console.log("Unable to save User");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
 };
-
-exports.viewUsers = viewUsers;
-exports.addUsers = addUsers;
