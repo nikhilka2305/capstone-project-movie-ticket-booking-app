@@ -2,7 +2,7 @@ import { Movie } from "../models/Movie.js";
 
 export const viewMovies = async (req, res, next) => {
 	try {
-		const movies = await Movie.find();
+		const movies = await Movie.find({ adminApproved: true });
 		res.json(movies);
 	} catch (err) {
 		console.log("Unable to get Movies");

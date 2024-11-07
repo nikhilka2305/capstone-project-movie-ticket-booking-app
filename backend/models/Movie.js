@@ -44,8 +44,6 @@ const movieSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	userReviews: [String],
-	bookings: [String],
 });
 
 export const Movie = mongoose.model("Movie", movieSchema);

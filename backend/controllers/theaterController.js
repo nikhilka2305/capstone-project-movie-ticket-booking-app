@@ -1,8 +1,11 @@
 import { Theater } from "../models/Theater.js";
 
 export const viewTheaters = async (req, res, next) => {
+	console.log(req.user);
 	try {
-		const theaters = await Theater.find();
+		const theaters = await Theater.find({ adminApproved: true })
+			.populate("owner", "theaterownername")
+			.populate("shows.movie", "movieName");
 		res.json(theaters);
 	} catch (err) {
 		console.log("Unable to get Theaters");
@@ -15,6 +18,7 @@ export const addTheater = async (req, res, next) => {
 	const {
 		theaterName,
 		location,
+		owner,
 		images,
 		seats,
 		seatClasses,
@@ -25,6 +29,7 @@ export const addTheater = async (req, res, next) => {
 		const theater = new Theater({
 			theaterName,
 			location,
+			owner,
 			images,
 			seats,
 			seatClasses,

@@ -27,7 +27,6 @@ const userSchema = mongoose.Schema({
 		default: "User",
 		enum: ["User"],
 	},
-	bookingHistory: [String],
 	moviePreferences: {
 		genre: {
 			type: String,

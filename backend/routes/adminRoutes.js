@@ -1,8 +1,14 @@
 import express from "express";
 const router = express.Router();
-import { viewAdmins, addAdmin } from "../controllers/adminController.js";
+import {
+	viewAdmins,
+	registerAdmin,
+	loginAdmin,
+} from "../controllers/adminController.js";
+import { authenticateToken } from "../middleware/authentication.js";
 
-router.get("/", viewAdmins);
-router.post("/newAdmin", addAdmin);
+router.get("/", authenticateToken, viewAdmins);
+router.post("/register", registerAdmin);
+router.post("/login", loginAdmin);
 
 export default router;

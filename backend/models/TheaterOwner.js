@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
 const theaterOwnerSchema = mongoose.Schema({
-	username: {
+	theaterownername: {
 		type: String,
 		unique: true,
 		required: true,
@@ -27,8 +27,6 @@ const theaterOwnerSchema = mongoose.Schema({
 		default: "TheaterOwner",
 		enum: ["TheaterOwner"],
 	},
-	theaterList: [String],
-	bookings: [String],
 });
 
 export const TheaterOwner = mongoose.model("TheaterOwner", theaterOwnerSchema);

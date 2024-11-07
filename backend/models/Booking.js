@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { nanoid } from "nanoid";
 
 const bookingSchema = mongoose.Schema({
@@ -7,16 +7,18 @@ const bookingSchema = mongoose.Schema({
 		unique: true,
 		default: () => `BID${nanoid(10)}`,
 	},
-	movieId: {
-		type: String,
+	movie: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Movie",
 		required: true,
 	},
 	showInfo: {
 		type: Date,
 		required: true,
 	},
-	theaterId: {
-		type: String,
+	theater: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Theater",
 		required: true,
 	},
 	seatNumbers: [
@@ -26,8 +28,9 @@ const bookingSchema = mongoose.Schema({
 		},
 	],
 	// Validation for seatNumber uniqueness required to avoid duplicate booking
-	userId: {
-		type: String,
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "User",
 		required: true,
 	},
 	bookingDate: {

@@ -20,6 +20,11 @@ const theaterSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	owner: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "TheaterOwner",
+		required: true,
+	},
 	images: {
 		type: [String],
 	},
@@ -56,11 +61,12 @@ const theaterSchema = mongoose.Schema({
 	shows: [
 		{
 			showTime: Date,
-			movieId: { type: String },
+			movie: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Movie",
+			},
 		},
 	],
-	userReviews: [String],
-	bookings: [String],
 });
 
 export const Theater = mongoose.model("Theater", theaterSchema);

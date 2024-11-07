@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
 const adminSchema = mongoose.Schema({
-	username: {
+	adminname: {
 		type: String,
 		unique: true,
 		required: true,
@@ -27,8 +27,12 @@ const adminSchema = mongoose.Schema({
 		default: "Admin",
 		enum: ["Admin"],
 	},
-	pendingMovieApprovals: [String],
-	pendingTheaterApprovals: [String],
+	pendingMovieApprovals: [
+		{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
+	],
+	pendingTheaterApprovals: [
+		{ type: mongoose.Schema.Types.ObjectId, ref: "Theater" },
+	],
 });
 
 export const Admin = mongoose.model("Admin", adminSchema);

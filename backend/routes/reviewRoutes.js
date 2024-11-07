@@ -1,8 +1,8 @@
 import { Router } from "express";
 const router = Router();
+import { viewReviews, addReview } from "../controllers/reviewController.js";
 
-router.get("/", (req, res) => {
-	res.send("Review Routes Working");
-});
+router.get("/", viewReviews);
+router.post("/newReview", addReview);
 
 export default router;
