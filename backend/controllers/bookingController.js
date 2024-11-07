@@ -1,7 +1,4 @@
 import { Booking } from "../models/Booking.js";
-import { User } from "../models/User.js";
-import { Movie } from "../models/Movie.js";
-import { Theater } from "../models/Theater.js";
 
 const popObject = {
 	path: "user",

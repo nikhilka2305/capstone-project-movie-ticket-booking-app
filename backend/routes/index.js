@@ -8,6 +8,7 @@ import movieRouter from "./movieRoutes.js";
 import reviewRouter from "./reviewRoutes.js";
 import theaterOwnerRouter from "./theaterOwnerRoutes.js";
 import theaterRouter from "./theaterRoutes.js";
+import showRouter from "./showRoutes.js";
 
 router.use("/user", userRouter);
 router.use("/admin", adminRouter);
@@ -15,6 +16,7 @@ router.use("/booking", bookingRouter);
 router.use("/movie", movieRouter);
 router.use("/review", reviewRouter);
 router.use("/theater", theaterRouter);
+router.use("/show", showRouter);
 router.use("/theaterOwner", theaterOwnerRouter);
 
 export { router as router };

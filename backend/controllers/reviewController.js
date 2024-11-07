@@ -1,7 +1,10 @@
 import { Review } from "../models/Review.js";
 export const viewReviews = async (req, res, next) => {
 	try {
-		const reviews = await Review.find();
+		const reviews = await Review.find()
+			.populate("movieId", "movieName")
+			.populate("theaterId", "theaterName")
+			.populate("userId", "username");
 		res.json(reviews);
 	} catch (err) {
 		console.log("Unable to get Reviews");
