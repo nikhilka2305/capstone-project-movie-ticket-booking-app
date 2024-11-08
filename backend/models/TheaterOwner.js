@@ -18,6 +18,17 @@ const theaterOwnerSchema = mongoose.Schema({
 		required: true,
 		// will use validate later
 	},
+	mobile: {
+		type: Number,
+		required: true,
+		unique: true,
+		validate: {
+			validator: function (val) {
+				return val.toString().length === 10;
+			},
+			message: (val) => `${val.value} has to be 10 digits`,
+		},
+	},
 	passwordHash: {
 		type: String,
 		required: true,

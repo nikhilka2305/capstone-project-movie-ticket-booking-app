@@ -22,13 +22,14 @@ export const viewTheaterOwners = async (req, res, next) => {
 };
 
 export const registerTheaterOwner = async (req, res, next) => {
-	const { theaterownername, email, password } = req.body;
-
+	const { theaterownername, email, mobile, password } = req.body;
+	console.log(req.body);
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const owner = new TheaterOwner({
 			theaterownername,
 			email,
+			mobile,
 			passwordHash,
 		});
 		await owner.save();

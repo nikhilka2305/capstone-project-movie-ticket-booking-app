@@ -1,14 +1,46 @@
 import { Theater } from "../models/Theater.js";
+import { TheaterOwner } from "../models/TheaterOwner.js";
 
 export const viewTheaters = async (req, res, next) => {
 	console.log(req.user);
+
 	try {
-		const theaters = await Theater.find({ adminApproved: true })
+		const { ownerid } = req.params;
+		const filterConditions = {};
+		if (ownerid) {
+			const owner = await TheaterOwner.findOne({ ownerId: ownerid });
+			if (!owner) throw new Error("No Theater Owner exists with that Id");
+			else {
+				filterConditions.owner = owner._id;
+			}
+		} else {
+			filterConditions.adminApproved = true;
+		}
+		const theaters = await Theater.find(filterConditions)
 			.populate("owner", "theaterownername")
 			.populate("shows.movie", "movieName");
 		res.json(theaters);
 	} catch (err) {
 		console.log("Unable to get Theaters");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const viewIndividualTheater = async (req, res, next) => {
+	const { theaterid } = req.params;
+
+	try {
+		const theater = await Theater.findOne({ theaterId: theaterid });
+
+		if (!theater) {
+			return res
+				.status(404)
+				.json({ message: "Not Found", error: "Such a Theater doesn't exist" });
+		}
+		return res.json(theater);
+	} catch (err) {
+		console.log("Unable to get that Theater");
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}

@@ -23,12 +23,14 @@ export const viewUsers = async (req, res, next) => {
 };
 
 export const registerUser = async (req, res, next) => {
-	const { username, email, password, moviePreferences } = req.body;
+	const { username, email, mobile, password, moviePreferences } = req.body;
+	// Check for existing User;
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const user = new User({
 			username,
 			email,
+			mobile,
 			passwordHash,
 			moviePreferences,
 		});
@@ -63,6 +65,7 @@ export const loginUser = async (req, res) => {
 					{ expiresIn: "6h" }
 				);
 				console.log(token);
+				res.cookie("token", token, { expiresIn: 60 * 60, httpOnly: true });
 				res.status(200).json({ message: "Succesfully Logged In" });
 			}
 		}

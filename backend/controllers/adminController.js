@@ -22,12 +22,13 @@ export const viewAdmins = async (req, res, next) => {
 };
 
 export const registerAdmin = async (req, res, next) => {
-	const { adminname, email, password } = req.body;
+	const { adminname, email, mobile, password } = req.body;
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const admin = new Admin({
 			adminname,
 			email,
+			mobile,
 			passwordHash,
 		});
 		await admin.save();
