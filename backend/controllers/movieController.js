@@ -6,7 +6,9 @@ export const viewMovies = async (req, res, next) => {
 		const { filter } = req.query;
 
 		const filterConditions =
-			req.user && req.user.role === "Admin" ? {} : { adminApproved: true };
+			req.user && req.user.role === "Admin"
+				? {}
+				: { adminApprovalStatus: "Approved" };
 
 		if (filter === "newReleases") {
 			const lastWeek = new Date();

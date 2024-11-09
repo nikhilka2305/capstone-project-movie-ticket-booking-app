@@ -39,12 +39,14 @@ const adminSchema = mongoose.Schema(
 			default: "Admin",
 			enum: ["Admin"],
 		},
-		pendingMovieApprovals: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
-		],
-		pendingTheaterApprovals: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: "Theater" },
-		],
+		blocked: {
+			type: Boolean,
+			default: false,
+		},
+		deleted: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );

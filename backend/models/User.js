@@ -39,6 +39,14 @@ const userSchema = mongoose.Schema(
 			default: "User",
 			enum: ["User"],
 		},
+		blocked: {
+			type: Boolean,
+			default: false,
+		},
+		deleted: {
+			type: Boolean,
+			default: false,
+		},
 		moviePreferences: {
 			genre: {
 				type: String,

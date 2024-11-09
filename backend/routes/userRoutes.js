@@ -6,9 +6,11 @@ import {
 	loginUser,
 	viewUserProfile,
 	updateUserProfile,
+	resetUserPassword,
 } from "../controllers/userController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
+import { checkAuth } from "../controllers/commonControllers.js";
 
 router.get(
 	"/",
@@ -19,17 +21,24 @@ router.get(
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get(
-	"/:userid",
+	"/:userid/profile",
 	authenticateToken,
 	authorization("User", "Admin"),
 	viewUserProfile
 );
 router.patch(
-	"/:userid",
+	"/:userid/resetPassword",
+	authenticateToken,
+	authorization("User", "Admin"),
+	resetUserPassword
+);
+router.patch(
+	"/:userid/profile",
 	authenticateToken,
 	authorization("User", "Admin"),
 	updateUserProfile
 ); //Edit profile
 
+router.get("/check-user", authenticateToken, authorization("User"), checkAuth);
 // check User route for user validation..
 export default router;

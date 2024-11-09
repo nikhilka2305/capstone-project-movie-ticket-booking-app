@@ -46,13 +46,23 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 			message: "You are not authorized to see this page",
 		});
 
-	/*
-		
-		Update Theater Owner Profile Logic
+	try {
+		const { mobile, email } = req.body;
 
-		*/
+		const user = await TheaterOwner.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ mobile, email },
+			{ runValidators: true, new: true }
+		);
+		console.log(user);
+		console.log("Updating Theater Owner Profile");
 
-	return res.send("Update Theater Owner Profile page works");
+		res.status(201).json("Profile updated");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to update profile", message: err.message });
+	}
 };
 
 export const registerTheaterOwner = async (req, res, next) => {
@@ -104,7 +114,9 @@ export const loginTheaterOwner = async (req, res) => {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
 				});
-				res.status(200).json({ message: "Succesfully Logged In" });
+				res
+					.status(200)
+					.json({ message: "Succesfully Logged In", token: token });
 			}
 		}
 	} catch (err) {
@@ -112,5 +124,34 @@ export const loginTheaterOwner = async (req, res) => {
 			error: "Login Failed",
 			message: err.message,
 		});
+	}
+};
+export const resetTheaterOwnerPassword = async (req, res, next) => {
+	const { ownerid } = req.params;
+
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const { newPassword } = req.body;
+
+		const newPasswordHash = await bcrypt.hash(newPassword, 10);
+		console.log(newPasswordHash);
+		console.log(req.user.loggedUserObjectId);
+		const theaterowner = await TheaterOwner.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ passwordHash: newPasswordHash },
+			{ new: true }
+		);
+		console.log(theater);
+		console.log("Resetting password");
+
+		res.status(201).json("Password Reset");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to Reset Password", message: err.message });
 	}
 };

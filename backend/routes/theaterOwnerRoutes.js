@@ -6,10 +6,12 @@ import {
 	loginTheaterOwner,
 	viewTheaterOwnerProfile,
 	updateTheaterOwnerProfile,
+	resetTheaterOwnerPassword,
 } from "../controllers/theaterOwnerController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
+import { checkAuth } from "../controllers/commonControllers.js";
 
 router.get(
 	"/",
@@ -26,16 +28,28 @@ router.get(
 	viewTheaters
 );
 router.get(
-	"/:ownerid",
+	"/:ownerid/profile",
 	authenticateToken,
 	authorization("TheaterOwner", "Admin"),
 	viewTheaterOwnerProfile
 );
 router.patch(
-	"/:ownerid",
+	"/:ownerid/resetPassword",
+	authenticateToken,
+	authorization("TheaterOwner", "Admin"),
+	resetTheaterOwnerPassword
+);
+router.patch(
+	"/:ownerid/profile",
 	authenticateToken,
 	authorization("TheaterOwner", "Admin"),
 	updateTheaterOwnerProfile
 ); //Edit profile
 
+router.get(
+	"/check-theater-owner",
+	authenticateToken,
+	authorization("TheaterOwner"),
+	checkAuth
+);
 export default router;

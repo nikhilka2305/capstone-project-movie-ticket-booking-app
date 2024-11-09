@@ -8,6 +8,10 @@ const reviewSchema = mongoose.Schema(
 			unique: true,
 			default: () => `RID${nanoid(10)}`,
 		},
+		deleted: {
+			type: Boolean,
+			default: false,
+		},
 		reviewFor: {
 			type: String,
 			enum: ["movie", "theater"],

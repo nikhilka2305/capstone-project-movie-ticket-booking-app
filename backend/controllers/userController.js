@@ -42,24 +42,37 @@ export const updateUserProfile = async (req, res, next) => {
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
 		return res.status(403).json({
 			error: "Authorization Error",
-			message: "You are not authorized to see this page",
+			message: "You are not authorized to update this profile",
 		});
+	try {
+		const { mobile, email, moviePreferences } = req.body;
 
-	/*
+		const user = await User.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ mobile, email, moviePreferences },
+			{ runValidators: true, new: true }
+		);
+		console.log(user);
+		console.log("Updating User Profile");
 
-		Update User Profile Logic
-
-		*/
-
-	return res.send("Update User Profile page works");
+		res.status(201).json("Profile updated");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to update profile", message: err.message });
+	}
 };
 
 export const registerUser = async (req, res, next) => {
 	const { username, email, mobile, password, moviePreferences } = req.body;
 	// Check for existing User;
-	const passwordHash = await bcrypt.hash(password, 10);
 	try {
-		const user = new User({
+		const passwordHash = await bcrypt.hash(password, 10);
+		const user = await User.findOne({ username });
+		if (!user) {
+			throw new Error("Username already exists. Try again");
+		}
+		user = new User({
 			username,
 			email,
 			mobile,
@@ -99,7 +112,9 @@ export const loginUser = async (req, res) => {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
 				});
-				res.status(200).json({ message: "Succesfully Logged In" });
+				res
+					.status(200)
+					.json({ message: "Succesfully Logged In", token: token });
 			}
 		}
 	} catch (err) {
@@ -107,5 +122,35 @@ export const loginUser = async (req, res) => {
 			error: "Login Failed",
 			message: err.message,
 		});
+	}
+};
+
+export const resetUserPassword = async (req, res, next) => {
+	const { userid } = req.params;
+
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const { newPassword } = req.body;
+
+		const newPasswordHash = await bcrypt.hash(newPassword, 10);
+		console.log(newPasswordHash);
+		console.log(req.user.loggedUserObjectId);
+		const user = await User.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ passwordHash: newPasswordHash },
+			{ new: true }
+		);
+		console.log(user);
+		console.log("Resetting password");
+
+		res.status(201).json("Password Reset");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to Reset Password", message: err.message });
 	}
 };

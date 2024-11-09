@@ -5,7 +5,7 @@ export const viewTheaters = async (req, res, next) => {
 	console.log(req.user);
 
 	try {
-		const { ownerid } = req.params;
+		const { ownerid, adminid } = req.params;
 		const filterConditions = {};
 		if (ownerid) {
 			const owner = await TheaterOwner.findOne({ ownerId: ownerid });
@@ -17,8 +17,8 @@ export const viewTheaters = async (req, res, next) => {
 				});
 
 			filterConditions.owner = owner._id;
-		} else {
-			filterConditions.adminApproved = true;
+		} else if (!adminid) {
+			filterConditions.adminApprovalStatus = "Approved";
 		}
 		const theaters = await Theater.find(filterConditions)
 			.populate("owner", "theaterownername")

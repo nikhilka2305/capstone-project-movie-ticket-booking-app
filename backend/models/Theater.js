@@ -13,9 +13,9 @@ const theaterSchema = mongoose.Schema(
 			unique: true,
 			default: () => `TID${nanoid(10)}`,
 		},
-		adminApproved: {
-			type: Boolean,
-			default: false,
+		adminApprovalStatus: {
+			type: String,
+			enum: ["Pending", "Approved", "Rejected", "Deleted"],
 		},
 		location: {
 			type: String,

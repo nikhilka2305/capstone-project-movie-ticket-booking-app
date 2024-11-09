@@ -8,7 +8,10 @@ const showSchema = mongoose.Schema(
 			unique: true,
 			default: () => `SID${nanoid(10)}`,
 		},
-
+		deleted: {
+			type: Boolean,
+			default: false,
+		},
 		showTime: {
 			type: Date,
 			required: true,

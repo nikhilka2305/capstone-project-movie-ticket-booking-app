@@ -13,9 +13,9 @@ const movieSchema = mongoose.Schema(
 			unique: true,
 			default: () => `MID${nanoid(10)}`,
 		},
-		adminApproved: {
-			type: Boolean,
-			default: false,
+		adminApprovalStatus: {
+			type: String,
+			enum: ["Pending", "Approved", "Rejected", "Deleted"],
 		},
 		releaseDate: {
 			type: Date,

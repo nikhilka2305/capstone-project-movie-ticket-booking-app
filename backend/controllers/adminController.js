@@ -34,13 +34,23 @@ export const viewAdminProfile = async (req, res, next) => {
 export const updateAdminProfile = async (req, res, next) => {
 	const { adminid } = req.params;
 
-	/*
+	try {
+		const { mobile, email } = req.body;
 
-		Update Admin Profile Logic
+		const user = await Admin.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ mobile, email },
+			{ runValidators: true, new: true }
+		);
+		console.log(user);
+		console.log("Updating Admin Profile");
 
-		*/
-
-	return res.send("Update Admin Profile page works");
+		res.status(201).json("Profile updated");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to update profile", message: err.message });
+	}
 };
 
 export const registerAdmin = async (req, res, next) => {
@@ -87,7 +97,9 @@ export const loginAdmin = async (req, res) => {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
 				});
-				res.status(200).json({ message: "Succesfully Logged In" });
+				res
+					.status(200)
+					.json({ message: "Succesfully Logged In", token: token });
 			}
 		}
 	} catch (err) {
@@ -95,5 +107,35 @@ export const loginAdmin = async (req, res) => {
 			error: "Login Failed",
 			message: err.message,
 		});
+	}
+};
+
+export const resetAdminPassword = async (req, res, next) => {
+	// const { adminid } = req.params;
+
+	if (req.user.role !== "Admin")
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const { newPassword } = req.body;
+
+		const newPasswordHash = await bcrypt.hash(newPassword, 10);
+		console.log(newPasswordHash);
+		console.log(req.user.loggedUserObjectId);
+		const admin = await Admin.findByIdAndUpdate(
+			req.user.loggedUserObjectId,
+			{ passwordHash: newPasswordHash },
+			{ new: true }
+		);
+		console.log(admin);
+		console.log("Resetting password");
+
+		res.status(201).json("Password Reset");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to Reset Password", message: err.message });
 	}
 };

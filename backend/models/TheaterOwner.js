@@ -39,6 +39,14 @@ const theaterOwnerSchema = mongoose.Schema(
 			default: "TheaterOwner",
 			enum: ["TheaterOwner"],
 		},
+		blocked: {
+			type: Boolean,
+			default: false,
+		},
+		deleted: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );
