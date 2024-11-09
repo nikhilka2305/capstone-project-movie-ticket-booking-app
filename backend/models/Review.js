@@ -1,40 +1,43 @@
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
-const reviewSchema = mongoose.Schema({
-	reviewId: {
-		type: String,
-		unique: true,
-		default: () => `RID${nanoid(10)}`,
+const reviewSchema = mongoose.Schema(
+	{
+		reviewId: {
+			type: String,
+			unique: true,
+			default: () => `RID${nanoid(10)}`,
+		},
+		reviewFor: {
+			type: String,
+			enum: ["movie", "theater"],
+		},
+		movieId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Movie",
+		},
+		theaterId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Theater",
+		},
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
+		},
+		userRating: {
+			type: Number,
+			required: true,
+			min: 1,
+			max: 5,
+		},
+		userReview: {
+			type: String,
+			required: true,
+		},
 	},
-	reviewFor: {
-		type: String,
-		enum: ["movie", "theater"],
-	},
-	movieId: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Movie",
-	},
-	theaterId: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Theater",
-	},
-	userId: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true,
-	},
-	userRating: {
-		type: Number,
-		required: true,
-		min: 1,
-		max: 5,
-	},
-	userReview: {
-		type: String,
-		required: true,
-	},
-});
+	{ timestamps: true }
+);
 
 // Schema-level validation function
 reviewSchema.path("reviewFor").validate(function (value) {

@@ -1,25 +1,57 @@
 import { User } from "../models/User.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { createToken } from "../utils/createToken.js";
 
 export const viewUsers = async (req, res, next) => {
 	console.log(req.user);
-	if (req.user.role !== "Admin")
-		res.status(403).json({
+
+	try {
+		console.log(req.user);
+		const users = await User.find().select("-passwordHash");
+		res.json(users);
+	} catch (err) {
+		console.log("Unable to get user Data");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const viewUserProfile = async (req, res, next) => {
+	const { userid } = req.params;
+
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+		return res.status(403).json({
 			error: "Authorization Error",
 			message: "You are not authorized to see this page",
 		});
-	else {
-		try {
-			console.log(req.user);
-			const users = await User.find();
-			res.json(users);
-		} catch (err) {
-			console.log("Unable to get user Data");
-			console.log(err.message);
-			return res.json({ message: "Error", error: err.message });
-		}
+
+	try {
+		const user = await User.findOne({ userId: userid }).select("-passwordHash");
+		if (!user) throw new Error("No such user exists");
+		res.status(200).json(user);
+	} catch (err) {
+		console.log("Unable to get user Data");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
 	}
+};
+
+export const updateUserProfile = async (req, res, next) => {
+	const { userid } = req.params;
+
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to see this page",
+		});
+
+	/*
+
+		Update User Profile Logic
+
+		*/
+
+	return res.send("Update User Profile page works");
 };
 
 export const registerUser = async (req, res, next) => {
@@ -55,17 +87,18 @@ export const loginUser = async (req, res) => {
 				throw new Error("Invalid User Credentials");
 			} else {
 				console.log(user);
-				const token = jwt.sign(
-					{
-						userId: user.userId,
-						username: username,
-						role: user.role,
-					},
-					process.env.JWT_ACCESS_TOKEN_COMMON_SECRET,
-					{ expiresIn: "6h" }
-				);
+				const token = createToken({
+					userId: user.userId,
+					username: username,
+					role: user.role,
+					id: user._id,
+				});
+
 				console.log(token);
-				res.cookie("token", token, { expiresIn: 60 * 60, httpOnly: true });
+				res.cookie("token", token, {
+					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+					httpOnly: true,
+				});
 				res.status(200).json({ message: "Succesfully Logged In" });
 			}
 		}

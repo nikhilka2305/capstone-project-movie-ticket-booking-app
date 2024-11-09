@@ -1,25 +1,44 @@
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
-const showSchema = mongoose.Schema({
-	showId: {
-		type: String,
-		unique: true,
-		default: () => `SID${nanoid(10)}`,
-	},
+const showSchema = mongoose.Schema(
+	{
+		showId: {
+			type: String,
+			unique: true,
+			default: () => `SID${nanoid(10)}`,
+		},
 
-	showTime: {
-		type: Date,
-		required: true,
+		showTime: {
+			type: Date,
+			required: true,
+		},
+		bookedSeats: [
+			{
+				seatNumber: {
+					row: {
+						type: Number,
+						required: true,
+					},
+					col: {
+						type: Number,
+						required: true,
+					},
+				},
+			},
+		],
+		movie: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Movie",
+			required: true,
+		},
+		theater: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Theater",
+			required: true,
+		},
 	},
-	movie: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Movie",
-	},
-	theater: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Theater",
-	},
-});
+	{ timestamps: true }
+);
 
 export const Show = mongoose.model("Show", showSchema);

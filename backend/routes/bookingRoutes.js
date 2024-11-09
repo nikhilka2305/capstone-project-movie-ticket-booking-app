@@ -1,8 +1,9 @@
 import { Router } from "express";
 const router = Router();
 import { addBooking, viewBookings } from "../controllers/bookingController.js";
-
-router.get("/", viewBookings);
-router.post("/newBooking", addBooking);
+import { authenticateToken } from "../middleware/authentication.js";
+import { authorization } from "../middleware/authorization.js";
+router.get("/", authenticateToken, viewBookings);
+router.post("/newBooking", authenticateToken, addBooking);
 
 export default router;

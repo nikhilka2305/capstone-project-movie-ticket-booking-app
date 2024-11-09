@@ -1,10 +1,11 @@
 import express, { json } from "express";
 import connectDB from "./configs/db.js";
 import { router } from "./routes/index.js";
-
+import cookieParser from "cookie-parser";
 const app = express();
 connectDB();
 const port = process.env.PORT || 5000;
+app.use(cookieParser());
 app.use(json());
 
 app.use("/", router);

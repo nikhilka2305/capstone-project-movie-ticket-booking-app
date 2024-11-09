@@ -10,9 +10,13 @@ export const viewTheaters = async (req, res, next) => {
 		if (ownerid) {
 			const owner = await TheaterOwner.findOne({ ownerId: ownerid });
 			if (!owner) throw new Error("No Theater Owner exists with that Id");
-			else {
-				filterConditions.owner = owner._id;
-			}
+			if (req.user.loggedUserId !== ownerid)
+				return res.status(403).json({
+					error: "Authorization Error",
+					message: "You are not authorized to see this page",
+				});
+
+			filterConditions.owner = owner._id;
 		} else {
 			filterConditions.adminApproved = true;
 		}

@@ -1,16 +1,29 @@
 import { Booking } from "../models/Booking.js";
 
-const popObject = {
-	path: "user",
-	populate: {},
-};
-
 export const viewBookings = async (req, res, next) => {
 	try {
 		const bookings = await Booking.find()
-			.populate("user", "username")
-			.populate("movie", "movieName")
-			.populate("theater", "theaterName");
+			.populate({
+				path: "user",
+				select: "theaterownername username adminname",
+			})
+
+			.populate({
+				path: "showInfo",
+				populate: [
+					{
+						path: "movie",
+						select: "movieName",
+					},
+					{
+						path: "theater",
+						select: "theaterName",
+					},
+				],
+
+				select: "-bookedSeats",
+			});
+
 		res.json(bookings);
 	} catch (err) {
 		console.log("Unable to get Bookings");
@@ -20,16 +33,16 @@ export const viewBookings = async (req, res, next) => {
 };
 
 export const addBooking = async (req, res, next) => {
-	const { movie, showInfo, theater, seatNumbers, user, bookingDate } = req.body;
-
+	const { showInfo, seatNumbers } = req.body;
+	const user = req.user.loggedUserObjectId;
+	const userType = req.user.role;
 	try {
 		const booking = new Booking({
-			movie,
 			showInfo,
-			theater,
 			seatNumbers,
 			user,
-			bookingDate,
+			userType,
+			bookingDate: Date.now(),
 		});
 		await booking.save();
 		return res.send("Success");

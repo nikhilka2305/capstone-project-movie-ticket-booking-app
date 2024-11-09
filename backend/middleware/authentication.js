@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const authenticateToken = (req, res, next) => {
-	const authHeader = req.headers["authorization"];
-	const token = authHeader && authHeader.split(" ")[1];
+	const token = req.cookies.token;
 	if (!token)
 		return res.status(403).json({ message: "You need to login to proceed" });
 	jwt.verify(token, process.env.JWT_ACCESS_TOKEN_COMMON_SECRET, (err, user) => {
@@ -14,6 +13,7 @@ export const authenticateToken = (req, res, next) => {
 		console.log(user);
 		req.user = {
 			loggedUserId: user.adminId || user.userId || user.ownerId,
+			loggedUserObjectId: user.id,
 			loggedUserName: user.adminname || user.username || user.theaterownername,
 			role: user.role,
 		};

@@ -1,24 +1,46 @@
 import { Admin } from "../models/Admin.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { createToken } from "../utils/createToken.js";
 
 export const viewAdmins = async (req, res, next) => {
 	console.log(req.user);
-	if (req.user.role !== "Admin")
-		res.status(403).json({
-			error: "Authorization Error",
-			message: "You are not authorized to see this page",
-		});
-	else {
-		try {
-			const admins = await Admin.find();
-			res.json(admins);
-		} catch (err) {
-			console.log("Unable to get user Data");
-			console.log(err.message);
-			return res.json({ message: "Error", error: err.message });
-		}
+
+	try {
+		const admins = await Admin.find().select("-passwordHash");
+		res.json(admins);
+	} catch (err) {
+		console.log("Unable to get user Data");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
 	}
+};
+
+export const viewAdminProfile = async (req, res, next) => {
+	const { adminid } = req.params;
+
+	try {
+		const admin = await Admin.findOne({ adminId: adminid }).select(
+			"-passwordHash"
+		);
+		if (!admin) throw new Error("No such theater admin exists");
+		res.status(200).json(admin);
+	} catch (err) {
+		console.log("Unable to get Admin Data");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const updateAdminProfile = async (req, res, next) => {
+	const { adminid } = req.params;
+
+	/*
+
+		Update Admin Profile Logic
+
+		*/
+
+	return res.send("Update Admin Profile page works");
 };
 
 export const registerAdmin = async (req, res, next) => {
@@ -54,16 +76,17 @@ export const loginAdmin = async (req, res) => {
 			if (!passwordMatch) {
 				throw new Error("Invalid Admin Credentials");
 			} else {
-				const token = jwt.sign(
-					{
-						adminId: admin.adminId,
-						adminname: adminname,
-						role: admin.role,
-					},
-					process.env.JWT_ACCESS_TOKEN_COMMON_SECRET,
-					{ expiresIn: "6h" }
-				);
+				const token = createToken({
+					adminId: admin.adminId,
+					adminname: adminname,
+					role: admin.role,
+					id: admin._id,
+				});
 				console.log(token);
+				res.cookie("token", token, {
+					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+					httpOnly: true,
+				});
 				res.status(200).json({ message: "Succesfully Logged In" });
 			}
 		}

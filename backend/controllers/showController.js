@@ -33,13 +33,14 @@ export const viewShows = async (req, res, next) => {
 };
 
 export const addShow = async (req, res, next) => {
-	const { showTime, movie, theater } = req.body;
+	const { showTime, movie, theater, bookedSeats } = req.body;
 
 	try {
 		const show = new Show({
 			showTime,
 			movie,
 			theater,
+			bookedSeats,
 		});
 		await show.save();
 		return res.send("Success");

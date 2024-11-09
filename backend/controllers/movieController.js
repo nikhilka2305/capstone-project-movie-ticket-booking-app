@@ -4,7 +4,10 @@ import { Show } from "../models/Show.js";
 export const viewMovies = async (req, res, next) => {
 	try {
 		const { filter } = req.query;
-		const filterConditions = { adminApproved: true };
+
+		const filterConditions =
+			req.user && req.user.role === "Admin" ? {} : { adminApproved: true };
+
 		if (filter === "newReleases") {
 			const lastWeek = new Date();
 			lastWeek.setDate(lastWeek.getDate() - 7);
@@ -44,10 +47,30 @@ export const viewIndividualMovie = async (req, res, next) => {
 	}
 };
 
+export const editIndividualMovie = async (req, res, next) => {
+	const { movieid } = req.params;
+
+	try {
+		const movie = await Movie.findOne({ movieId: movieid });
+
+		if (!movie) {
+			return res
+				.status(404)
+				.json({ message: "Not Found", error: "Such a Movie doesn't exist" });
+		}
+		return res.json("Edit Movie Worked");
+	} catch (err) {
+		console.log("Unable to get that Movie");
+		console.log(err.message);
+		return res.json({ message: "Error", error: err.message });
+	}
+};
+
 export const addMovie = async (req, res, next) => {
 	const {
 		movieName,
 		releaseDate,
+		movieduration,
 		language,
 		genre,
 		rating,
@@ -60,6 +83,7 @@ export const addMovie = async (req, res, next) => {
 		const movie = new Movie({
 			movieName,
 			releaseDate,
+			movieduration,
 			language,
 			genre,
 			rating,
