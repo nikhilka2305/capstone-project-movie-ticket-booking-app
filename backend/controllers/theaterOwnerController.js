@@ -92,7 +92,7 @@ export const loginTheaterOwner = async (req, res) => {
 		const theaterowner = await TheaterOwner.findOne({
 			theaterownername: theaterownername,
 		});
-		if (!theaterowner) {
+		if (!theaterowner || theaterowner.deleted || theaterowner.blocked) {
 			throw new Error("Invalid Theater Owner Credentials-TON");
 		} else {
 			const passwordMatch = await bcrypt.compare(
@@ -153,5 +153,31 @@ export const resetTheaterOwnerPassword = async (req, res, next) => {
 		res
 			.status(500)
 			.json({ error: "Unable to Reset Password", message: err.message });
+	}
+};
+
+export const deleteTheaterOwner = async (req, res, next) => {
+	const { ownerid } = req.params;
+
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const theaterowner = await TheaterOwner.findOneAndUpdate(
+			{ ownerId: ownerid },
+			{ deleted: true },
+			{ new: true }
+		);
+		console.log(theaterowner);
+		console.log("Deleting Account");
+		if (req.user.role !== "Admin")
+			return res.status(204).clearCookie("token").json("Account Deleted");
+		res.status(204).json("Account Deleted");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to delete account", message: err.message });
 	}
 };

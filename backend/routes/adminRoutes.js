@@ -7,12 +7,14 @@ import {
 	viewAdminProfile,
 	updateAdminProfile,
 	resetAdminPassword,
+	deleteAdmin,
 } from "../controllers/adminController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { viewMovies } from "../controllers/movieController.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewTheaters } from "../controllers/theaterController.js";
+import { viewPersonalBookings } from "../controllers/bookingController.js";
 
 router.get("/", authenticateToken, authorization("Admin"), viewAdmins);
 router.post("/register", registerAdmin);
@@ -47,6 +49,18 @@ router.patch(
 	authorization("Admin"),
 	updateAdminProfile
 );
+router.get(
+	"/:adminid/bookings",
+	authenticateToken,
+	authorization("Admin"),
+	viewPersonalBookings
+),
+	router.delete(
+		"/:adminid",
+		authenticateToken,
+		authorization("Admin"),
+		deleteAdmin
+	);
 router.get(
 	"/check-admin",
 	authenticateToken,

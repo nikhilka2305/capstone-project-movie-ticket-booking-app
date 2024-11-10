@@ -88,7 +88,7 @@ bookingSchema.pre("save", async function (next) {
 		// Proceed if no conflicts
 		next();
 	} catch (err) {
-		console.log("Error checking booked seats:", err);
+		console.log("Error checking booked seats:");
 		next(err); // Pass error to the next middleware
 	}
 });

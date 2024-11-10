@@ -90,9 +90,11 @@ export const registerUser = async (req, res, next) => {
 
 export const loginUser = async (req, res) => {
 	const { username, password } = req.body;
+
 	try {
 		const user = await User.findOne({ username: username });
-		if (!user) {
+
+		if (!user || user.deleted || user.blocked) {
 			throw new Error("Invalid User Credentials");
 		} else {
 			const passwordMatch = await bcrypt.compare(password, user.passwordHash);
@@ -152,5 +154,31 @@ export const resetUserPassword = async (req, res, next) => {
 		res
 			.status(500)
 			.json({ error: "Unable to Reset Password", message: err.message });
+	}
+};
+
+export const deleteUser = async (req, res, next) => {
+	const { userid } = req.params;
+	console.log(req.user.loggedUserId, userid);
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const user = await User.findOneAndUpdate(
+			{ userId: userid },
+			{ deleted: true },
+			{ new: true }
+		);
+		console.log(user);
+		console.log("Deleting Account");
+		if (req.user.role !== "Admin")
+			return res.status(204).clearCookie("token").json("Account Deleted");
+		res.status(204).json("Account Deleted");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to delete account", message: err.message });
 	}
 };

@@ -12,7 +12,12 @@ import { authorization } from "../middleware/authorization.js";
 const router = Router();
 
 router.get("/", viewTheaters);
-router.post("/newTheater", addTheater);
+router.post(
+	"/newTheater",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	addTheater
+);
 router.post(
 	"/:theaterid/addreview",
 	authenticateToken,

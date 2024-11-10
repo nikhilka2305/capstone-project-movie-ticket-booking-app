@@ -79,7 +79,7 @@ export const loginAdmin = async (req, res) => {
 		const admin = await Admin.findOne({
 			adminname: adminname,
 		});
-		if (!admin) {
+		if (!admin || admin.deleted || admin.blocked) {
 			throw new Error("Invalid Admin Credentials-TON");
 		} else {
 			const passwordMatch = await bcrypt.compare(password, admin.passwordHash);
@@ -137,5 +137,32 @@ export const resetAdminPassword = async (req, res, next) => {
 		res
 			.status(500)
 			.json({ error: "Unable to Reset Password", message: err.message });
+	}
+};
+
+export const deleteAdmin = async (req, res, next) => {
+	const { adminid } = req.params;
+	console.log(req.user);
+
+	if (req.user.role !== "Admin")
+		return res.status(403).json({
+			error: "Authorization Error",
+			message: "You are not authorized to reset Password",
+		});
+	try {
+		const admin = await Admin.findOneAndUpdate(
+			{ adminId: adminid },
+			{ deleted: true },
+			{ new: true }
+		);
+		console.log(admin);
+		console.log("Deleting Account");
+		if (req.user.loggedUserId === adminid)
+			return res.status(204).clearCookie("token").json("Account Deleted");
+		res.status(204).json("Account Deleted");
+	} catch (err) {
+		res
+			.status(500)
+			.json({ error: "Unable to delete account", message: err.message });
 	}
 };

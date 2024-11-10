@@ -23,7 +23,7 @@ export const viewShows = async (req, res, next) => {
 
 		const shows = await Show.find(filterConditions)
 			.populate("movie", "movieName")
-			.populate("theater", "theaterName");
+			.populate("theater", "theaterName seats");
 		res.json(shows);
 	} catch (err) {
 		console.log("Unable to get Shows");

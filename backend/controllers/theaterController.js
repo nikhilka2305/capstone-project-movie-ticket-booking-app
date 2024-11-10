@@ -2,6 +2,7 @@ import { Theater } from "../models/Theater.js";
 import { TheaterOwner } from "../models/TheaterOwner.js";
 
 export const viewTheaters = async (req, res, next) => {
+	console.log("owner");
 	console.log(req.user);
 
 	try {

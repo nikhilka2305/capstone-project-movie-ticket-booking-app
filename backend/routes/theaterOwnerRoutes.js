@@ -7,11 +7,13 @@ import {
 	viewTheaterOwnerProfile,
 	updateTheaterOwnerProfile,
 	resetTheaterOwnerPassword,
+	deleteTheaterOwner,
 } from "../controllers/theaterOwnerController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
+import { viewPersonalBookings } from "../controllers/bookingController.js";
 
 router.get(
 	"/",
@@ -45,6 +47,19 @@ router.patch(
 	authorization("TheaterOwner", "Admin"),
 	updateTheaterOwnerProfile
 ); //Edit profile
+
+router.get(
+	"/:ownerid/bookings",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	viewPersonalBookings
+),
+	router.delete(
+		"/:ownerid",
+		authenticateToken,
+		authorization("Admin", "TheaterOwner"),
+		deleteTheaterOwner
+	);
 
 router.get(
 	"/check-theater-owner",
