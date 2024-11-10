@@ -4,7 +4,7 @@ export const authenticateToken = (req, res, next) => {
 	const token = req.cookies.token;
 	if (!token)
 		return res.status(403).json({ message: "You need to login to proceed" });
-	jwt.verify(token, process.env.JWT_ACCESS_TOKEN_COMMON_SECRET, (err, user) => {
+	jwt.verify(token, process.env.JWT_ACCESS_TOKEN, (err, user) => {
 		if (err) {
 			console.log("User validation failed");
 			return res.status(401).json({ message: "Invalid Token" });

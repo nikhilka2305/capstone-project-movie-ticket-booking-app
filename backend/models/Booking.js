@@ -14,7 +14,7 @@ const bookingSchema = mongoose.Schema(
 			ref: "Show",
 			required: true,
 		},
-		seatNumbers: [
+		seats: [
 			{
 				seatNumber: {
 					row: {
@@ -58,8 +58,8 @@ bookingSchema.pre("save", async function (next) {
 		console.log(show.theater.seats);
 		// Check if entered seats are valid
 
-		// Loop through the requested seatNumbers and check against bookedSeats
-		for (let seat of this.seatNumbers) {
+		// Loop through the requested seats and check against bookedSeats
+		for (let seat of this.seats) {
 			console.log("Before Booking");
 			if (
 				seat.seatNumber.row < 0 ||
@@ -102,7 +102,7 @@ bookingSchema.post("save", async function (val, next) {
 			await Show.findByIdAndUpdate(
 				val.showInfo,
 				{
-					$addToSet: { bookedSeats: { $each: val.seatNumbers } },
+					$addToSet: { bookedSeats: { $each: val.seats } },
 					// $push: { bookedSeats: { $each: seatsToAdd } },
 				},
 				{ new: true }
