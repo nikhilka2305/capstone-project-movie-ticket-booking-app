@@ -3,12 +3,12 @@ import { nanoid } from "nanoid";
 
 const adminSchema = mongoose.Schema(
 	{
-		adminname: {
+		username: {
 			type: String,
 			unique: true,
 			required: true,
 		},
-		adminId: {
+		userId: {
 			type: String,
 			unique: true,
 			default: () => `AID${nanoid(10)}`,

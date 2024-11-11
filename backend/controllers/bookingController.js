@@ -27,7 +27,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 				}).select("_id");
 			} else {
 				console.log("admin here");
-				filterOptions.user = await Admin.findOne({ adminId: userid }).select(
+				filterOptions.user = await Admin.findOne({ userId: userid }).select(
 					"_id"
 				);
 			}
@@ -36,7 +36,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 		const bookings = await Booking.find(filterOptions)
 			.populate({
 				path: "user",
-				select: "theaterownername username adminname",
+				select: "theaterownername username",
 			})
 
 			.populate({
@@ -204,7 +204,7 @@ export const viewBookings = async (req, res, next) => {
 										$eq: ["$userType", "Admin"],
 									},
 									then: {
-										$arrayElemAt: ["$adminDetails.adminname", 0],
+										$arrayElemAt: ["$adminDetails.username", 0],
 									},
 								},
 								{

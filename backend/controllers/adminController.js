@@ -19,7 +19,7 @@ export const viewAdminProfile = async (req, res, next) => {
 	const { adminid } = req.params;
 
 	try {
-		const admin = await Admin.findOne({ adminId: adminid }).select(
+		const admin = await Admin.findOne({ userId: adminid }).select(
 			"-passwordHash"
 		);
 		if (!admin) throw new Error("No such theater admin exists");
@@ -54,11 +54,11 @@ export const updateAdminProfile = async (req, res, next) => {
 };
 
 export const registerAdmin = async (req, res, next) => {
-	const { adminname, email, mobile, password } = req.body;
+	const { username, email, mobile, password } = req.body;
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const admin = new Admin({
-			adminname,
+			username,
 			email,
 			mobile,
 			passwordHash,
@@ -73,11 +73,11 @@ export const registerAdmin = async (req, res, next) => {
 };
 
 export const loginAdmin = async (req, res) => {
-	const { adminname, password } = req.body;
+	const { username, password } = req.body;
 
 	try {
 		const admin = await Admin.findOne({
-			adminname: adminname,
+			username: username,
 		});
 		if (!admin || admin.deleted || admin.blocked) {
 			throw new Error("Invalid Admin Credentials-TON");
@@ -87,8 +87,8 @@ export const loginAdmin = async (req, res) => {
 				throw new Error("Invalid Admin Credentials");
 			} else {
 				const token = createToken({
-					adminId: admin.adminId,
-					adminname: adminname,
+					userId: admin.userId,
+					username: username,
 					role: admin.role,
 					id: admin._id,
 				});
@@ -151,7 +151,7 @@ export const deleteAdmin = async (req, res, next) => {
 		});
 	try {
 		const admin = await Admin.findOneAndUpdate(
-			{ adminId: adminid },
+			{ userId: adminid },
 			{ deleted: true },
 			{ new: true }
 		);
