@@ -3,13 +3,12 @@ import { TheaterOwner } from "../models/TheaterOwner.js";
 
 export const viewTheaters = async (req, res, next) => {
 	console.log("owner");
-	console.log(req.user);
 
 	try {
 		const { ownerid, adminid } = req.params;
 		const filterConditions = {};
 		if (ownerid) {
-			const owner = await TheaterOwner.findOne({ ownerId: ownerid });
+			const owner = await TheaterOwner.findOne({ userId: ownerid });
 			if (!owner) throw new Error("No Theater Owner exists with that Id");
 
 			if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
@@ -88,4 +87,14 @@ export const addTheater = async (req, res, next) => {
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
+};
+
+export const editIndividualTheater = async (req, res, next) => {
+	const { theaterid } = req.params;
+	res.send(`You have edited ${theaterid} page`);
+};
+
+export const deleteIndividualTheater = async (req, res, next) => {
+	const { theaterid } = req.params;
+	res.send(`You have deleted ${theaterid} page`);
 };

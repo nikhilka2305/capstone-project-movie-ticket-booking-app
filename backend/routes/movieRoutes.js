@@ -5,6 +5,7 @@ import {
 	viewIndividualMovie,
 	addMovie,
 	editIndividualMovie,
+	deleteIndividualMovie,
 } from "../controllers/movieController.js";
 import { viewReviews, addReview } from "../controllers/reviewController.js";
 import { viewShows } from "../controllers/showController.js";
@@ -26,6 +27,13 @@ router.patch(
 	authenticateToken,
 	authorization("Admin"),
 	editIndividualMovie
+);
+
+router.delete(
+	"/:movieid",
+	authenticateToken,
+	authorization("Admin"),
+	deleteIndividualMovie
 );
 
 router.post(

@@ -23,7 +23,7 @@ export const viewShows = async (req, res, next) => {
 
 		const shows = await Show.find(filterConditions)
 			.populate("movie", "movieName")
-			.populate("theater", "theaterName seats, seatClasses");
+			.populate("theater", "theaterName seats seatClasses");
 		res.json(shows);
 	} catch (err) {
 		console.log("Unable to get Shows");
@@ -33,14 +33,13 @@ export const viewShows = async (req, res, next) => {
 };
 
 export const addShow = async (req, res, next) => {
-	const { showTime, movie, theater, bookedSeats } = req.body;
+	const { showTime, movie, theater } = req.body;
 
 	try {
 		const show = new Show({
 			showTime,
 			movie,
 			theater,
-			bookedSeats,
 		});
 		await show.save();
 		return res.send("Success");
@@ -49,4 +48,61 @@ export const addShow = async (req, res, next) => {
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
+};
+
+export const individualShow = async (req, res, next) => {
+	const { showId, theaterId } = req.params;
+
+	try {
+		console.log("ind show");
+		console.log(showId);
+
+		const show = await Show.findOne({ showId: showId });
+		if (!show) throw new Error("No such show exists");
+		return res.status(200).json(show);
+	} catch (err) {
+		res.status(404).json({ error: "Couldn't find show details", message: err });
+	}
+};
+
+export const editShow = async (req, res, next) => {
+	const { showid } = req.params;
+	return res.send(`You have Succesfully edited ${showid} Show page`);
+	// try {
+	// 	const { showTime, movie, theater } = req.body;
+	// 	const show = Show.findOne({ showId: showId });
+	// 	if (!show)
+	// 		// const show = new Show({
+	// 		// 	showTime,
+	// 		// 	movie,
+	// 		// 	theater,
+	// 		// });
+	// 		await show.save();
+	// 	return res.send("Success");
+	// } catch (err) {
+	// 	console.log("Unable to save Show");
+	// 	console.log(err.message);
+	// 	return res.json({ message: "Error", error: err.message });
+	// }
+};
+
+export const deleteShow = async (req, res, next) => {
+	const { showid } = req.params;
+	return res.send(`You have Succesfully deleted ${showid} Show page`);
+	// try {
+	// 	const { showTime, movie, theater } = req.body;
+	// 	const show = Show.findOne({ showId: showId });
+	// 	if (!show)
+	// 		// const show = new Show({
+	// 		// 	showTime,
+	// 		// 	movie,
+	// 		// 	theater,
+	// 		// });
+	// 		await show.save();
+	// 	return res.send("Success");
+	// } catch (err) {
+	// 	console.log("Unable to save Show");
+	// 	console.log(err.message);
+	// 	return res.json({ message: "Error", error: err.message });
+	// }
 };

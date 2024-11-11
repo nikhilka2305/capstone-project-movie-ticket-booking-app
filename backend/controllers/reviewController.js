@@ -33,6 +33,16 @@ export const viewReviews = async (req, res, next) => {
 	}
 };
 
+export const editReview = async (req, res, next) => {
+	const { reviewid } = req.params;
+	res.send(`The review ${reviewid} is edited`);
+};
+
+export const deleteReview = async (req, res, next) => {
+	const { reviewid } = req.params;
+	res.send(`The review ${reviewid} is deleted`);
+};
+
 export const addReview = async (req, res, next) => {
 	console.log(req.user);
 
