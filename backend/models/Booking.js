@@ -26,8 +26,22 @@ const bookingSchema = mongoose.Schema(
 						required: true,
 					},
 				},
+				seatClass: {
+					className: {
+						type: String,
+						required: true,
+					},
+					price: {
+						type: Number,
+						required: true,
+					},
+				},
 			},
 		],
+		totalAmount: {
+			type: Number,
+			default: 0,
+		},
 		// Validation for seatNumber uniqueness required to avoid duplicate booking
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -85,6 +99,11 @@ bookingSchema.pre("save", async function (next) {
 			}
 		}
 
+		let bookingCost = 0;
+		for (let seat of this.seats) {
+			bookingCost += seat.seatClass.price;
+		}
+		this.totalAmount = bookingCost;
 		// Proceed if no conflicts
 		next();
 	} catch (err) {

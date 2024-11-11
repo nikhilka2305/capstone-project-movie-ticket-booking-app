@@ -16,6 +16,10 @@ const movieSchema = mongoose.Schema(
 		adminApprovalStatus: {
 			type: String,
 			enum: ["Pending", "Approved", "Rejected", "Deleted"],
+			default: function () {
+				if (this.userType === "Admin") return "Approved";
+				else return "Pending";
+			},
 		},
 		releaseDate: {
 			type: Date,
@@ -47,6 +51,16 @@ const movieSchema = mongoose.Schema(
 		},
 		director: {
 			type: String,
+			required: true,
+		},
+		addedBy: {
+			type: mongoose.Schema.Types.ObjectId,
+			refPath: "userType",
+			required: true,
+		},
+		userType: {
+			type: String,
+			enum: ["TheaterOwner", "Admin"],
 			required: true,
 		},
 	},

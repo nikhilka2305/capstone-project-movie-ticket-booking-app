@@ -92,6 +92,8 @@ export const addMovie = async (req, res, next) => {
 			movieDescription,
 			movieCast,
 			director,
+			addedBy: req.user.loggedUserObjectId,
+			userType: req.user.role,
 		});
 		await movie.save();
 		return res.send("Success");

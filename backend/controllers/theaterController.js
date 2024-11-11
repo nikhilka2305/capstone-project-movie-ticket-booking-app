@@ -11,7 +11,8 @@ export const viewTheaters = async (req, res, next) => {
 		if (ownerid) {
 			const owner = await TheaterOwner.findOne({ ownerId: ownerid });
 			if (!owner) throw new Error("No Theater Owner exists with that Id");
-			if (req.user.loggedUserId !== ownerid)
+
+			if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
 				return res.status(403).json({
 					error: "Authorization Error",
 					message: "You are not authorized to see this page",
@@ -37,8 +38,15 @@ export const viewIndividualTheater = async (req, res, next) => {
 
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid });
-
-		if (!theater) {
+		console.log(req.user.loggedUserObjectId, theater.owner);
+		if (
+			req.user &&
+			(req.user.role === "Admin" ||
+				req.user.loggedUserObjectId == theater.owner)
+		) {
+			return res.json(theater);
+		}
+		if (theater.adminApprovalStatus !== "Approved") {
 			return res
 				.status(404)
 				.json({ message: "Not Found", error: "Such a Theater doesn't exist" });

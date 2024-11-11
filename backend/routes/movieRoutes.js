@@ -13,13 +13,21 @@ import { authorization } from "../middleware/authorization.js";
 
 router.get("/", viewMovies);
 router.get("/:movieid", viewIndividualMovie);
+
 router.post(
+	"/addMovie",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	addMovie
+);
+
+router.patch(
 	"/:movieid",
 	authenticateToken,
 	authorization("Admin"),
 	editIndividualMovie
 );
-router.post("/addMovie", addMovie);
+
 router.post(
 	"/:movieid/addreview",
 	authenticateToken,

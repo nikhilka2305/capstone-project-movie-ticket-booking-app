@@ -26,6 +26,11 @@ router.post(
 );
 router.get("/:theaterid/reviews", viewReviews);
 router.get("/:theaterid/shows", viewShows);
-router.get("/:theaterid", viewIndividualTheater);
+router.get(
+	"/:theaterid",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	viewIndividualTheater
+);
 
 export default router;

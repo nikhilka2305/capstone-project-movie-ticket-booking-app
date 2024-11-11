@@ -22,7 +22,6 @@ export const viewPersonalBookings = async (req, res, next) => {
 					"_id"
 				);
 			} else if (req.params.ownerid) {
-				console.log("owner here");
 				filterOptions.user = await TheaterOwner.findOne({
 					ownerId: userid,
 				}).select("_id");
@@ -250,7 +249,8 @@ export const viewBookings = async (req, res, next) => {
 					_id: 1,
 					bookingId: 1,
 
-					seatNumbers: 1,
+					seats: 1,
+					totalAmount: 1,
 					__v: 1,
 				},
 			},
@@ -310,13 +310,13 @@ export const viewBookings = async (req, res, next) => {
 };
 
 export const addBooking = async (req, res, next) => {
-	const { showInfo, seatNumbers } = req.body;
+	const { showInfo, seats } = req.body;
 	const user = req.user.loggedUserObjectId;
 	const userType = req.user.role;
 	try {
 		const booking = new Booking({
 			showInfo,
-			seatNumbers,
+			seats,
 			user,
 			userType,
 			bookingDate: Date.now(),
