@@ -25,7 +25,7 @@ export const viewTheaterOwnerProfile = async (req, res, next) => {
 		});
 
 	try {
-		const owner = await TheaterOwner.findOne({ ownerId: ownerid }).select(
+		const owner = await TheaterOwner.findOne({ userId: ownerid }).select(
 			"-passwordHash"
 		);
 		if (!owner) throw new Error("No such theater owner exists");
@@ -66,12 +66,12 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 };
 
 export const registerTheaterOwner = async (req, res, next) => {
-	const { theaterownername, email, mobile, password } = req.body;
+	const { username, email, mobile, password } = req.body;
 	console.log(req.body);
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const owner = new TheaterOwner({
-			theaterownername,
+			username,
 			email,
 			mobile,
 			passwordHash,
@@ -86,11 +86,11 @@ export const registerTheaterOwner = async (req, res, next) => {
 };
 
 export const loginTheaterOwner = async (req, res) => {
-	const { theaterownername, password } = req.body;
+	const { username, password } = req.body;
 
 	try {
 		const theaterowner = await TheaterOwner.findOne({
-			theaterownername: theaterownername,
+			username: username,
 		});
 		if (!theaterowner || theaterowner.deleted || theaterowner.blocked) {
 			throw new Error("Invalid Theater Owner Credentials-TON");
@@ -104,8 +104,8 @@ export const loginTheaterOwner = async (req, res) => {
 			} else {
 				console.log(theaterowner);
 				const token = createToken({
-					ownerId: theaterowner.ownerId,
-					theaterownername: theaterownername,
+					userId: theaterowner.userId,
+					username: username,
 					role: theaterowner.role,
 					id: theaterowner._id,
 				});
@@ -162,11 +162,11 @@ export const deleteTheaterOwner = async (req, res, next) => {
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
 		return res.status(403).json({
 			error: "Authorization Error",
-			message: "You are not authorized to reset Password",
+			message: "You are not authorized to delete this account",
 		});
 	try {
 		const theaterowner = await TheaterOwner.findOneAndUpdate(
-			{ ownerId: ownerid },
+			{ userId: ownerid },
 			{ deleted: true },
 			{ new: true }
 		);

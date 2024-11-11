@@ -23,7 +23,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 				);
 			} else if (req.params.ownerid) {
 				filterOptions.user = await TheaterOwner.findOne({
-					ownerId: userid,
+					userId: userid,
 				}).select("_id");
 			} else {
 				console.log("admin here");
@@ -36,7 +36,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 		const bookings = await Booking.find(filterOptions)
 			.populate({
 				path: "user",
-				select: "theaterownername username",
+				select: "username",
 			})
 
 			.populate({
@@ -125,14 +125,6 @@ export const viewBookings = async (req, res, next) => {
 
 			{
 				$lookup: {
-					from: "theaterowners",
-					localField: "user",
-					foreignField: "_id",
-					as: "userA",
-				},
-			},
-			{
-				$lookup: {
 					from: "users",
 					localField: "user",
 					foreignField: "_id",
@@ -188,37 +180,6 @@ export const viewBookings = async (req, res, next) => {
 							default: null,
 						},
 					},
-					name: {
-						$switch: {
-							branches: [
-								{
-									case: {
-										$eq: ["$userType", "User"],
-									},
-									then: {
-										$arrayElemAt: ["$userDetails.username", 0],
-									},
-								},
-								{
-									case: {
-										$eq: ["$userType", "Admin"],
-									},
-									then: {
-										$arrayElemAt: ["$adminDetails.username", 0],
-									},
-								},
-								{
-									case: {
-										$eq: ["$userType", "TheaterOwner"],
-									},
-									then: {
-										$arrayElemAt: ["$theaterOwnerDetails.theaterownername", 0],
-									},
-								},
-							],
-							default: null,
-						},
-					},
 				},
 			},
 			{
@@ -240,7 +201,7 @@ export const viewBookings = async (req, res, next) => {
 							},
 						},
 					},
-					name: 1,
+
 					userInfo: 1,
 					userType: 1,
 					createdAt: 1,
@@ -257,9 +218,6 @@ export const viewBookings = async (req, res, next) => {
 			{
 				$project: {
 					userInfo: {
-						username: 0,
-						theaterownername: 0,
-						adminname: 0,
 						passwordHash: 0,
 						deleted: 0,
 						updatedAt: 0,
@@ -274,35 +232,6 @@ export const viewBookings = async (req, res, next) => {
 		console.log(`Length of retrieved data is ${bookings.length}`);
 		res.json(bookings);
 	} catch (err) {
-		// try {
-		// 	const bookings = await Booking.find(filterConditions)
-		// 		.populate({
-		// 			path: "user",
-		// 			select: "theaterownername username adminname",
-		// 		})
-
-		// 		.populate({
-		// 			path: "showInfo",
-		// 			populate: [
-		// 				{
-		// 					path: "movie",
-		// 					select: "movieName",
-		// 				},
-		// 				{
-		// 					path: "theater",
-		// 					select: "owner",
-		// 					populate: {
-		// 						path: "owner",
-		// 						select: "ownerId theaterownername _id",
-		// 					},
-		// 				},
-		// 			],
-
-		// 			select: "-bookedSeats",
-		// 		});
-		// 	console.log(`Length of retrieved data is ${bookings.length}`);
-		// 	res.json(bookings);
-		// }
 		console.log("Unable to get Bookings");
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });

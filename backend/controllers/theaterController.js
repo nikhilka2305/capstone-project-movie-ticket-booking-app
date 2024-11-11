@@ -23,7 +23,7 @@ export const viewTheaters = async (req, res, next) => {
 			filterConditions.adminApprovalStatus = "Approved";
 		}
 		const theaters = await Theater.find(filterConditions)
-			.populate("owner", "theaterownername")
+			.populate("owner", "username")
 			.populate("shows.movie", "movieName");
 		res.json(theaters);
 	} catch (err) {

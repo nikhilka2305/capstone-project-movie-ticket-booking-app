@@ -12,9 +12,9 @@ export const authenticateToken = (req, res, next) => {
 		console.log("User validated");
 		console.log(user);
 		req.user = {
-			loggedUserId: user.userId || user.ownerId,
+			loggedUserId: user.userId,
 			loggedUserObjectId: user.id,
-			loggedUserName: user.username || user.theaterownername,
+			loggedUserName: user.username,
 			role: user.role,
 		};
 		next();

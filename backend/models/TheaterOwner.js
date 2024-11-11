@@ -3,12 +3,12 @@ import { nanoid } from "nanoid";
 
 const theaterOwnerSchema = mongoose.Schema(
 	{
-		theaterownername: {
+		username: {
 			type: String,
 			unique: true,
 			required: true,
 		},
-		ownerId: {
+		userId: {
 			type: String,
 			unique: true,
 			default: () => `OID${nanoid(10)}`,
