@@ -1,3 +1,4 @@
+import HandleError from "../middleware/errorHandling.js";
 import { Movie } from "../models/Movie.js";
 import { Show } from "../models/Show.js";
 
@@ -55,16 +56,39 @@ export const editIndividualMovie = async (req, res, next) => {
 	try {
 		const movie = await Movie.findOne({ movieId: movieid });
 
-		if (!movie) {
-			return res
-				.status(404)
-				.json({ message: "Not Found", error: "Such a Movie doesn't exist" });
+		if (!movie || movie.adminApprovalStatus === "Deleted") {
+			throw new HandleError("Such a Movie doesn't exist or is deleted", 404);
 		}
-		return res.json("Edit Movie Worked");
+		const {
+			movieName,
+			releaseDate,
+			movieduration,
+			language,
+			genre,
+			rating,
+			movieDescription,
+			movieCast,
+			director,
+		} = req.body;
+
+		const updatedMovie = await Movie.findOneAndUpdate(
+			{ movieId: movieid },
+			{
+				movieName,
+				releaseDate,
+				movieduration,
+				language,
+				genre,
+				rating,
+				movieDescription,
+				movieCast,
+				director,
+			},
+			{ runValidators: true, new: true }
+		);
+		return res.status(201).json({ message: "Movie updated" });
 	} catch (err) {
-		console.log("Unable to get that Movie");
-		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res.status(err.statusCode).json({ message: err.message });
 	}
 };
 
@@ -74,12 +98,14 @@ export const deleteIndividualMovie = async (req, res, next) => {
 	try {
 		const movie = await Movie.findOne({ movieId: movieid });
 
-		if (!movie) {
-			return res
-				.status(404)
-				.json({ message: "Not Found", error: "Such a Movie doesn't exist" });
+		if (!movie || movie.adminApprovalStatus === "Deleted") {
+			throw new HandleError("Such a Movie doesn't exist or is deleted", 404);
 		}
-		return res.json("Delete Movie Worked");
+		const deletedMovie = await Movie.findOneAndUpdate(
+			{ movieId: movieid },
+			{ adminApprovalStatus: "Deleted" }
+		);
+		return res.status(204).json({ message: " Movie Deleted" });
 	} catch (err) {
 		console.log("Unable to get that Movie");
 		console.log(err.message);

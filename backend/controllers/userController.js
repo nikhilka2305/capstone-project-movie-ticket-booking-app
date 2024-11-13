@@ -68,8 +68,8 @@ export const registerUser = async (req, res, next) => {
 	// Check for existing User;
 	try {
 		const passwordHash = await bcrypt.hash(password, 10);
-		const user = await User.findOne({ username });
-		if (!user) {
+		let user = await User.findOne({ username });
+		if (user) {
 			throw new Error("Username already exists. Try again");
 		}
 		user = new User({
@@ -78,6 +78,8 @@ export const registerUser = async (req, res, next) => {
 			mobile,
 			passwordHash,
 			moviePreferences,
+			displayImage:
+				"https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
 		});
 		await user.save();
 		return res.send("Success");
@@ -163,19 +165,26 @@ export const deleteUser = async (req, res, next) => {
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
 		return res.status(403).json({
 			error: "Authorization Error",
-			message: "You are not authorized to reset Password",
+			message: "You are not authorized to delete this account",
 		});
 	try {
-		const user = await User.findOneAndUpdate(
-			{ userId: userid },
-			{ deleted: true },
-			{ new: true }
-		);
-		console.log(user);
-		console.log("Deleting Account");
-		if (req.user.role !== "Admin")
-			return res.status(204).clearCookie("token").json("Account Deleted");
-		res.status(204).json("Account Deleted");
+		const user = await User.findOne({ userId: userid });
+		if (!user || user.deleted)
+			return res
+				.status(404)
+				.json("This account doesn't exist or is already deleted");
+		else {
+			await User.findOneAndUpdate(
+				{ userId: userid },
+				{ deleted: true },
+				{ new: true }
+			);
+			console.log(user);
+			console.log("Deleting Account");
+			if (req.user.role !== "Admin")
+				return res.status(204).clearCookie("token").json("Account Deleted");
+			res.status(204).json("Account Deleted");
+		}
 	} catch (err) {
 		res
 			.status(500)

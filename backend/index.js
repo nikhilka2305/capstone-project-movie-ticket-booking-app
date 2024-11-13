@@ -2,6 +2,7 @@ import express, { json } from "express";
 import connectDB from "./configs/db.js";
 import { router } from "./routes/index.js";
 import cookieParser from "cookie-parser";
+import HandleError from "./middleware/errorHandling.js";
 const app = express();
 connectDB();
 const port = process.env.PORT || 5000;
@@ -13,9 +14,14 @@ app.get("/", (req, res, next) => {
 	res.send("App Index Page");
 });
 
-app.all("*", (req, res) => {
-	res.status(404).json({ message: "Such an endpoint doesn't exist" });
+app.all("*", (req, res, next) => {
+	try {
+		throw new HandleError("Such an end point doesn't exist...Class", 404);
+	} catch (err) {
+		res.status(err.statusCode).json({ message: err.message });
+	}
 });
+
 app.listen(port, () => {
 	console.log(`Listening at ${port}`);
 });

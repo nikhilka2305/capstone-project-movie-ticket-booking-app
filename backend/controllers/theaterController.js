@@ -1,5 +1,7 @@
+import HandleError from "../middleware/errorHandling.js";
 import { Theater } from "../models/Theater.js";
 import { TheaterOwner } from "../models/TheaterOwner.js";
+import { ObjectId } from "mongodb";
 
 export const viewTheaters = async (req, res, next) => {
 	console.log("owner");
@@ -37,11 +39,15 @@ export const viewIndividualTheater = async (req, res, next) => {
 
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid });
+		if (!theater)
+			return res
+				.status(404)
+				.json({ message: "Not Found", error: "Such a Theater doesn't exist" });
 		console.log(req.user.loggedUserObjectId, theater.owner);
 		if (
 			req.user &&
 			(req.user.role === "Admin" ||
-				req.user.loggedUserObjectId == theater.owner)
+				new ObjectId(req.user.loggedUserObjectId).equals(theater.owner))
 		) {
 			return res.json(theater);
 		}
@@ -91,10 +97,63 @@ export const addTheater = async (req, res, next) => {
 
 export const editIndividualTheater = async (req, res, next) => {
 	const { theaterid } = req.params;
-	res.send(`You have edited ${theaterid} page`);
+	try {
+		const theater = await Theater.findOne({ theaterId: theaterid });
+		if (!theater) throw new HandleError("Such a theater doesn't exist", 404);
+		console.log(req.user.loggedUserObjectId, theater.owner);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner)
+		) {
+			throw new HandleError("You are not authorized to edit this theater", 403);
+		}
+		const { theatername, location, images, seats, seatclasses, amenities } =
+			req.body;
+		const updatedTheater = await Theater.findOneAndUpdate(
+			{ theaterId: theaterid },
+			{
+				theaterName: theatername,
+				location,
+				images,
+				seats,
+				seatClasses: seatclasses,
+				amenities,
+			},
+			{ runValidators: true, new: true }
+		);
+		console.log(updatedTheater);
+		return res.json({ message: `Succesfully Updated ${theaterid}` });
+	} catch (err) {
+		return res.status(err.statusCode).json({ message: err.message });
+	}
 };
 
 export const deleteIndividualTheater = async (req, res, next) => {
 	const { theaterid } = req.params;
+	try {
+		const theater = await Theater.findOne({ theaterId: theaterid });
+		if (!theater || theater.adminApprovalStatus === "Deleted")
+			throw new HandleError(
+				"Such a theater doesn't exist or it is deleted already",
+				404
+			);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner)
+		) {
+			throw new HandleError("You are not authorized to edit this theater", 403);
+		}
+		const deletedTheater = await Theater.findOneAndUpdate(
+			{ theaterId: theaterid },
+			{
+				adminApprovalStatus: "Deleted",
+			},
+			{ runValidators: true, new: true }
+		);
+		return res.status(204).json({ message: "Succesfully Deleted" });
+	} catch (err) {
+		return res.status(err.statusCode).json({ message: err.message });
+	}
+
 	res.send(`You have deleted ${theaterid} page`);
 };

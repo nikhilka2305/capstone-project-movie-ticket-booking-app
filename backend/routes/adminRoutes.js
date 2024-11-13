@@ -15,10 +15,12 @@ import { viewMovies } from "../controllers/movieController.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewTheaters } from "../controllers/theaterController.js";
 import { viewPersonalBookings } from "../controllers/bookingController.js";
+import { validateUserReg } from "../middleware/userRegistrationValidation.js";
+import { validateUserLogin } from "../middleware/userLoginValidation.js";
 
 router.get("/", authenticateToken, authorization("Admin"), viewAdmins);
-router.post("/register", registerAdmin);
-router.post("/login", loginAdmin);
+router.post("/register", validateUserReg("Admin"), registerAdmin);
+router.post("/login", validateUserLogin, loginAdmin);
 router.get(
 	"/:adminid/profile",
 	authenticateToken,

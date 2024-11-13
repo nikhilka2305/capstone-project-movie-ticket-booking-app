@@ -9,6 +9,11 @@ const bookingSchema = mongoose.Schema(
 			unique: true,
 			default: () => `BID${nanoid(10)}`,
 		},
+		status: {
+			type: String,
+			enum: ["Confirmed", "Cancelled"],
+			default: "Confirmed",
+		},
 		showInfo: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Show",
@@ -38,11 +43,7 @@ const bookingSchema = mongoose.Schema(
 				},
 			},
 		],
-		totalAmount: {
-			type: Number,
-			default: 0,
-		},
-		// Validation for seatNumber uniqueness required to avoid duplicate booking
+
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			refPath: "userType",
@@ -111,6 +112,16 @@ bookingSchema.pre("save", async function (next) {
 		next(err); // Pass error to the next middleware
 	}
 });
+
+bookingSchema.virtual("BookingAmount").get(function () {
+	const Totalcost = this.seats.reduce((cost, seat) => {
+		return (cost += seat.seatClass.price);
+	}, 0);
+	return Totalcost;
+});
+
+bookingSchema.set("toJSON", { virtuals: true });
+bookingSchema.set("toObject", { virtuals: true });
 
 bookingSchema.post("save", async function (val, next) {
 	console.log("After Booking");

@@ -34,6 +34,11 @@ const userSchema = mongoose.Schema(
 				message: (val) => `${val.value} has to be 10 digits`,
 			},
 		},
+		displayImage: {
+			type: String,
+			default: "No Image",
+		},
+
 		role: {
 			type: String,
 			default: "User",

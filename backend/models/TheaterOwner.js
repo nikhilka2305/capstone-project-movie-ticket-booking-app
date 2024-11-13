@@ -30,6 +30,11 @@ const theaterOwnerSchema = mongoose.Schema(
 				message: (val) => `${val.value} has to be 10 digits`,
 			},
 		},
+		displayImage: {
+			type: String,
+			default: "No Image",
+		},
+
 		passwordHash: {
 			type: String,
 			required: true,

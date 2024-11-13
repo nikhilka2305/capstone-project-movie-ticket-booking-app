@@ -15,6 +15,7 @@ const reviewSchema = mongoose.Schema(
 		reviewFor: {
 			type: String,
 			enum: ["movie", "theater"],
+			required: true,
 		},
 		movieId: {
 			type: mongoose.Schema.Types.ObjectId,

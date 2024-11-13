@@ -75,6 +75,8 @@ export const registerTheaterOwner = async (req, res, next) => {
 			email,
 			mobile,
 			passwordHash,
+			displayImage:
+				"https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
 		});
 		await owner.save();
 		return res.send("Success");
@@ -165,16 +167,23 @@ export const deleteTheaterOwner = async (req, res, next) => {
 			message: "You are not authorized to delete this account",
 		});
 	try {
-		const theaterowner = await TheaterOwner.findOneAndUpdate(
-			{ userId: ownerid },
-			{ deleted: true },
-			{ new: true }
-		);
-		console.log(theaterowner);
-		console.log("Deleting Account");
-		if (req.user.role !== "Admin")
-			return res.status(204).clearCookie("token").json("Account Deleted");
-		res.status(204).json("Account Deleted");
+		const theaterowner = await TheaterOwner.findOne({ userId: ownerid });
+		if (!theaterowner || theaterowner.deleted) {
+			return res
+				.status(404)
+				.json("This account doesn't exist or is already deleted");
+		} else {
+			await TheaterOwner.findOneAndUpdate(
+				{ userId: ownerid },
+				{ deleted: true },
+				{ new: true }
+			);
+			console.log(theaterowner);
+			console.log("Deleting Account");
+			if (req.user.role !== "Admin")
+				return res.status(204).clearCookie("token").json("Account Deleted");
+			res.status(204).json("Account Deleted");
+		}
 	} catch (err) {
 		res
 			.status(500)

@@ -3,6 +3,7 @@ import { User } from "../models/User.js";
 import { TheaterOwner } from "../models/TheaterOwner.js";
 import { Admin } from "../models/Admin.js";
 import { ObjectId } from "mongodb";
+import HandleError from "../middleware/errorHandling.js";
 
 export const viewPersonalBookings = async (req, res, next) => {
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
@@ -60,6 +61,25 @@ export const viewPersonalBookings = async (req, res, next) => {
 		console.log("Unable to get Bookings");
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const viewIndividualBooking = async (req, res, nex) => {
+	const { bookingid } = req.params;
+
+	try {
+		const booking = await Booking.findOne({ bookingId: bookingid });
+		if (!booking) throw new HandleError("No such booking found", 404);
+		console.log(booking.user, req.user.loggedUserObjectId);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user)
+		)
+			throw new HandleError("You are not Authorized to view this booking", 403);
+		return res.json(booking);
+	} catch (err) {
+		console.log(err);
+		return res.status(err.statusCode).json({ message: err.message });
 	}
 };
 
@@ -230,6 +250,7 @@ export const viewBookings = async (req, res, next) => {
 			},
 		]);
 		console.log(`Length of retrieved data is ${bookings.length}`);
+
 		res.json(bookings);
 	} catch (err) {
 		console.log("Unable to get Bookings");

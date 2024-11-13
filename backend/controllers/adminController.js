@@ -62,6 +62,8 @@ export const registerAdmin = async (req, res, next) => {
 			email,
 			mobile,
 			passwordHash,
+			displayImage:
+				"https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
 		});
 		await admin.save();
 		return res.send("Success");
@@ -150,16 +152,23 @@ export const deleteAdmin = async (req, res, next) => {
 			message: "You are not authorized to reset Password",
 		});
 	try {
-		const admin = await Admin.findOneAndUpdate(
-			{ userId: adminid },
-			{ deleted: true },
-			{ new: true }
-		);
-		console.log(admin);
-		console.log("Deleting Account");
-		if (req.user.loggedUserId === adminid)
-			return res.status(204).clearCookie("token").json("Account Deleted");
-		res.status(204).json("Account Deleted");
+		const admin = await Admin.findOne({ userId: adminid });
+		if (!admin || admin.deleted)
+			return res
+				.status(404)
+				.json("This account doesn't exist or is already deleted");
+		else {
+			await Admin.findOneAndUpdate(
+				{ userId: adminid },
+				{ deleted: true },
+				{ new: true }
+			);
+			console.log(admin);
+			console.log("Deleting Account");
+			if (req.user.loggedUserId === adminid)
+				return res.status(204).clearCookie("token").json("Account Deleted");
+			return res.status(204).json("Account Deleted");
+		}
 	} catch (err) {
 		res
 			.status(500)

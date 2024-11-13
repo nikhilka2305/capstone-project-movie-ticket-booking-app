@@ -14,15 +14,12 @@ import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewPersonalBookings } from "../controllers/bookingController.js";
+import { validateUserReg } from "../middleware/userRegistrationValidation.js";
+import { validateUserLogin } from "../middleware/userLoginValidation.js";
 
-router.get(
-	"/",
-	authenticateToken,
-	authorization("Admin"),
-	viewTheaterOwners
-); /*Admin Only*/
-router.post("/register", registerTheaterOwner);
-router.post("/login", loginTheaterOwner);
+router.get("/", authenticateToken, authorization("Admin"), viewTheaterOwners);
+router.post("/register", validateUserReg("TheaterOwner"), registerTheaterOwner);
+router.post("/login", validateUserLogin, loginTheaterOwner);
 router.get(
 	"/:ownerid/theaters",
 	authenticateToken,

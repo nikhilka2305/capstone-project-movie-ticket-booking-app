@@ -59,15 +59,6 @@ const theaterSchema = mongoose.Schema(
 				default: "",
 			},
 		},
-		shows: [
-			{
-				showTime: Date,
-				movie: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: "Movie",
-				},
-			},
-		],
 	},
 	{ timestamps: true }
 );

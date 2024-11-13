@@ -13,6 +13,8 @@ import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewPersonalBookings } from "../controllers/bookingController.js";
+import { validateUserReg } from "../middleware/userRegistrationValidation.js";
+import { validateUserLogin } from "../middleware/userLoginValidation.js";
 
 router.get(
 	"/",
@@ -20,8 +22,8 @@ router.get(
 	authorization("Admin"),
 	viewUsers
 ); /* Admin Only*/
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", validateUserReg("User"), registerUser);
+router.post("/login", validateUserLogin, loginUser);
 router.get(
 	"/:userid/profile",
 	authenticateToken,

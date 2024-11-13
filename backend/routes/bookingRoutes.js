@@ -1,6 +1,10 @@
 import { Router } from "express";
 const router = Router();
-import { addBooking, viewBookings } from "../controllers/bookingController.js";
+import {
+	addBooking,
+	viewBookings,
+	viewIndividualBooking,
+} from "../controllers/bookingController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 router.get(
@@ -9,6 +13,7 @@ router.get(
 	authorization("Admin", "TheaterOwner"),
 	viewBookings
 );
+router.get("/:bookingid", authenticateToken, viewIndividualBooking);
 router.post("/newBooking", authenticateToken, addBooking);
 
 export default router;
