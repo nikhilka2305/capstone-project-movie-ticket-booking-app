@@ -13,14 +13,14 @@ export const viewReviews = async (req, res, next) => {
 		if (movieid) {
 			const movie = await Movie.findOne({ movieId: movieid });
 			if (!movie) {
-				throw new Error("Movie doesn't exist");
+				throw new HandleError("Movie doesn't exist", 404);
 			}
 			filterConditions.movieId = movie._id;
 			console.log(filterConditions);
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid });
 			if (!theater) {
-				throw new Error("Theater doesn't exist");
+				throw new HandleError("Theater doesn't exist", 404);
 			}
 			filterConditions.theaterId = theater._id;
 		}
@@ -30,8 +30,6 @@ export const viewReviews = async (req, res, next) => {
 			.populate("userId", "username");
 		res.json(reviews);
 	} catch (err) {
-		console.log("Unable to get Reviews");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -118,7 +116,9 @@ export const addReview = async (req, res, next) => {
 				throw new HandleError("Movie doesn't exist", 404);
 			}
 			const watchedMovie = userBookings.find(
-				(booking) => booking.showInfo.movie.movieId == movieid
+				(booking) =>
+					booking.showInfo.movie.movieId == movieid &&
+					booking.status === "Confirmed"
 			);
 			console.log("Checking Movie");
 			console.log(watchedMovie);
@@ -135,7 +135,9 @@ export const addReview = async (req, res, next) => {
 				throw new Error("Theater doesn't exist");
 			}
 			const watchedTheater = userBookings.find(
-				(booking) => booking.showInfo.theater.theaterId == theaterid
+				(booking) =>
+					booking.showInfo.theater.theaterId == theaterid &&
+					booking.status === "Confirmed"
 			);
 			console.log("Checking Theater");
 			console.log(watchedTheater);
@@ -187,4 +189,36 @@ export const addReview = async (req, res, next) => {
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
+};
+
+export const averageRating = async (req, res, next) => {
+	console.log("Average rating Calculation");
+	const { movieid, theaterid } = req.params;
+	console.log(movieid, theaterid);
+	const filterConditions = { deleted: false };
+	let reviews;
+	try {
+		if (movieid) {
+			const movie = await Movie.findOne({ movieId: movieid }).lean();
+			if (!movie) throw new HandleError("Movie doesn't exist", 404);
+			reviews = await Review.find({ movieId: movie._id });
+		} else if (theaterid) {
+			const theater = await Theater.findOne({ theaterId: theaterid }).lean();
+			if (!theater) throw new HandleError("Theater doesn't exist", 404);
+			reviews = await Review.find({ theaterId: theater._id });
+		}
+		if (!reviews || reviews.length === 0)
+			return res.status(200).json({ message: "No Reviews are added" });
+		// Average rating logic to be added
+		console.log(reviews);
+		const totalRating = reviews.reduce((total, review) => {
+			return (total += review.userRating);
+		}, 0);
+		const averageRating = totalRating / reviews.length;
+		console.log(totalRating, averageRating);
+		return res.json(averageRating);
+	} catch (err) {
+		return res.json({ message: "Error", error: err.message });
+	}
+	res.status(200).json("Average Rating is ");
 };

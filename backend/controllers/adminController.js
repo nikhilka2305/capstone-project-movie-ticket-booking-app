@@ -1,6 +1,7 @@
 import { Admin } from "../models/Admin.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../utils/createToken.js";
+import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 
 export const viewAdmins = async (req, res, next) => {
 	console.log(req.user);
@@ -36,10 +37,17 @@ export const updateAdminProfile = async (req, res, next) => {
 
 	try {
 		const { mobile, email } = req.body;
+		const image = req.file;
+		let displayImage;
+		if (image) {
+			console.log("><><>Admin<<<<>>");
+			console.log(image);
 
-		const user = await Admin.findByIdAndUpdate(
-			req.user.loggedUserObjectId,
-			{ mobile, email },
+			displayImage = await uploadDisplayImage(image);
+		}
+		const user = await Admin.findOneAndUpdate(
+			{ userId: adminid },
+			{ mobile, email, displayImage: displayImage },
 			{ runValidators: true, new: true }
 		);
 		console.log(user);

@@ -4,6 +4,7 @@ import { TheaterOwner } from "../models/TheaterOwner.js";
 import { Admin } from "../models/Admin.js";
 import { ObjectId } from "mongodb";
 import HandleError from "../middleware/errorHandling.js";
+import { handleBookingCancellation } from "../utils/deleteCascadeManager.js";
 
 export const viewPersonalBookings = async (req, res, next) => {
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
@@ -236,6 +237,20 @@ export const viewBookings = async (req, res, next) => {
 				},
 			},
 			{
+				$addFields: {
+					// Calculate total amount by summing up the price of each seat based on seatClass
+					BookingAmount: {
+						$sum: {
+							$map: {
+								input: "$seats",
+								as: "seat",
+								in: "$$seat.seatClass.price", // Access price from seatClass
+							},
+						},
+					},
+				},
+			},
+			{
 				$project: {
 					userInfo: {
 						passwordHash: 0,
@@ -277,5 +292,55 @@ export const addBooking = async (req, res, next) => {
 		console.log("Unable to save Booking");
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const cancelBooking = async (req, res, next) => {
+	const { bookingid } = req.params;
+
+	try {
+		const booking = await Booking.findOne({ bookingId: bookingid }).populate({
+			path: "showInfo",
+			select: "showTime",
+		});
+		if (!booking) throw new HandleError("No such booking found", 404);
+
+		console.log(booking.user, req.user.loggedUserObjectId);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user)
+		)
+			throw new HandleError(
+				"You are not Authorized to cancel this booking",
+				403
+			);
+		if (booking.status === "Cancelled")
+			throw new HandleError("This Booking is already cancelled", 403);
+
+		console.log(booking);
+		if (booking.showInfo.showTime < Date.now()) {
+			console.log(booking.showInfo.showTime, new Date(Date.now()));
+			console.log(
+				"You cannot cancel this booking as the show time is already past.."
+			);
+			throw new HandleError(
+				"You cannot cancel this Booking as time period has already passed"
+			);
+		} else {
+			console.log(booking.showInfo.showTime, new Date(Date.now()));
+			console.log("deleting seats from show..");
+			await handleBookingCancellation(bookingid);
+			console.log("cancelling booking");
+			const cancelledBooking = await Booking.findOneAndUpdate(
+				{ bookingId: bookingid },
+				{
+					status: "Cancelled",
+				},
+				{ runValidators: true, new: true }
+			);
+			return res.status(204).json({ message: "Booking Cancelled" });
+		}
+	} catch (err) {
+		return res.status(err.statusCode).json({ message: err.message });
 	}
 };

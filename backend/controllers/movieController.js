@@ -1,6 +1,7 @@
 import HandleError from "../middleware/errorHandling.js";
 import { Movie } from "../models/Movie.js";
 import { Show } from "../models/Show.js";
+import { uploadMoviePoster } from "../utils/cloudinaryUpload.js";
 
 export const viewMovies = async (req, res, next) => {
 	try {
@@ -59,8 +60,10 @@ export const editIndividualMovie = async (req, res, next) => {
 		if (!movie || movie.adminApprovalStatus === "Deleted") {
 			throw new HandleError("Such a Movie doesn't exist or is deleted", 404);
 		}
+
 		const {
 			movieName,
+			adminApprovalStatus,
 			releaseDate,
 			movieduration,
 			language,
@@ -70,11 +73,19 @@ export const editIndividualMovie = async (req, res, next) => {
 			movieCast,
 			director,
 		} = req.body;
+		const image = req.file;
+		let posterImage;
+		if (image) {
+			console.log("><><>Movie Poster<<<<>>");
+			console.log(image);
 
+			posterImage = await uploadMoviePoster(image);
+		}
 		const updatedMovie = await Movie.findOneAndUpdate(
 			{ movieId: movieid },
 			{
 				movieName,
+				adminApprovalStatus,
 				releaseDate,
 				movieduration,
 				language,
@@ -83,6 +94,7 @@ export const editIndividualMovie = async (req, res, next) => {
 				movieDescription,
 				movieCast,
 				director,
+				posterImage: posterImage,
 			},
 			{ runValidators: true, new: true }
 		);
@@ -125,7 +137,14 @@ export const addMovie = async (req, res, next) => {
 		movieCast,
 		director,
 	} = req.body;
+	const image = req.file;
+	let posterImage;
+	if (image) {
+		console.log("><><>Movie Poster<<<<>>");
+		console.log(image);
 
+		posterImage = await uploadMoviePoster(image);
+	}
 	try {
 		const movie = new Movie({
 			movieName,
@@ -137,6 +156,7 @@ export const addMovie = async (req, res, next) => {
 			movieDescription,
 			movieCast,
 			director,
+			posterImage: posterImage,
 			addedBy: req.user.loggedUserObjectId,
 			userType: req.user.role,
 		});

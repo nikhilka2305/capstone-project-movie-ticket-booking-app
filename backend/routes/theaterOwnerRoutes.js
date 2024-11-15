@@ -14,8 +14,12 @@ import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewPersonalBookings } from "../controllers/bookingController.js";
-import { validateUserReg } from "../middleware/userRegistrationValidation.js";
+import {
+	validateUserPatch,
+	validateUserReg,
+} from "../middleware/userRegistrationValidation.js";
 import { validateUserLogin } from "../middleware/userLoginValidation.js";
+import { multerSingleFileHandler } from "../middleware/multer.js";
 
 router.get("/", authenticateToken, authorization("Admin"), viewTheaterOwners);
 router.post("/register", validateUserReg("TheaterOwner"), registerTheaterOwner);
@@ -36,12 +40,15 @@ router.patch(
 	"/:ownerid/resetPassword",
 	authenticateToken,
 	authorization("TheaterOwner", "Admin"),
+	validateUserPatch("TheaterOwner"),
 	resetTheaterOwnerPassword
 );
 router.patch(
 	"/:ownerid/profile",
 	authenticateToken,
 	authorization("TheaterOwner", "Admin"),
+	multerSingleFileHandler("displayimage"),
+	validateUserPatch("TheaterOwner"),
 	updateTheaterOwnerProfile
 ); //Edit profile
 

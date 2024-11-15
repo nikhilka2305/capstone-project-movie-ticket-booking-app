@@ -22,6 +22,6 @@ router.delete(
 	authorization("Admin", "User"),
 	deleteReview
 );
-router.post("/newReview", authenticateToken, authorization("User"), addReview);
+// router.post("/newReview", authenticateToken, authorization("User"), addReview);
 
 export default router;

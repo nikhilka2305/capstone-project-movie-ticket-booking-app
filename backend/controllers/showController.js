@@ -2,6 +2,7 @@ import { Movie } from "../models/Movie.js";
 import { Show } from "../models/Show.js";
 import { Theater } from "../models/Theater.js";
 import { ObjectId } from "mongodb";
+import { handleShowDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewShows = async (req, res, next) => {
 	const { movieid, theaterid } = req.params;
@@ -38,7 +39,7 @@ export const viewShows = async (req, res, next) => {
 
 export const addShow = async (req, res, next) => {
 	const { showTime, movie, theater } = req.body;
-
+	// Verify Theater Owner
 	try {
 		const show = new Show({
 			showTime,
@@ -114,11 +115,6 @@ export const deleteShow = async (req, res, next) => {
 			.populate("movie", "movieName")
 			.populate("theater", "theaterName seats seatClasses owner");
 		console.log(show);
-		if (!show || show.deleted)
-			return res.status(404).json({
-				error: "Show Cannot Be Accessed",
-				message: "Show not found or deleted",
-			});
 
 		if (
 			req.user.role !== "Admin" &&
@@ -128,33 +124,12 @@ export const deleteShow = async (req, res, next) => {
 			console.log;
 			throw new Error("You are not authorized to do this");
 		}
+		handleShowDeletion(showid);
 
-		const updatedShow = await Show.findOneAndUpdate(
-			{ showId: showid },
-			{ deleted: true },
-			{ runValidators: true, new: true }
-		);
-		console.log(updatedShow);
 		return res.json({ message: `Succesfully Deleted ${showid}` });
 	} catch (err) {
 		console.log("Unable to save Show");
 		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
-	// try {
-	// 	const { showTime, movie, theater } = req.body;
-	// 	const show = Show.findOne({ showId: showId });
-	// 	if (!show)
-	// 		// const show = new Show({
-	// 		// 	showTime,
-	// 		// 	movie,
-	// 		// 	theater,
-	// 		// });
-	// 		await show.save();
-	// 	return res.send("Success");
-	// } catch (err) {
-	// 	console.log("Unable to save Show");
-	// 	console.log(err.message);
-	// 	return res.json({ message: "Error", error: err.message });
-	// }
 };

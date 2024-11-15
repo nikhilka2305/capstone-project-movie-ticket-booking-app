@@ -39,6 +39,7 @@ const reviewSchema = mongoose.Schema(
 		userReview: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 	},
 	{ timestamps: true }
@@ -62,3 +63,5 @@ reviewSchema.path("reviewFor").validate(function (value) {
 }, "Invalid review data.");
 
 export const Review = mongoose.model("Review", reviewSchema);
+
+// Average rating Route is a good addition

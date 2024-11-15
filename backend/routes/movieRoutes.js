@@ -7,10 +7,16 @@ import {
 	editIndividualMovie,
 	deleteIndividualMovie,
 } from "../controllers/movieController.js";
-import { viewReviews, addReview } from "../controllers/reviewController.js";
+import {
+	viewReviews,
+	addReview,
+	averageRating,
+} from "../controllers/reviewController.js";
 import { viewShows } from "../controllers/showController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
+import { multerSingleFileHandler } from "../middleware/multer.js";
+import { validateMovie } from "../middleware/movieValidation.js";
 
 router.get("/", viewMovies);
 router.get("/:movieid", viewIndividualMovie);
@@ -19,6 +25,8 @@ router.post(
 	"/addMovie",
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
+	multerSingleFileHandler("movieposter"),
+	validateMovie("Add"),
 	addMovie
 );
 
@@ -26,6 +34,8 @@ router.patch(
 	"/:movieid",
 	authenticateToken,
 	authorization("Admin"),
+	multerSingleFileHandler("movieposter"),
+	validateMovie("Patch"),
 	editIndividualMovie
 );
 
@@ -42,6 +52,9 @@ router.post(
 	authorization("User"),
 	addReview
 );
+
+router.get("/:movieid/avgrating", averageRating);
+
 router.get("/:movieid/reviews", viewReviews);
 router.get("/:movieid/shows", viewShows);
 

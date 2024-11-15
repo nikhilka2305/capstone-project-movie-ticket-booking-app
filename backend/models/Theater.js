@@ -28,6 +28,12 @@ const theaterSchema = mongoose.Schema(
 		},
 		images: {
 			type: [String],
+			validate: {
+				validator: function (val) {
+					return val.length <= 5;
+				},
+				message: "Max 5 images..",
+			},
 		},
 		seats: {
 			rows: {

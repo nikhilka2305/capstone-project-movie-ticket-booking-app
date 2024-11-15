@@ -1,6 +1,8 @@
 import { TheaterOwner } from "../models/TheaterOwner.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../utils/createToken.js";
+import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
+import { handleTheaterOwnerDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaterOwners = async (req, res, next) => {
 	console.log(req.user);
@@ -48,10 +50,17 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 
 	try {
 		const { mobile, email } = req.body;
+		const image = req.file;
+		let displayImage;
+		if (image) {
+			console.log("><><>TO<<<<>>");
+			console.log(image);
+			displayImage = await uploadDisplayImage(image);
+		}
 
-		const user = await TheaterOwner.findByIdAndUpdate(
-			req.user.loggedUserObjectId,
-			{ mobile, email },
+		const user = await TheaterOwner.findOneAndUpdate(
+			{ userId: ownerid },
+			{ mobile, email, displayImage: displayImage },
 			{ runValidators: true, new: true }
 		);
 		console.log(user);
@@ -173,13 +182,7 @@ export const deleteTheaterOwner = async (req, res, next) => {
 				.status(404)
 				.json("This account doesn't exist or is already deleted");
 		} else {
-			await TheaterOwner.findOneAndUpdate(
-				{ userId: ownerid },
-				{ deleted: true },
-				{ new: true }
-			);
-			console.log(theaterowner);
-			console.log("Deleting Account");
+			handleTheaterOwnerDeletion(ownerid);
 			if (req.user.role !== "Admin")
 				return res.status(204).clearCookie("token").json("Account Deleted");
 			res.status(204).json("Account Deleted");

@@ -2,6 +2,8 @@ import HandleError from "../middleware/errorHandling.js";
 import { Theater } from "../models/Theater.js";
 import { TheaterOwner } from "../models/TheaterOwner.js";
 import { ObjectId } from "mongodb";
+import { addMultipleImages } from "../utils/cloudinaryUpload.js";
+import { handleTheaterDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaters = async (req, res, next) => {
 	console.log("owner");
@@ -23,9 +25,10 @@ export const viewTheaters = async (req, res, next) => {
 		} else if (!adminid) {
 			filterConditions.adminApprovalStatus = "Approved";
 		}
-		const theaters = await Theater.find(filterConditions)
-			.populate("owner", "username")
-			.populate("shows.movie", "movieName");
+		const theaters = await Theater.find(filterConditions).populate(
+			"owner",
+			"username"
+		);
 		res.json(theaters);
 	} catch (err) {
 		console.log("Unable to get Theaters");
@@ -65,27 +68,31 @@ export const viewIndividualTheater = async (req, res, next) => {
 };
 
 export const addTheater = async (req, res, next) => {
-	const {
-		theaterName,
-		location,
-		owner,
-		images,
-		seats,
-		seatClasses,
-		amenities,
-		shows,
-	} = req.body;
+	const { theaterName, location, owner, seats, seatClasses, amenities, shows } =
+		req.body;
+
 	try {
+		const images = req.files;
+		let theaterimages;
+
+		if (images) {
+			console.log(images);
+			theaterimages = await addMultipleImages(images);
+			console.log(theaterimages);
+		}
+
 		const theater = new Theater({
 			theaterName,
 			location,
-			owner,
-			images,
+			owner: req.user.role === "Admin" ? owner : req.user.loggedUserObjectId,
+			adminApprovalStatus: req.user.role === "Admin" ? "Approved" : "Pending",
+			images: theaterimages,
 			seats,
 			seatClasses,
 			amenities,
 			shows,
 		});
+
 		await theater.save();
 		return res.send("Success");
 	} catch (err) {
@@ -107,19 +114,26 @@ export const editIndividualTheater = async (req, res, next) => {
 		) {
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
-		const { theatername, location, images, seats, seatclasses, amenities } =
-			req.body;
+		const { theatername, location, seats, seatclasses, amenities } = req.body;
+		const images = req.files;
+		let theaterimages;
+
+		if (images) {
+			console.log(images);
+			theaterimages = await addMultipleImages(images);
+			console.log(theaterimages);
+		}
 		const updatedTheater = await Theater.findOneAndUpdate(
 			{ theaterId: theaterid },
 			{
 				theaterName: theatername,
 				location,
-				images,
+				images: theaterimages,
 				seats,
 				seatClasses: seatclasses,
 				amenities,
 			},
-			{ runValidators: true, new: true }
+			{ runValidators: true, new: true, upsert: true }
 		);
 		console.log(updatedTheater);
 		return res.json({ message: `Succesfully Updated ${theaterid}` });
@@ -143,13 +157,7 @@ export const deleteIndividualTheater = async (req, res, next) => {
 		) {
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
-		const deletedTheater = await Theater.findOneAndUpdate(
-			{ theaterId: theaterid },
-			{
-				adminApprovalStatus: "Deleted",
-			},
-			{ runValidators: true, new: true }
-		);
+		handleTheaterDeletion(theaterid);
 		return res.status(204).json({ message: "Succesfully Deleted" });
 	} catch (err) {
 		return res.status(err.statusCode).json({ message: err.message });

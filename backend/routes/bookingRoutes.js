@@ -2,6 +2,7 @@ import { Router } from "express";
 const router = Router();
 import {
 	addBooking,
+	cancelBooking,
 	viewBookings,
 	viewIndividualBooking,
 } from "../controllers/bookingController.js";
@@ -14,6 +15,7 @@ router.get(
 	viewBookings
 );
 router.get("/:bookingid", authenticateToken, viewIndividualBooking);
+router.delete("/:bookingid", authenticateToken, cancelBooking);
 router.post("/newBooking", authenticateToken, addBooking);
 
 export default router;

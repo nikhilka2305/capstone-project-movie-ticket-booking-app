@@ -1,5 +1,6 @@
 import express from "express";
 const router = express.Router();
+
 import {
 	viewUsers,
 	registerUser,
@@ -13,8 +14,12 @@ import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewPersonalBookings } from "../controllers/bookingController.js";
-import { validateUserReg } from "../middleware/userRegistrationValidation.js";
+import {
+	validateUserPatch,
+	validateUserReg,
+} from "../middleware/userRegistrationValidation.js";
 import { validateUserLogin } from "../middleware/userLoginValidation.js";
+import { multerSingleFileHandler } from "../middleware/multer.js";
 
 router.get(
 	"/",
@@ -34,12 +39,15 @@ router.patch(
 	"/:userid/resetPassword",
 	authenticateToken,
 	authorization("User", "Admin"),
+	validateUserPatch("User"),
 	resetUserPassword
 );
 router.patch(
 	"/:userid/profile",
 	authenticateToken,
 	authorization("User", "Admin"),
+	multerSingleFileHandler("displayimage"),
+	validateUserPatch("User"),
 	updateUserProfile
 ); //Edit profile
 

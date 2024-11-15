@@ -63,6 +63,9 @@ const movieSchema = mongoose.Schema(
 			enum: ["TheaterOwner", "Admin"],
 			required: true,
 		},
+		posterImage: {
+			type: String,
+		},
 	},
 	{ timestamps: true }
 );
