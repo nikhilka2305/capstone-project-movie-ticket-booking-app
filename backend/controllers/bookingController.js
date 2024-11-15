@@ -286,6 +286,8 @@ export const addBooking = async (req, res, next) => {
 			userType,
 			bookingDate: Date.now(),
 		});
+		if (!seats || seats.length === 0)
+			throw new HandleError("You must have atleast 1 seat to book ticket", 401);
 		await booking.save();
 		return res.send("Success");
 	} catch (err) {

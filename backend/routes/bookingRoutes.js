@@ -8,6 +8,7 @@ import {
 } from "../controllers/bookingController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
+import { validateBooking } from "../middleware/bookingValidation.js";
 router.get(
 	"/",
 	authenticateToken,
@@ -16,6 +17,6 @@ router.get(
 );
 router.get("/:bookingid", authenticateToken, viewIndividualBooking);
 router.delete("/:bookingid", authenticateToken, cancelBooking);
-router.post("/newBooking", authenticateToken, addBooking);
+router.post("/newBooking", authenticateToken, validateBooking, addBooking);
 
 export default router;

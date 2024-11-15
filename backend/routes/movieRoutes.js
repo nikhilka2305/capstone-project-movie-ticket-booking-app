@@ -17,6 +17,7 @@ import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { multerSingleFileHandler } from "../middleware/multer.js";
 import { validateMovie } from "../middleware/movieValidation.js";
+import { validateReview } from "../middleware/reviewValidation.js";
 
 router.get("/", viewMovies);
 router.get("/:movieid", viewIndividualMovie);
@@ -50,6 +51,7 @@ router.post(
 	"/:movieid/addreview",
 	authenticateToken,
 	authorization("User"),
+	validateReview("Add"),
 	addReview
 );
 

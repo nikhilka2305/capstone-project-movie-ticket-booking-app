@@ -8,12 +8,14 @@ import {
 } from "../controllers/reviewController.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
+import { validateReview } from "../middleware/reviewValidation.js";
 
 router.get("/", viewReviews);
 router.patch(
 	"/:reviewid",
 	authenticateToken,
 	authorization("Admin", "User"),
+	validateReview("Patch"),
 	editReview
 );
 router.delete(

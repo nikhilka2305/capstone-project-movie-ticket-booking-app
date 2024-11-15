@@ -3,6 +3,8 @@ import { Show } from "../models/Show.js";
 import { Theater } from "../models/Theater.js";
 import { ObjectId } from "mongodb";
 import { handleShowDeletion } from "../utils/deleteCascadeManager.js";
+import HandleError from "../middleware/errorHandling.js";
+import { validateDateTime } from "../utils/validateDate.js";
 
 export const viewShows = async (req, res, next) => {
 	const { movieid, theaterid } = req.params;
@@ -14,12 +16,18 @@ export const viewShows = async (req, res, next) => {
 	try {
 		if (movieid) {
 			const movie = await Movie.findOne({ movieId: movieid });
+			if (!movie || movie.adminApprovalStatus !== "Approved")
+				throw new HandleError("Such a movie doesn't exist or might be deleted");
 			console.log("---");
 			console.log(movie._id);
 			filterConditions.movie = movie._id;
 			console.log(filterConditions);
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid });
+			if (!theater || theater.adminApprovalStatus !== "Approved")
+				throw new HandleError(
+					"Such a theater doesn't exist or might be deleted"
+				);
 			console.log("---");
 			console.log(theater._id);
 			filterConditions.theater = theater._id;
@@ -38,19 +46,50 @@ export const viewShows = async (req, res, next) => {
 };
 
 export const addShow = async (req, res, next) => {
-	const { showTime, movie, theater } = req.body;
+	const { theaterid } = req.params;
+	const { showTime, movie } = req.body;
 	// Verify Theater Owner
+
 	try {
-		const show = new Show({
-			showTime,
-			movie,
-			theater,
-		});
-		await show.save();
-		return res.send("Success");
+		console.log(theaterid);
+		const theater = await Theater.findOne({ theaterId: theaterid })
+			.populate("owner", "ownerId username _id")
+			.lean();
+		console.log(theater);
+
+		if (!theater || theater.adminApprovalStatus !== "Approved")
+			throw new HandleError(
+				"This theater is not found or is not available to host shows",
+				404
+			);
+		const checkmovie = await Movie.findById(movie)
+			.select("movieId movieName, adminApprovalStatus")
+			.lean();
+		if (!checkmovie || checkmovie.adminApprovalStatus !== "Approved")
+			throw new HandleError(
+				"This movie is not found or is not available to show",
+				404
+			);
+
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner._id)
+		) {
+			console.log(req.user.role !== "Admin");
+			console.log;
+			throw new HandleError("You are not authorized to do this", 403);
+		}
+		const validShowTime = validateDateTime(showTime);
+		if (validShowTime) {
+			const show = new Show({
+				showTime,
+				movie,
+				theater: theater._id,
+			});
+			await show.save();
+			return res.status(201).json({ message: "Successfully created show" });
+		}
 	} catch (err) {
-		console.log("Unable to save Show");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };

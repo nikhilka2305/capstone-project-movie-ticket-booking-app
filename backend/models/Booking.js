@@ -61,7 +61,12 @@ const bookingSchema = mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-
+bookingSchema.path("seats").validate({
+	validator: function (value) {
+		return Array.isArray(value) && value.length > 0; // Check if array exists and has at least one element
+	},
+	message: "There must be at least one seat selected to make a booking.",
+});
 bookingSchema.pre("save", async function (next) {
 	try {
 		// Check if any of the seats are already booked

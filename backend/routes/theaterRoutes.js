@@ -12,6 +12,7 @@ import {
 	viewReviews,
 } from "../controllers/reviewController.js";
 import {
+	addShow,
 	deleteShow,
 	editShow,
 	individualShow,
@@ -20,6 +21,9 @@ import {
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { multerMultipleFileHandler } from "../middleware/multer.js";
+import { validateTheater } from "../middleware/theaterValidation.js";
+import { validateReview } from "../middleware/reviewValidation.js";
+import { validateShow } from "../middleware/showValidation.js";
 
 const router = Router();
 
@@ -29,6 +33,7 @@ router.post(
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
 	multerMultipleFileHandler("theaterimages", 3),
+	validateTheater("Add"),
 	addTheater
 );
 router.patch(
@@ -37,6 +42,7 @@ router.patch(
 	authorization("Admin", "TheaterOwner"),
 
 	multerMultipleFileHandler("theaterimages", 4),
+	validateTheater("Patch"),
 	editIndividualTheater
 );
 router.delete(
@@ -49,6 +55,7 @@ router.post(
 	"/:theaterid/addreview",
 	authenticateToken,
 	authorization("User"),
+	validateReview("Add"),
 	addReview
 );
 
@@ -62,10 +69,18 @@ router.get(
 	viewIndividualTheater
 );
 
+router.post(
+	"/:theaterid/newShow",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	validateShow("Add"),
+	addShow
+);
 router.patch(
 	"/:theaterid/shows/:showid",
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
+	validateShow("Patch"),
 	editShow
 );
 
