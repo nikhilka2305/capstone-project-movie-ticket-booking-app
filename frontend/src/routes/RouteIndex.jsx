@@ -31,13 +31,16 @@ import { ShowRoutes } from "./ShowRoutes";
 import { ManageReview, ReviewRoutes } from "./ReviewRoutes";
 import { TheaterBookingRoute } from "./BookingRoutes";
 
+import ProtectRoute from "../hooks/ProtectRoute";
+import Home from "../pages/shared/Home";
+
 export default function RouteIndex() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
 			element: (
 				<>
-					<h1 className="text-center"> Movie Booking System Navigation</h1>
+					<Home />
 					<Outlet />
 				</>
 			),
@@ -63,7 +66,9 @@ export default function RouteIndex() {
 			path: "/user",
 			element: (
 				<>
-					<Outlet />
+					<ProtectRoute roles={["User", "Admin"]}>
+						<Outlet />
+					</ProtectRoute>
 				</>
 			),
 			children: [
@@ -79,7 +84,9 @@ export default function RouteIndex() {
 			path: "/theaterowner",
 			element: (
 				<>
-					<Outlet />
+					<ProtectRoute roles={["TheaterOwner", "Admin"]}>
+						<Outlet />
+					</ProtectRoute>
 				</>
 			),
 			children: [
@@ -96,7 +103,9 @@ export default function RouteIndex() {
 			path: "/admin",
 			element: (
 				<>
-					<Outlet />
+					<ProtectRoute roles={["Admin"]}>
+						<Outlet />
+					</ProtectRoute>
 				</>
 			),
 			children: [

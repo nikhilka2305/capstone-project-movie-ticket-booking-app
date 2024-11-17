@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { ReviewRoutes } from "./ReviewRoutes";
+import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 
 export const IndividualMovie = {
 	path: ":movieid",
@@ -9,7 +9,7 @@ export const IndividualMovie = {
 			<Outlet />
 		</p>
 	),
-	children: [ReviewRoutes],
+	children: [ReviewRoutes, AddReview],
 };
 
 export const IndividualMovieManagementRoute = {

@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import ProtectRoute from "../hooks/ProtectRoute";
 
 export const ManageReview = {
 	path: "reviews/:reviewid/manage",
@@ -20,6 +21,10 @@ export const ReviewRoutes = {
 };
 
 export const AddReview = {
-	path: "Add review",
-	element: <h3>Reviews</h3>,
+	path: "addreview",
+	element: (
+		<ProtectRoute roles={["User"]}>
+			<h3>Add Reviews</h3>
+		</ProtectRoute>
+	),
 };

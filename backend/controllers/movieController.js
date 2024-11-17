@@ -12,11 +12,11 @@ export const viewMovies = async (req, res, next) => {
 				? {}
 				: { adminApprovalStatus: "Approved" };
 
-		if (filter === "newReleases") {
+		if (filter === "newreleases") {
 			const lastWeek = new Date();
 			lastWeek.setDate(lastWeek.getDate() - 7);
 			filterConditions.releaseDate = { $gte: lastWeek };
-		} else if (filter === "currentlyRunning") {
+		} else if (filter === "nowrunning") {
 			const currentlyRunningMovies = await Show.distinct("movie", {
 				showTime: { $gte: new Date() },
 			});

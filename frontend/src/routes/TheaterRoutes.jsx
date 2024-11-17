@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { AddShow, IndividualShow, ManageShow, ShowRoutes } from "./ShowRoutes";
-import { ReviewRoutes } from "./ReviewRoutes";
+import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 
 export const IndividualTheater = {
 	path: ":theaterid",
@@ -10,7 +10,7 @@ export const IndividualTheater = {
 			<Outlet />
 		</p>
 	),
-	children: [ReviewRoutes],
+	children: [ReviewRoutes, AddReview],
 };
 
 export const AddTheaterRoute = {

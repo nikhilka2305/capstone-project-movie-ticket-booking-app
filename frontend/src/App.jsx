@@ -1,13 +1,27 @@
 import "./App.css";
+import Footer from "./components/shared/Footer";
+import Header from "./components/shared/Header";
+import { AuthContext } from "./context/AuthContext";
+
 import RouteIndex from "./routes/RouteIndex";
 
 function App() {
 	return (
 		<>
-			<h1 className=" text-3xl text-center">
-				Movie Ticket Booking Application
-			</h1>
-			<RouteIndex />
+			<AuthContext.Provider
+				value={{
+					isAuthenticated: true,
+					user: {
+						username: "NiksUser",
+						role: "TheaterOwner",
+					},
+				}}
+			>
+				<Header />
+
+				<RouteIndex />
+				<Footer />
+			</AuthContext.Provider>
 		</>
 	);
 }
