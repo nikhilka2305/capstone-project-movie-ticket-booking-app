@@ -20,6 +20,7 @@ import {
 } from "../middleware/userRegistrationValidation.js";
 import { validateUserLogin } from "../middleware/userLoginValidation.js";
 import { multerSingleFileHandler } from "../middleware/multer.js";
+import { viewIndividualUserReview } from "../controllers/reviewController.js";
 
 router.get(
 	"/",
@@ -63,12 +64,13 @@ router.get(
 	authenticateToken,
 	authorization("Admin", "User"),
 	viewPersonalBookings
-),
-	router.get(
-		"/check-user",
-		authenticateToken,
-		authorization("User"),
-		checkAuth
-	);
-// check User route for user validation..
+);
+
+router.get(
+	"/:userid/reviews",
+	authenticateToken,
+	authorization("Admin", "User"),
+	viewIndividualUserReview
+);
+
 export default router;

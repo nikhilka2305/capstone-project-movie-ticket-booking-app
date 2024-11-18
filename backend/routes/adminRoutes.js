@@ -70,10 +70,5 @@ router.get(
 		authorization("Admin"),
 		deleteAdmin
 	);
-router.get(
-	"/check-admin",
-	authenticateToken,
-	authorization("Admin"),
-	checkAuth
-);
+
 export default router;

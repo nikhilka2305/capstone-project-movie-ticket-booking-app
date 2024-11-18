@@ -125,9 +125,7 @@ export const loginTheaterOwner = async (req, res) => {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
 				});
-				res
-					.status(200)
-					.json({ message: "Succesfully Logged In", token: token });
+				res.status(200).json({ message: "Succesfully Logged In" });
 			}
 		}
 	} catch (err) {

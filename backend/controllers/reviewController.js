@@ -4,6 +4,7 @@ import { Movie } from "../models/Movie.js";
 import { Review } from "../models/Review.js";
 import { Theater } from "../models/Theater.js";
 import { ObjectId } from "mongodb";
+import { User } from "../models/User.js";
 export const viewReviews = async (req, res, next) => {
 	const { movieid, theaterid } = req.params;
 	console.log(movieid, theaterid);
@@ -34,6 +35,41 @@ export const viewReviews = async (req, res, next) => {
 	}
 };
 
+export const viewIndividualReview = async (req, res, next) => {
+	const { reviewid } = req.params;
+	try {
+		const review = await Review.findOne({ reviewId: reviewid });
+		if (!review || review.deleted)
+			throw new HandleError("No such review or review deleted", 404);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(review.userId)
+		)
+			throw new HandleError("You are not authorized to edit this review", 403);
+		return res.status(200).json(review);
+	} catch (err) {
+		res.status(err.statusCode).json({ message: err.message });
+	}
+};
+
+export const viewIndividualUserReview = async (req, res, next) => {
+	const { userid } = req.params;
+	try {
+		const user = await User.findOne({ userId: userid });
+		if (!user || user.deleted)
+			throw new HandleError("No such user... Or User was removed", 404);
+		if (
+			req.user.role !== "Admin" &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(user._id)
+		)
+			throw new HandleError("You are not authorized to see these reviews", 403);
+		const reviews = await Review.find({ userId: user._id });
+		res.status(200).json(reviews);
+	} catch (err) {
+		res.status(err.statusCode).json({ message: err.message });
+	}
+};
+
 export const editReview = async (req, res, next) => {
 	const { reviewid } = req.params;
 	try {
@@ -61,9 +97,8 @@ export const editReview = async (req, res, next) => {
 export const deleteReview = async (req, res, next) => {
 	const { reviewid } = req.params;
 	try {
-		const review = await Review.findOne({ reviewId: reviewid });
-		if (!review || review.deleted)
-			throw new HandleError("No such review or review deleted", 404);
+		const review = await Review.findOne({ reviewId: reviewid, deleted: false });
+		if (!review) throw new HandleError("No such review or review deleted", 404);
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(review.userId)
@@ -112,7 +147,7 @@ export const addReview = async (req, res, next) => {
 	try {
 		if (movieid) {
 			const movie = await Movie.findOne({ movieId: movieid });
-			if (!movie) {
+			if (!movie || movie.adminApprovalStatus !== "Approved") {
 				throw new HandleError("Movie doesn't exist", 404);
 			}
 			const watchedMovie = userBookings.find(
@@ -131,7 +166,7 @@ export const addReview = async (req, res, next) => {
 			reviewData.reviewFor = "movie";
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid });
-			if (!theater) {
+			if (!theater || theater.adminApprovalStatus !== "Approved") {
 				throw new Error("Theater doesn't exist");
 			}
 			const watchedTheater = userBookings.find(
@@ -187,7 +222,9 @@ export const addReview = async (req, res, next) => {
 	} catch (err) {
 		console.log("Unable to save Review");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -216,9 +253,8 @@ export const averageRating = async (req, res, next) => {
 		}, 0);
 		const averageRating = totalRating / reviews.length;
 		console.log(totalRating, averageRating);
-		return res.json(averageRating);
+		return res.json({ message: "The Average rating is", averageRating });
 	} catch (err) {
 		return res.json({ message: "Error", error: err.message });
 	}
-	res.status(200).json("Average Rating is ");
 };

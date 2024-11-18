@@ -8,5 +8,5 @@ export const logout = (req, res, next) => {
 export const checkAuth = (req, res, next) => {
 	return res
 		.status(200)
-		.json(`Succesfully authenticated & authorized as ${req.user.role}`);
+		.json({ message: "Successfully Authorized", user: req.user });
 };

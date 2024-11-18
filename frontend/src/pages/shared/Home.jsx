@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PosterSlider from "../../components/shared/PosterSlider";
 import axios from "axios";
+import Input from "../../components/shared/formcomponents/Input";
 export default function Home() {
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 	const [nowRunningMovies, setNowRunningMovies] = useState([]);
@@ -10,6 +11,7 @@ export default function Home() {
 			try {
 				const response = await axios.get(`${serverUrl}?filter=nowrunning`);
 				const responseData = response.data;
+				console.log(response);
 				console.log(responseData);
 
 				setNowRunningMovies(responseData);
@@ -21,7 +23,6 @@ export default function Home() {
 			try {
 				const response = await axios.get(`${serverUrl}?filter=newreleases`);
 				const responseData = response.data;
-				console.log(responseData);
 
 				setNewReleaseMovies(responseData);
 			} catch (err) {
@@ -32,6 +33,7 @@ export default function Home() {
 		getNowRunningMovies();
 		getNewReleaseMovies();
 	}, []);
+
 	return (
 		<main className="mx-16 my-8">
 			<h1 className="text-center text-4xl mt- 4">

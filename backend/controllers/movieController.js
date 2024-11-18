@@ -2,6 +2,7 @@ import HandleError from "../middleware/errorHandling.js";
 import { Movie } from "../models/Movie.js";
 import { Show } from "../models/Show.js";
 import { uploadMoviePoster } from "../utils/cloudinaryUpload.js";
+import { ObjectId } from "mongodb";
 
 export const viewMovies = async (req, res, next) => {
 	try {
@@ -17,18 +18,29 @@ export const viewMovies = async (req, res, next) => {
 			lastWeek.setDate(lastWeek.getDate() - 7);
 			filterConditions.releaseDate = { $gte: lastWeek };
 		} else if (filter === "nowrunning") {
-			const currentlyRunningMovies = await Show.distinct("movie", {
-				showTime: { $gte: new Date() },
-			});
-			filterConditions._id = { $in: currentlyRunningMovies };
+			// const currentlyRunningMovies = await Show.find("movie", {
+			// 	showTime: { $gte: new Date() },
+			// });
+			const runningActiveShows = await Show.find(
+				{ deleted: false, showTime: { $gte: Date.now() } },
+				"movieID"
+			)
+				.lean()
+				.select("movie");
+
+			// Extract movie IDs for filtering
+			const runningMovies = runningActiveShows.map((show) => show.movie);
+
+			filterConditions._id = { $in: runningMovies };
 		}
 
 		const movies = await Movie.find(filterConditions);
+
 		res.json(movies);
 	} catch (err) {
 		console.log("Unable to get Movies");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res.status(500).json({ message: "Error", error: err.message });
 	}
 };
 

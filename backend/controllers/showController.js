@@ -12,6 +12,7 @@ export const viewShows = async (req, res, next) => {
 	const now = new Date();
 	console.log(now);
 	const filterConditions = { showTime: { $gt: now } };
+	if (!req.user) filterConditions.deleted = false;
 
 	try {
 		if (movieid) {

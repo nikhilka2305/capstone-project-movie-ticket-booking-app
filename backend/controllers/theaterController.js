@@ -114,7 +114,7 @@ export const editIndividualTheater = async (req, res, next) => {
 		) {
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
-		const { theatername, location, seats, seatclasses, amenities } = req.body;
+		const { theaterName, location, seats, seatclasses, amenities } = req.body;
 		const images = req.files;
 		let theaterimages;
 
@@ -126,7 +126,7 @@ export const editIndividualTheater = async (req, res, next) => {
 		const updatedTheater = await Theater.findOneAndUpdate(
 			{ theaterId: theaterid },
 			{
-				theaterName: theatername,
+				theaterName: theaterName,
 				location,
 				images: theaterimages,
 				seats,

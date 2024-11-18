@@ -33,6 +33,8 @@ import { TheaterBookingRoute } from "./BookingRoutes";
 
 import ProtectRoute from "../hooks/ProtectRoute";
 import Home from "../pages/shared/Home";
+import Header from "../components/shared/Header";
+import Footer from "../components/shared/Footer";
 
 export default function RouteIndex() {
 	const router = createBrowserRouter([
@@ -40,11 +42,17 @@ export default function RouteIndex() {
 			path: "/",
 			element: (
 				<>
-					<Home />
+					<Header />
 					<Outlet />
+					<Footer />
 				</>
 			),
 			children: [
+				{
+					index: true,
+					element: <Home />,
+				},
+
 				UserLoginRoute,
 				UserSignUpRoute,
 				MovieRoutes,
@@ -54,21 +62,35 @@ export default function RouteIndex() {
 		},
 		{
 			path: "/toauth",
-			element: <Outlet />,
+			element: (
+				<>
+					<Header />
+					<Outlet />
+					<Footer />
+				</>
+			),
 			children: [TheaterOwnerLoginRoute, TheaterOwnerSignUpRoute],
 		},
 		{
 			path: "/adminauth",
-			element: <Outlet />,
+			element: (
+				<>
+					<Header />
+					<Outlet />
+					<Footer />
+				</>
+			),
 			children: [AdminLoginRoute, AdminSignUpRoute],
 		},
 		{
 			path: "/user",
 			element: (
 				<>
+					<Header />
 					<ProtectRoute roles={["User", "Admin"]}>
 						<Outlet />
 					</ProtectRoute>
+					<Footer />
 				</>
 			),
 			children: [
@@ -84,9 +106,11 @@ export default function RouteIndex() {
 			path: "/theaterowner",
 			element: (
 				<>
+					<Header />
 					<ProtectRoute roles={["TheaterOwner", "Admin"]}>
 						<Outlet />
 					</ProtectRoute>
+					<Footer />
 				</>
 			),
 			children: [
@@ -103,9 +127,11 @@ export default function RouteIndex() {
 			path: "/admin",
 			element: (
 				<>
+					<Header />
 					<ProtectRoute roles={["Admin"]}>
 						<Outlet />
 					</ProtectRoute>
+					<Footer />
 				</>
 			),
 			children: [
@@ -127,23 +153,45 @@ export default function RouteIndex() {
 		},
 		{
 			path: "owner",
-			element: <Outlet />,
+			element: (
+				<>
+					<Header />
+					<Outlet />
+					<Footer />
+				</>
+			),
 			children: [TheaterOwnerLoginRoute, TheaterOwnerSignUpRoute],
 		},
 		{
 			path: "admin",
-			element: <Outlet />,
+			element: (
+				<>
+					<Header />
+					<Outlet />
+					<Footer />
+				</>
+			),
 			children: [AdminLoginRoute, AdminSignUpRoute],
 		},
 		{
 			path: "*",
-			element: <Navigate to="/not-found" />,
+			element: (
+				<>
+					<Navigate to="/not-found" />
+				</>
+			),
 		},
 		{
 			path: "/not-found",
-			element: <h1>Page not Found: 404</h1>,
+			element: (
+				<>
+					<Header />
+					<h1>Page not Found: 404</h1>
+					<Footer />
+				</>
+			),
 		},
 	]);
 
-	return <RouterProvider router={router} />;
+	return router;
 }

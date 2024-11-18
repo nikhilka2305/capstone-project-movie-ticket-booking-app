@@ -1,11 +1,14 @@
+import Login from "../pages/user/Login";
+import SignUp from "../pages/user/SignUp";
+
 export const UserSignUpRoute = {
 	path: "signup",
-	element: <p>Sign up</p>,
+	element: <SignUp />,
 };
 
 export const UserLoginRoute = {
 	path: "login",
-	element: <p>Login</p>,
+	element: <Login />,
 };
 
 export const TheaterOwnerSignUpRoute = {

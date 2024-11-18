@@ -129,11 +129,11 @@ export const loginUser = async (req, res) => {
 				console.log(token);
 				res.cookie("token", token, {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+
+					secure: process.env.NODE_ENV === "production",
 					httpOnly: true,
 				});
-				res
-					.status(200)
-					.json({ message: "Succesfully Logged In", token: token });
+				res.status(200).json({ message: "Succesfully Logged In" });
 			}
 		}
 	} catch (err) {

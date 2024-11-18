@@ -4,6 +4,7 @@ import HandleError from "./errorHandling.js";
 export const authenticateToken = (req, res, next) => {
 	try {
 		const token = req.cookies.token;
+		console.log(req.cookies);
 		if (!token) {
 			throw new HandleError("You need to login to proceed", 403);
 		}

@@ -1,6 +1,7 @@
 import mongoose, { Types } from "mongoose";
 import { nanoid } from "nanoid";
 import { Show } from "./Show.js";
+import HandleError from "../middleware/errorHandling.js";
 
 const bookingSchema = mongoose.Schema(
 	{
@@ -87,8 +88,9 @@ bookingSchema.pre("save", async function (next) {
 				seat.seatNumber.col < 0 ||
 				seat.seatNumber.col > show.theater.seats.seatsPerRow
 			) {
-				throw new Error(
-					`Seat (${seat.seatNumber.row}, ${seat.seatNumber.col}) is an invalid seat`
+				throw new HandleError(
+					`Seat (${seat.seatNumber.row}, ${seat.seatNumber.col}) is an invalid seat`,
+					403
 				);
 			}
 			const isSeatBooked = show.bookedSeats.some(
@@ -99,8 +101,9 @@ bookingSchema.pre("save", async function (next) {
 
 			// If seat is already booked, throw an error
 			if (isSeatBooked) {
-				throw new Error(
-					`Seat (${seat.seatNumber.row}, ${seat.seatNumber.col}) is already booked.`
+				throw new HandleError(
+					`Seat (${seat.seatNumber.row}, ${seat.seatNumber.col}) is already booked.`,
+					403
 				);
 			}
 		}
@@ -127,7 +130,7 @@ bookingSchema.post("save", async function (val, next) {
 	console.log("After Booking");
 	try {
 		const show = await Show.findOne({ _id: val.showInfo });
-		if (!show) throw new Error("Show doesn't exist");
+		if (!show) throw new HandleError("Show doesn't exist", 403);
 		{
 			await Show.findByIdAndUpdate(
 				val.showInfo,

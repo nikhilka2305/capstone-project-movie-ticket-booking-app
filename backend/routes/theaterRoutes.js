@@ -76,19 +76,5 @@ router.post(
 	validateShow("Add"),
 	addShow
 );
-router.patch(
-	"/:theaterid/shows/:showid",
-	authenticateToken,
-	authorization("Admin", "TheaterOwner"),
-	validateShow("Patch"),
-	editShow
-);
-
-router.delete(
-	"/:theaterid/shows/:showid",
-	authenticateToken,
-	authorization("Admin", "TheaterOwner"),
-	deleteShow
-);
 
 export default router;

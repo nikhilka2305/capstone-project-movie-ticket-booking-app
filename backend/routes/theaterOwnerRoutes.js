@@ -65,10 +65,4 @@ router.get(
 		deleteTheaterOwner
 	);
 
-router.get(
-	"/check-theater-owner",
-	authenticateToken,
-	authorization("TheaterOwner"),
-	checkAuth
-);
 export default router;

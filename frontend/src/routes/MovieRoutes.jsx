@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { AddReview, ReviewRoutes } from "./ReviewRoutes";
+import Movies from "../pages/shared/Movies";
 
 export const IndividualMovie = {
 	path: ":movieid",
@@ -35,11 +36,12 @@ export const AddMovieRoute = {
 
 export const MovieRoutes = {
 	path: "movies",
-	element: (
-		<h2>
-			Browse Currently Running
-			<Outlet />
-		</h2>
-	),
-	children: [IndividualMovie],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <Movies />,
+		},
+		IndividualMovie,
+	],
 };

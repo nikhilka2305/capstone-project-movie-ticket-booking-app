@@ -26,7 +26,7 @@ router.post(
 	"/addMovie",
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
-	multerSingleFileHandler("movieposter"),
+	multerSingleFileHandler("posterImage"),
 	validateMovie("Add"),
 	addMovie
 );

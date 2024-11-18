@@ -69,12 +69,27 @@ export const viewIndividualBooking = async (req, res, nex) => {
 	const { bookingid } = req.params;
 
 	try {
-		const booking = await Booking.findOne({ bookingId: bookingid });
+		const booking = await Booking.findOne({ bookingId: bookingid })
+			.lean()
+			.populate({
+				path: "showInfo",
+				select: " -seats ",
+				populate: {
+					path: "theater",
+					select: "owner",
+				},
+			})
+			.select("-bookedSe");
+
 		if (!booking) throw new HandleError("No such booking found", 404);
 		console.log(booking.user, req.user.loggedUserObjectId);
+		console.log(booking);
 		if (
 			req.user.role !== "Admin" &&
-			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user)
+			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user) &&
+			!new ObjectId(req.user.loggedUserObjectId).equals(
+				booking.showInfo.theater.owner
+			)
 		)
 			throw new HandleError("You are not Authorized to view this booking", 403);
 		return res.json(booking);
@@ -289,11 +304,13 @@ export const addBooking = async (req, res, next) => {
 		if (!seats || seats.length === 0)
 			throw new HandleError("You must have atleast 1 seat to book ticket", 401);
 		await booking.save();
-		return res.send("Success");
+		return res.status(200).json({ message: "Success" });
 	} catch (err) {
 		console.log("Unable to save Booking");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 

@@ -1,12 +1,15 @@
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const ProtectRoute = ({ children, roles = [] }) => {
-	const auth = useAuth();
-	console.log(auth);
+	const auth = useContext(AuthContext);
 
-	if (!auth || !auth.isAuthenticated) {
-		console.log("Not authed");
+	console.log(auth.isAuthenticated);
+	console.log(auth.user);
+
+	if (!auth.isAuthenticated) {
+		console.log("Need to Login");
 		return <Navigate to="/login" replace />;
 	} else console.log("Authenticated");
 

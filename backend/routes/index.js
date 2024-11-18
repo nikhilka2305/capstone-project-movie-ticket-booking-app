@@ -10,8 +10,9 @@ import theaterOwnerRouter from "./theaterOwnerRoutes.js";
 import theaterRouter from "./theaterRoutes.js";
 import showRouter from "./showRoutes.js";
 import { authenticateToken } from "../middleware/authentication.js";
-import { logout } from "../controllers/commonControllers.js";
+import { checkAuth, logout } from "../controllers/commonControllers.js";
 
+router.get("/check-user", authenticateToken, checkAuth);
 router.use("/user", userRouter);
 router.use("/admin", adminRouter);
 router.use("/booking", bookingRouter);
