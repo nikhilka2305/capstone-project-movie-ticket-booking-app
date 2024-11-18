@@ -1,3 +1,7 @@
+import AdminLogin from "../pages/admin/AdminLogin";
+import AdminSignUp from "../pages/admin/AdminSignUp";
+import OwnerLogin from "../pages/theaterOwner/OwnerLogin";
+import OwnerSignUp from "../pages/theaterOwner/OwnerSignUp";
 import Login from "../pages/user/Login";
 import SignUp from "../pages/user/SignUp";
 
@@ -13,20 +17,20 @@ export const UserLoginRoute = {
 
 export const TheaterOwnerSignUpRoute = {
 	path: "tosignup",
-	element: <p>Sign up</p>,
+	element: <OwnerSignUp />,
 };
 
 export const TheaterOwnerLoginRoute = {
 	path: "tologin",
-	element: <p>Login</p>,
+	element: <OwnerLogin />,
 };
 
 export const AdminSignUpRoute = {
 	path: "adminsignup",
-	element: <p>Sign up</p>,
+	element: <AdminSignUp />,
 };
 
 export const AdminLoginRoute = {
 	path: "adminlogin",
-	element: <p>Login</p>,
+	element: <AdminLogin />,
 };

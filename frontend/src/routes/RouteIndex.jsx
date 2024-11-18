@@ -1,9 +1,4 @@
-import {
-	createBrowserRouter,
-	Navigate,
-	Outlet,
-	RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 
 import { ProfileRoute, UserDashboard } from "./UserRoutes";
 import {
@@ -69,7 +64,14 @@ export default function RouteIndex() {
 					<Footer />
 				</>
 			),
-			children: [TheaterOwnerLoginRoute, TheaterOwnerSignUpRoute],
+			children: [
+				{
+					index: true, // Redirect when "/movies" is accessed
+					element: <Navigate to="tologin" replace />,
+				},
+				TheaterOwnerLoginRoute,
+				TheaterOwnerSignUpRoute,
+			],
 		},
 		{
 			path: "/adminauth",
@@ -80,7 +82,14 @@ export default function RouteIndex() {
 					<Footer />
 				</>
 			),
-			children: [AdminLoginRoute, AdminSignUpRoute],
+			children: [
+				{
+					index: true, // Redirect when "/movies" is accessed
+					element: <Navigate to="adminlogin" replace />,
+				},
+				AdminLoginRoute,
+				AdminSignUpRoute,
+			],
 		},
 		{
 			path: "/user",

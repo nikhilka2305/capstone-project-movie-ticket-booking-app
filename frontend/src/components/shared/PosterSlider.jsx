@@ -1,6 +1,8 @@
 import Poster from "./Poster";
+import PropTypes from "prop-types";
 const posterSlider =
 	"poster-slider flex gap-4 justify-evenly flex-wrap align-middle";
+
 export default function PosterSlider({ heading, posters }) {
 	console.log(posters);
 	return (
@@ -14,3 +16,7 @@ export default function PosterSlider({ heading, posters }) {
 		</article>
 	);
 }
+PosterSlider.propTypes = {
+	heading: PropTypes.string,
+	posters: PropTypes.object,
+};

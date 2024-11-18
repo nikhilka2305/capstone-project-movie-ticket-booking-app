@@ -1,11 +1,14 @@
-// import { AuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
-
+	const navigate = useNavigate();
+	const handleLogOut = () => {
+		logOut();
+		navigate("/");
+	};
 	return (
 		<header className="flex justify-between items-center border-b border-slate-500 dark:border-slate-100 px-16 py-2 ">
 			<section className="logo">
@@ -16,7 +19,7 @@ export default function Header() {
 			<aside>
 				{!isAuthenticated && <Link to="/login">Login</Link>}
 				{isAuthenticated && (
-					<button className="ml-8" onClick={logOut}>
+					<button className="ml-8" onClick={handleLogOut}>
 						LogOut
 					</button>
 				)}

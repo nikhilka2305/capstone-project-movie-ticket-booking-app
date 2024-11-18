@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PosterSlider from "../../components/shared/PosterSlider";
 import axios from "axios";
-import Input from "../../components/shared/formcomponents/Input";
+
 export default function Home() {
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 	const [nowRunningMovies, setNowRunningMovies] = useState([]);
