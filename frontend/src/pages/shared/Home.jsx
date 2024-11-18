@@ -56,6 +56,7 @@ export default function Home() {
 			<h1 className="text-center text-4xl mt- 4">
 				Welcome to Movie Booking System App
 			</h1>
+			{loading && <div>Loading...</div>}
 			<PosterSlider heading="Now Playing" posters={nowRunningMovies}>
 				<Pagination
 					page={pageNowRunning}

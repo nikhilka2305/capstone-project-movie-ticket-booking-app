@@ -1,19 +1,24 @@
 import { Outlet } from "react-router-dom";
 import { ManageReview, ReviewRoutes } from "./ReviewRoutes";
 import { AddBooking, BookingRoute } from "./BookingRoutes";
+import Profile from "../pages/shared/Profile";
 
 export const UserDashboard = {
 	path: ":userid",
-	element: (
-		<h3>
-			User Dashboard
-			<Outlet />
-		</h3>
-	),
-	children: [ReviewRoutes, ManageReview, BookingRoute, AddBooking],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <h3>User Dashboard</h3>,
+		},
+		ReviewRoutes,
+		ManageReview,
+		BookingRoute,
+		AddBooking,
+	],
 };
 
 export const ProfileRoute = {
 	path: ":userid/profile",
-	element: <h3>User Profile</h3>,
+	element: <Profile type="user" idtype="userid" />,
 };

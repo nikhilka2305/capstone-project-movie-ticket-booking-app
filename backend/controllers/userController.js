@@ -1,7 +1,7 @@
 import { User } from "../models/User.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../utils/createToken.js";
-
+import HandleError from "../middleware/errorHandling.js";
 import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 
 export const viewUsers = async (req, res, next) => {
@@ -29,12 +29,14 @@ export const viewUserProfile = async (req, res, next) => {
 
 	try {
 		const user = await User.findOne({ userId: userid }).select("-passwordHash");
-		if (!user) throw new Error("No such user exists");
+		if (!user) throw new HandleError("No such user exists", 404);
 		res.status(200).json(user);
 	} catch (err) {
 		console.log("Unable to get user Data");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 

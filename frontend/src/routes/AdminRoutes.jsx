@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { TheaterManagementRoute } from "./TheaterRoutes";
 import { AddBooking, BookingRoute } from "./BookingRoutes";
+import Profile from "../pages/shared/Profile";
 
 export const IndividualTheaterOwnerManagementRoute = {
 	path: ":ownerid",
@@ -23,7 +24,7 @@ export const AdminDashboard = {
 };
 export const AdminProfileRoute = {
 	path: ":adminid/profile",
-	element: <h3>Admin Profile</h3>,
+	element: <Profile type="admin" idtype="adminid" />,
 };
 
 export const AdminTheaterBookings = {
