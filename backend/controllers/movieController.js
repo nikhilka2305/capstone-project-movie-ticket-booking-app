@@ -6,8 +6,8 @@ import { ObjectId } from "mongodb";
 
 export const viewMovies = async (req, res, next) => {
 	try {
-		const { filter } = req.query;
-
+		const { filter, page = 1, limit = 10 } = req.query;
+		console.log(req.query);
 		const filterConditions =
 			req.user && req.user.role === "Admin"
 				? {}
@@ -18,9 +18,6 @@ export const viewMovies = async (req, res, next) => {
 			lastWeek.setDate(lastWeek.getDate() - 7);
 			filterConditions.releaseDate = { $gte: lastWeek };
 		} else if (filter === "nowrunning") {
-			// const currentlyRunningMovies = await Show.find("movie", {
-			// 	showTime: { $gte: new Date() },
-			// });
 			const runningActiveShows = await Show.find(
 				{ deleted: false, showTime: { $gte: Date.now() } },
 				"movieID"
@@ -33,10 +30,16 @@ export const viewMovies = async (req, res, next) => {
 
 			filterConditions._id = { $in: runningMovies };
 		}
+		const skip = (page - 1) * limit;
+		const movies = await Movie.find(filterConditions).skip(skip).limit(limit);
+		const totalMovies = await Movie.countDocuments(filterConditions);
 
-		const movies = await Movie.find(filterConditions);
-
-		res.json(movies);
+		res.json({
+			movies,
+			totalMovies,
+			totalPages: Math.ceil(totalMovies / limit),
+			currentPage: page,
+		});
 	} catch (err) {
 		console.log("Unable to get Movies");
 		console.log(err.message);
