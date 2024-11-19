@@ -25,14 +25,11 @@ export default function Header() {
 					<Link to="/">MBS</Link>
 				</h2>
 			</section>
-			<aside>
+			<aside className="flex gap-8">
 				<Link to={"/movies"}>Movies</Link>
+				<Link to={"/theaters"}>Theaters</Link>
 				{!isAuthenticated && <Link to="/login">Login</Link>}
-				{isAuthenticated && (
-					<button className="ml-8" onClick={handleLogOut}>
-						LogOut
-					</button>
-				)}
+				{isAuthenticated && <button onClick={handleLogOut}>LogOut</button>}
 			</aside>
 			<section className="loggedUser">
 				{isAuthenticated && user && (

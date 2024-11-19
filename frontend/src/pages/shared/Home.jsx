@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import PosterSlider from "../../components/shared/PosterSlider";
 import axios from "axios";
 import { Pagination } from "../../components/shared/Pagination";
+import Poster from "../../components/shared/Poster";
+import { Link } from "react-router-dom";
 
 export default function Home() {
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
@@ -57,7 +59,18 @@ export default function Home() {
 				Welcome to Movie Booking System App
 			</h1>
 			{loading && <div>Loading...</div>}
-			<PosterSlider heading="Now Playing" posters={nowRunningMovies}>
+			<PosterSlider heading="Now Playing">
+				<section className="w-full h-full flex justify-evenly gap-2">
+					{nowRunningMovies.map((item, i) => (
+						<Link
+							to={`movies/${item.movieId}`}
+							key={i}
+							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
+						>
+							<Poster url={item.posterImage} />
+						</Link>
+					))}
+				</section>
 				<Pagination
 					page={pageNowRunning}
 					setPage={setPageNowRunning}
@@ -65,7 +78,19 @@ export default function Home() {
 				/>
 			</PosterSlider>
 			/
-			<PosterSlider heading="Coming Soon" posters={newReleaseMovies}>
+			<PosterSlider heading="New Releases">
+				<section className="w-full h-full flex  justify-evenly">
+					{newReleaseMovies.map((item, i) => (
+						<Link
+							to={`movies/${item.movieId}`}
+							key={i}
+							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
+						>
+							<Poster url={item.posterImage} />
+						</Link>
+					))}
+				</section>
+
 				<Pagination
 					page={pageNewRelease}
 					setPage={setPageNewRelease}

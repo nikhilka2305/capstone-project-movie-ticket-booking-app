@@ -64,8 +64,8 @@ router.get("/:theaterid/reviews", viewReviews);
 router.get("/:theaterid/shows", viewShows);
 router.get(
 	"/:theaterid",
-	authenticateToken,
-	authorization("Admin", "TheaterOwner"),
+	// authenticateToken,
+	// authorization("Admin", "TheaterOwner"),
 	viewIndividualTheater
 );
 

@@ -52,6 +52,7 @@ export default function Input({
 					maxLength={maxlength}
 					pattern={pattern}
 					accept={props.fileTypes}
+					multiple={props.multiple}
 				/>
 			)}
 		</div>

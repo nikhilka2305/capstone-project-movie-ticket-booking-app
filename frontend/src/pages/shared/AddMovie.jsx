@@ -217,6 +217,7 @@ export default function AddMovie() {
 					onChange={handleFileChange}
 					fileTypes={["image/jpeg", " image/jpg", " image/png"]}
 				/>
+
 				<Button label="Submit" />
 			</form>
 		</section>

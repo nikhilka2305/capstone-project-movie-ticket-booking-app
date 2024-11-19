@@ -1,16 +1,20 @@
 import { Outlet } from "react-router-dom";
 import { AddShow, IndividualShow, ManageShow, ShowRoutes } from "./ShowRoutes";
 import { AddReview, ReviewRoutes } from "./ReviewRoutes";
+import Theaters from "../pages/shared/Theaters";
+import SingleTheater from "../pages/shared/SingleTheater";
 
 export const IndividualTheater = {
 	path: ":theaterid",
-	element: (
-		<p>
-			See Individual Theater
-			<Outlet />
-		</p>
-	),
-	children: [ReviewRoutes, AddReview],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <SingleTheater />,
+		},
+		ReviewRoutes,
+		AddReview,
+	],
 };
 
 export const AddTheaterRoute = {
@@ -42,11 +46,12 @@ export const TheaterManagementRoute = {
 
 export const TheaterRoutes = {
 	path: "theaters",
-	element: (
-		<h2>
-			Browse Currently Running
-			<Outlet />
-		</h2>
-	),
-	children: [IndividualTheater],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <Theaters />,
+		},
+		IndividualTheater,
+	],
 };

@@ -45,7 +45,7 @@ export const addMultipleImages = async (images) => {
 		});
 
 		const theaterimage = cloudinaryInstance.url(img.public_id, {
-			transformation: [{ aspect_ratio: "4:3", width: 200, crop: "fit" }],
+			transformation: [{ aspect_ratio: "4:3", width: 500, crop: "fit" }],
 			secure: true, // Ensures the URL is secure
 			resource_type: "image", // Explicitly specify the resource type
 		});

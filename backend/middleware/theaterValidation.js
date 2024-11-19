@@ -1,4 +1,7 @@
 import joi from "joi";
+import joiObjId from "joi-objectid";
+
+const joiobjectid = joiObjId(joi);
 const theaterstatus = ["Pending", "Approved", "Rejected", "Deleted"];
 const theaterSchema = joi
 	.object({
@@ -8,7 +11,7 @@ const theaterSchema = joi
 		}),
 		adminApprovalStatus: joi.string().valid(...theaterstatus),
 		location: joi.string().min(5).required(),
-		owner: joi.object({ id: joi.string().hex().length(24) }),
+		owner: joiobjectid().required(),
 		seats: joi
 			.object({
 				rows: joi.number().min(5).required(),

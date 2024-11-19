@@ -5,109 +5,113 @@ import axios from "axios";
 import Card from "../../components/shared/Card";
 import Button from "../../components/shared/formcomponents/Button";
 
-function SingleMovie() {
-	const [movie, setMovie] = useState();
-	const [movieRating, setMovieRating] = useState({
+function SingleTheater() {
+	const [theater, setTheater] = useState();
+	const [theaterRating, setTheaterRating] = useState({
 		averageRating: 0,
 		reviewCount: 0,
 	});
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
-	const { movieid } = useParams();
-	console.log(movieid);
-
+	const { theaterid } = useParams();
+	console.log(theaterid);
 	useEffect(() => {
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
-		}/movie/${movieid}`;
+		}/theater/${theaterid}`;
 		setLoading(true);
-		async function getMovie() {
+		async function getTheater() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
 				console.log(responseData);
 				const reviewResponse = await axios.get(`${serverUrl}/avgrating`);
 				console.log(reviewResponse.data);
-				setMovie(responseData);
-				setMovieRating({
+				setTheater(responseData);
+				setTheaterRating({
 					averageRating: reviewResponse.data.averageRating,
 					reviewCount: reviewResponse.data.reviewCount,
 				});
 			} catch (err) {
 				console.log(err);
-				navigate("/movies");
+				navigate("/theaters");
 			}
 		}
 		setLoading(false);
-		getMovie();
-	}, [movieid, navigate]);
+		getTheater();
+	}, [theaterid, navigate]);
+
 	return (
 		<>
-			{/* <div className="py-8 px-8 w-2/3 min-h-full mx-auto bg-white rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16"> */}
-
 			{loading && <div>Loading...</div>}
-			{!loading && movie && (
+			{!loading && theater && (
 				<Card loading={loading}>
 					<img
 						className="w-full max-h-[500px] object-cover md:w-2/5"
-						src={movie.posterImage}
-						alt={movie.movieName}
+						src={
+							theater.images
+								? theater.images[0]
+								: "https://community.softr.io/uploads/db9110/original/2X/7/74e6e7e382d0ff5d7773ca9a87e6f6f8817a68a6.jpeg"
+						}
+						alt={theater.theaterName}
 					/>
 					<div className="">
 						<div className="p-5 pb-10">
-							<h1 className="text-2xl font-semibold text-gray-800 mt-4">
-								{movie.movieName}
+							<h1 className="text-3xl font-semibold text-gray-800 mt-4">
+								{theater.theaterName}
 							</h1>
 							<p className="text-sm text-gray-500 rounded bg-blue-gray-50 inline p-1">
-								{movie.genre}
+								{theater.location}
 							</p>
-							<p className="text-xl text-gray-400 mt-2 leading-relaxed">
-								{movie.movieDescription}
+
+							<p className="text-lg text-gray-600 mt-2 leading-relaxed">
+								<span className="text-black text-2xl">Amenities</span>
+								<br />
+								<span className="text-gray-800 mr-8 text-sm">Seats: </span>
+								{theater.seats.rows * theater.seats.seatsPerRow}
+								<span className="text-gray-800 ml-4 mr-8 text-sm">
+									Parking:
+								</span>{" "}
+								{theater.amenities && theater.amenities.parking}
+								<span className="text-gray-800 ml-4 mr-8 text-sm">
+									Restrooms:
+								</span>{" "}
+								{theater.amenities && theater.amenities.restroom}
+								<span className="text-gray-800 ml-4 mr-8 text-sm">
+									Food Counters:
+								</span>
+								{theater.amenities && theater.amenities.foodCounters}
 							</p>
 							<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
 								{" "}
-								{movie.movieCast.map((cast, i) => (
-									<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
-										{cast}
-									</li>
-								))}
+								{theater.seatClasses &&
+									theater.seatClasses.map((sClass, i) => (
+										<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
+											{sClass.className} - ₹{sClass.price}/-
+										</li>
+									))}
 							</ul>
 						</div>
 						<div className="bg-blue-50 p-5 ">
 							<div className="sm:flex sm:justify-between">
 								<div>
-									<div className="ml-2 text-lg text-gray-700">
-										<span className="text-gray-900 font-bold">
-											Directed By:{" "}
-										</span>{" "}
-										{movie.director}
-									</div>
 									<div className="flex items-center">
 										<div className="text-gray-900 ml-2 text-lg md:text-lg mt-1 flex gap-2">
 											<span>Rating:</span>
 											<span className="text-blue-gray-800">
-												{movieRating.averageRating > 0
-													? `${movieRating.averageRating} / 5`
+												{theaterRating.averageRating > 0
+													? `${theaterRating.averageRating} / 5`
 													: "No Rating"}
 											</span>
 										</div>
 										<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
-											{movieRating.reviewCount > 0
-												? `${movieRating.reviewCount} reviews`
+											{theaterRating.reviewCount > 0
+												? `${theaterRating.reviewCount} reviews`
 												: "No Reviews"}
 										</div>
 									</div>
 								</div>
 								<Button label="See Shows" />
-							</div>
-							<div className="ml-2 mt-3 text-gray-600 text-sm md:text-sm">
-								<div>{movie.language}</div>
-								<div>
-									{new Date(movie.releaseDate).toLocaleDateString("en-IN")}
-								</div>
-								<div>
-									Rating <span className="font-bold">{movie.rating}</span>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -117,4 +121,4 @@ function SingleMovie() {
 	);
 }
 
-export default SingleMovie;
+export default SingleTheater;

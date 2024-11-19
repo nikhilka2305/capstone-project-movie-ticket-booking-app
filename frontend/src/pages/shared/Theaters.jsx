@@ -2,18 +2,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import PosterSlider from "../../components/shared/PosterSlider";
 import { Pagination } from "../../components/shared/Pagination";
-import Poster from "../../components/shared/Poster";
 import { Link } from "react-router-dom";
+import Poster from "../../components/shared/Poster";
 
-export default function Movies() {
-	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
-	const [movies, setMovies] = useState([]);
+function Theaters() {
+	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theater`;
+	const [theaters, setTheaters] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(1); // Current page
 	const [totalPages, setTotalPages] = useState(1);
-	useEffect(() => {
+
+	useState(() => {
 		setLoading(true);
-		async function getMovies() {
+		async function getTheaters() {
 			try {
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 4 },
@@ -21,30 +22,28 @@ export default function Movies() {
 				const responseData = response.data;
 				console.log(responseData);
 
-				setMovies(responseData.movies);
+				setTheaters(responseData.theaters);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
 				console.log(err);
 			}
 		}
-
-		getMovies();
+		getTheaters();
 	}, [page]);
-
 	return (
-		<main className="py-8 px-8 flex flex-col items-center  bg-yellow-200 min-h-svh w-full">
-			<h1 className="text-2xl mb-lg-2 ">Movies Available</h1>
+		<main className="py-8 px-8 flex flex-col items-center justify-center bg-yellow-200 min-h-svh w-full gap-8">
+			<h1 className="text-2xl ">Theaters</h1>
 			{loading && <div>Loading...</div>}
-			<PosterSlider posters={movies}>
+			<PosterSlider posters={theaters} classes="h-full">
 				<section className="w-full h-full flex flex-wrap justify-evenly gap-2">
-					{movies.map((item, i) => (
+					{theaters.map((item, i) => (
 						<Link
-							to={`/movies/${item.movieId}`}
+							to={`/theaters/${item.theaterId}`}
 							key={i}
 							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
 						>
-							<Poster url={item.posterImage} />
+							<Poster url={item.images[0]} />
 						</Link>
 					))}
 				</section>
@@ -53,3 +52,5 @@ export default function Movies() {
 		</main>
 	);
 }
+
+export default Theaters;

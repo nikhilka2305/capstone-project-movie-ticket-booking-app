@@ -7,6 +7,7 @@ import { handleTheaterDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaters = async (req, res, next) => {
 	console.log("owner");
+	const { filter, page = 1, limit = 10 } = req.query;
 
 	try {
 		const { ownerid, adminid } = req.params;
@@ -25,11 +26,20 @@ export const viewTheaters = async (req, res, next) => {
 		} else if (!adminid) {
 			filterConditions.adminApprovalStatus = "Approved";
 		}
-		const theaters = await Theater.find(filterConditions).populate(
-			"owner",
-			"username"
-		);
-		res.json(theaters);
+
+		const skip = (page - 1) * limit;
+		const theaters = await Theater.find(filterConditions)
+			.skip(skip)
+			.limit(limit)
+			.populate("owner", "username");
+		const totalTheaters = await Theater.countDocuments(filterConditions);
+
+		res.json({
+			theaters,
+			totalTheaters,
+			totalPages: Math.ceil(totalTheaters / limit),
+			currentPage: page,
+		});
 	} catch (err) {
 		console.log("Unable to get Theaters");
 		console.log(err.message);
@@ -42,24 +52,18 @@ export const viewIndividualTheater = async (req, res, next) => {
 
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid });
-		if (!theater)
-			return res
-				.status(404)
-				.json({ message: "Not Found", error: "Such a Theater doesn't exist" });
-		console.log(req.user.loggedUserObjectId, theater.owner);
+		if (!theater || theater.adminApprovalStatus !== "Approved")
+			throw new HandleError("Such a Theater doesn't exist", 404);
+
 		if (
-			req.user &&
-			(req.user.role === "Admin" ||
+			(req.user && req.user.role === "Admin") ||
+			(req.user &&
 				new ObjectId(req.user.loggedUserObjectId).equals(theater.owner))
 		) {
-			return res.json(theater);
+			return res.status(200).json(theater);
 		}
-		if (theater.adminApprovalStatus !== "Approved") {
-			return res
-				.status(404)
-				.json({ message: "Not Found", error: "Such a Theater doesn't exist" });
-		}
-		return res.json(theater);
+
+		return res.status(200).json(theater);
 	} catch (err) {
 		console.log("Unable to get that Theater");
 		console.log(err.message);

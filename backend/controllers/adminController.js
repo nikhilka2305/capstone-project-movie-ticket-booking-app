@@ -2,6 +2,7 @@ import { Admin } from "../models/Admin.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../utils/createToken.js";
 import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
+import HandleError from "../middleware/errorHandling.js";
 
 export const viewAdmins = async (req, res, next) => {
 	console.log(req.user);
@@ -23,12 +24,14 @@ export const viewAdminProfile = async (req, res, next) => {
 		const admin = await Admin.findOne({ userId: adminid }).select(
 			"-passwordHash"
 		);
-		if (!admin) throw new Error("No such theater admin exists");
+		if (!admin) throw new HandleError("No such admin exists", 404);
 		res.status(200).json(admin);
 	} catch (err) {
 		console.log("Unable to get Admin Data");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
