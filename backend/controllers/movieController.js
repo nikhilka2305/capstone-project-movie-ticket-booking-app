@@ -31,7 +31,10 @@ export const viewMovies = async (req, res, next) => {
 			filterConditions._id = { $in: runningMovies };
 		}
 		const skip = (page - 1) * limit;
-		const movies = await Movie.find(filterConditions).skip(skip).limit(limit);
+		const movies = await Movie.find(filterConditions)
+			.select("movieName movieId posterImage")
+			.skip(skip)
+			.limit(limit);
 		const totalMovies = await Movie.countDocuments(filterConditions);
 
 		res.json({
@@ -51,7 +54,9 @@ export const viewIndividualMovie = async (req, res, next) => {
 	const { movieid } = req.params;
 
 	try {
-		const movie = await Movie.findOne({ movieId: movieid });
+		const movie = await Movie.findOne({ movieId: movieid })
+			.lean()
+			.select("-adminApprovalStatus -updatedAt ");
 
 		if (!movie) {
 			return res

@@ -13,7 +13,11 @@ export default function PosterSlider({ heading, posters, classes, children }) {
 			{heading ? <h2 className="mb-4">{heading}</h2> : ""}
 			<div className={posterSlider}>
 				{posters.map((poster, i) => {
-					return <Poster key={i}>{poster.posterImage}</Poster>;
+					return (
+						<Poster key={i} movieid={poster.movieId}>
+							{poster.posterImage}
+						</Poster>
+					);
 				})}
 			</div>
 			{children}

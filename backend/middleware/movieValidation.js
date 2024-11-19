@@ -15,7 +15,7 @@ const movieSchema = joi
 		genre: joi.string().required(),
 		rating: joi.string().valid(...ratings),
 		movieDescription: joi.string().required().min(20).max(200),
-		movieCast: joi.array().items(joi.string().min(5)).max(5),
+		movieCast: joi.array().items(joi.string().min(5)).max(10),
 		director: joi.string().required().min(4),
 	})
 	.options({ abortEarly: false });

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import Input from "../shared/formcomponents/Input";
+import Input from "./formcomponents/Input";
 
-export default function SelectFavActors({
-	favactors,
-	setFavactors,
+export default function SelectActors({
+	actors,
+	setActors,
 	minlength,
 	maxlength,
+	maxNumber,
 }) {
 	{
 		// const [favactors, setFavactors] = useState([]); // State to store favorite actors
@@ -25,31 +26,31 @@ export default function SelectFavActors({
 				return;
 			}
 
-			if (favactors.length >= 5) {
+			if (actors.length >= maxNumber) {
 				// alert("You can only add up to 5 favorite actors.");
-				setError("You can only add up to 5 favorite actors.");
+				setError(`You can only add up to ${maxNumber} actors.`);
 				return;
 			}
 
-			if (favactors.includes(actor.trim())) {
+			if (actors.includes(actor.trim())) {
 				// alert("This actor is already in the list.");
 				setError("This actor is already in the list.");
 				return;
 			}
 
-			setFavactors((prev) => [...prev, actor.trim()]); // Add the actor
+			setActors((prev) => [...prev, actor.trim()]); // Add the actor
 			setActor(""); // Clear the input field
 			setError("");
 		};
 
 		// Handle removing an actor
 		const removeActor = (actorToRemove) => {
-			setFavactors((prev) => prev.filter((a) => a !== actorToRemove));
+			setActors((prev) => prev.filter((a) => a !== actorToRemove));
 			setError("");
 		};
 
 		return (
-			<div className="flex flex-col gap-2">
+			<div className="py-2 pl-4 pr-2 flex flex-col gap-2">
 				<h2>Enter Your Favorite Actors (Max 5)</h2>
 
 				{/* Input Field */}
@@ -65,15 +66,15 @@ export default function SelectFavActors({
 					<button
 						onClick={addActor}
 						type="button"
-						className="border rounded-md bg-gray-300 py-2 px-1 w-1/3 mx-auto"
+						className="border rounded-md bg-gray-300 py-2 px-1 w-1/4 ml-auto"
 					>
-						Add Actor
+						+
 					</button>
 				</div>
 
 				{/* Display Current List */}
 				<ul className="flex gap-1 flex-wrap">
-					{favactors.map((a, i) => (
+					{actors.map((a, i) => (
 						<li
 							key={i}
 							className="border rounded-lg border-slate-500 p-2 flex justify-between items-center min-w-20"
@@ -103,7 +104,7 @@ export default function SelectFavActors({
 				</ul>
 
 				{/* Display Error for Exceeding 5 */}
-				{favactors.length >= 5 && (
+				{actors.length >= maxNumber && (
 					<p className="text-red-600 text-center">
 						You have reached the maximum limit of 5 actors.
 					</p>

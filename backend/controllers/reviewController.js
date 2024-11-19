@@ -253,7 +253,11 @@ export const averageRating = async (req, res, next) => {
 		}, 0);
 		const averageRating = totalRating / reviews.length;
 		console.log(totalRating, averageRating);
-		return res.json({ message: "The Average rating is", averageRating });
+		return res.json({
+			message: "The Average rating is",
+			averageRating: averageRating,
+			reviewCount: reviews.length,
+		});
 	} catch (err) {
 		return res.json({ message: "Error", error: err.message });
 	}

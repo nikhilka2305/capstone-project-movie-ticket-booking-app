@@ -1,16 +1,20 @@
 import { Outlet } from "react-router-dom";
 import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 import Movies from "../pages/shared/Movies";
+import SingleMovie from "../pages/shared/SingleMovie";
+import AddMovie from "../pages/shared/AddMovie";
 
 export const IndividualMovie = {
 	path: ":movieid",
-	element: (
-		<p>
-			See Individual Movie
-			<Outlet />
-		</p>
-	),
-	children: [ReviewRoutes, AddReview],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <SingleMovie />,
+		},
+		ReviewRoutes,
+		AddReview,
+	],
 };
 
 export const IndividualMovieManagementRoute = {
@@ -31,7 +35,7 @@ export const MovieManagementRoute = {
 
 export const AddMovieRoute = {
 	path: "addmovie",
-	element: <h3>Add Movie</h3>,
+	element: <AddMovie />,
 };
 
 export const MovieRoutes = {

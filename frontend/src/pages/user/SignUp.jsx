@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Accordion from "../../components/shared/Accordion";
 import Input from "../../components/shared/formcomponents/Input";
-import SelectFavActors from "../../components/user/SelectFavActors";
+
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import SelectActors from "../../components/shared/SelectActors";
 
 export default function SignUp() {
 	const [username, setUsername] = useState("");
@@ -111,11 +112,12 @@ export default function SignUp() {
 						minlength="5"
 						maxlength="20"
 					/>
-					<SelectFavActors
-						favactors={actors}
-						setFavactors={setActors}
+					<SelectActors
+						actors={actors}
+						setActors={setActors}
 						minlength="5"
 						maxlength="20"
+						maxNumber={5}
 					/>
 				</Accordion>
 				<Button label="Submit" />
