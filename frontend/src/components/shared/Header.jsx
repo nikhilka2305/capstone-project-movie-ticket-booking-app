@@ -53,7 +53,13 @@ export default function Header() {
 								<a>Homepage</a>
 							</li>
 							<li>
-								<a>Portfolio</a>
+								<a>Shows</a>
+							</li>
+							<li>
+								<a>Movies</a>
+							</li>
+							<li>
+								<a>Theaters</a>
 							</li>
 							<li>
 								<a>About</a>
