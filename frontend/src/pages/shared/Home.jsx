@@ -64,7 +64,7 @@ export default function Home() {
 			<PosterSlider posters={nowRunningMovies} classes="">
 				{nowRunningMovies.map((item, i) => (
 					<Link to={`/movies/${item.movieId}`} key={i}>
-						<Poster url={item.posterImage} />
+						<Poster url={item.posterImage} title={item.movieName} />
 					</Link>
 				))}
 			</PosterSlider>
@@ -77,7 +77,7 @@ export default function Home() {
 			<PosterSlider posters={newReleaseMovies} classes="">
 				{newReleaseMovies.map((item, i) => (
 					<Link to={`/movies/${item.movieId}`} key={i}>
-						<Poster url={item.posterImage} />
+						<Poster url={item.posterImage} title={item.movieName} />
 					</Link>
 				))}
 			</PosterSlider>

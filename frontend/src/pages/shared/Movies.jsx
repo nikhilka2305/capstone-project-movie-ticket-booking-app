@@ -39,7 +39,7 @@ export default function Movies() {
 			<PosterSlider posters={movies} classes="">
 				{movies.map((item, i) => (
 					<Link to={`/movies/${item.movieId}`} key={i}>
-						<Poster url={item.posterImage} />
+						<Poster url={item.posterImage} title={item.movieName} />
 					</Link>
 				))}
 			</PosterSlider>

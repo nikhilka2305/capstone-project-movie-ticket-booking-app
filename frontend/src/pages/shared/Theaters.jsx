@@ -38,7 +38,7 @@ function Theaters() {
 			<PosterSlider posters={theaters} classes="h-full">
 				{theaters.map((item, i) => (
 					<Link to={`/theaters/${item.theaterId}`} key={i}>
-						<Poster url={item.images[0]} />
+						<Poster url={item.images[0]} title={item.theaterName} />
 					</Link>
 				))}
 			</PosterSlider>
