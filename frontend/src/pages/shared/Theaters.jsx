@@ -32,23 +32,17 @@ function Theaters() {
 		getTheaters();
 	}, [page]);
 	return (
-		<main className="py-8 px-8 flex flex-col items-center justify-center bg-yellow-200 min-h-svh w-full gap-8">
+		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
 			<h1 className="text-2xl ">Theaters</h1>
 			{loading && <div>Loading...</div>}
 			<PosterSlider posters={theaters} classes="h-full">
-				<section className="w-full h-full flex flex-wrap justify-evenly gap-2">
-					{theaters.map((item, i) => (
-						<Link
-							to={`/theaters/${item.theaterId}`}
-							key={i}
-							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
-						>
-							<Poster url={item.images[0]} />
-						</Link>
-					))}
-				</section>
-				<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+				{theaters.map((item, i) => (
+					<Link to={`/theaters/${item.theaterId}`} key={i}>
+						<Poster url={item.images[0]} />
+					</Link>
+				))}
 			</PosterSlider>
+			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);
 }

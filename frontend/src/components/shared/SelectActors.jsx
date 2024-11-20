@@ -50,11 +50,10 @@ export default function SelectActors({
 		};
 
 		return (
-			<div className="py-2 pl-4 pr-2 flex flex-col gap-2">
-				<h2>Enter Your Favorite Actors (Max 5)</h2>
+			<div className="py-2 flex flex-col gap-8 mt-8 items-between">
+				<h2 className="pl-6 text-center">Enter Your Favorite Actors (Max 5)</h2>
 
-				{/* Input Field */}
-				<div className="flex flex-col gap-2">
+				<div className="flex flex-col gap-8">
 					<Input
 						label="Actor Name"
 						type="text"
@@ -66,9 +65,9 @@ export default function SelectActors({
 					<button
 						onClick={addActor}
 						type="button"
-						className="border rounded-md bg-gray-300 py-2 px-1 w-1/4 ml-auto"
+						className="border rounded-md text-blue-500 bg-gray-300 py-2 px-1 mx-8 w-1/4 ml-auto"
 					>
-						+
+						Add
 					</button>
 				</div>
 

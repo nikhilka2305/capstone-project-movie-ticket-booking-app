@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
-import Button from "../../components/shared/formcomponents/Button";
 
 function SingleMovie() {
 	const [movie, setMovie] = useState();
@@ -14,6 +13,8 @@ function SingleMovie() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 	const { movieid } = useParams();
+	const tagsClasses =
+		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1";
 	console.log(movieid);
 
 	useEffect(() => {
@@ -43,72 +44,53 @@ function SingleMovie() {
 	}, [movieid, navigate]);
 	return (
 		<>
-			{/* <div className="py-8 px-8 w-2/3 min-h-full mx-auto bg-white rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16"> */}
-
 			{loading && <div>Loading...</div>}
 			{!loading && movie && (
-				<Card loading={loading}>
-					<img
-						className="w-full max-h-[500px] object-cover md:w-2/5"
-						src={movie.posterImage}
-						alt={movie.movieName}
-					/>
-					<div className="">
-						<div className="p-5 pb-10">
-							<h1 className="text-2xl font-semibold text-gray-800 mt-4">
-								{movie.movieName}
-							</h1>
-							<p className="text-sm text-gray-500 rounded bg-blue-gray-50 inline p-1">
-								{movie.genre}
+				<Card
+					loading={loading}
+					title={movie.movieName}
+					image={movie.posterImage}
+				>
+					<div>
+						<div className="tags flex justify-start gap-2">
+							<p className={tagsClasses}>{movie.genre}</p>
+							<p className={tagsClasses}>{movie.language}</p>
+							<p className={tagsClasses}>
+								{new Date(movie.releaseDate).toLocaleDateString("en-IN")}
 							</p>
-							<p className="text-xl text-gray-400 mt-2 leading-relaxed">
-								{movie.movieDescription}
+							<p className={tagsClasses}>
+								Rating: <span className="font-bold">{movie.rating}</span>
 							</p>
-							<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
-								{" "}
-								{movie.movieCast.map((cast, i) => (
-									<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
-										{cast}
-									</li>
-								))}
-							</ul>
 						</div>
-						<div className="bg-blue-50 p-5 ">
-							<div className="sm:flex sm:justify-between">
-								<div>
-									<div className="ml-2 text-lg text-gray-700">
-										<span className="text-gray-900 font-bold">
-											Directed By:{" "}
-										</span>{" "}
-										{movie.director}
-									</div>
-									<div className="flex items-center">
-										<div className="text-gray-900 ml-2 text-lg md:text-lg mt-1 flex gap-2">
-											<span>Rating:</span>
-											<span className="text-blue-gray-800">
-												{movieRating.averageRating > 0
-													? `${movieRating.averageRating} / 5`
-													: "No Rating"}
-											</span>
-										</div>
-										<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
-											{movieRating.reviewCount > 0
-												? `${movieRating.reviewCount} reviews`
-												: "No Reviews"}
-										</div>
-									</div>
-								</div>
-								<Button label="See Shows" />
-							</div>
-							<div className="ml-2 mt-3 text-gray-600 text-sm md:text-sm">
-								<div>{movie.language}</div>
-								<div>
-									{new Date(movie.releaseDate).toLocaleDateString("en-IN")}
-								</div>
-								<div>
-									Rating <span className="font-bold">{movie.rating}</span>
-								</div>
-							</div>
+						<p className="text-lg text-gray-400 mt-2 leading-relaxed">
+							{movie.movieDescription}
+						</p>
+						<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
+							{" "}
+							{movie.movieCast.map((cast, i) => (
+								<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
+									{cast}
+								</li>
+							))}
+						</ul>
+						<div className="mt-4 text-lg text-gray-700">
+							<span className="text-gray-500 font-bold">Directed By: </span>{" "}
+							{movie.director}
+						</div>
+					</div>
+					<div className="flex items-center">
+						<div className="text-gray-900 text-lg md:text-lg mt-1 flex gap-2">
+							<span>Rating:</span>
+							<span className="text-blue-gray-800">
+								{movieRating.averageRating > 0
+									? `${movieRating.averageRating} / 5`
+									: "No Rating"}
+							</span>
+						</div>
+						<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
+							{movieRating.reviewCount > 0
+								? `${movieRating.reviewCount} reviews`
+								: "No Reviews"}
 						</div>
 					</div>
 				</Card>
