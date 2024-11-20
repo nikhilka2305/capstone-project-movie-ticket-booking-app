@@ -6,13 +6,16 @@ import Profile from "../pages/shared/Profile";
 
 export const OwnerDashboard = {
 	path: ":ownerid",
-	element: (
-		<h3>
-			Theater Owner Dashboard
-			<Outlet />
-		</h3>
-	),
-	children: [TheaterManagementRoute, BookingRoute, AddBooking],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <h2>Manage Theaters</h2>,
+		},
+		TheaterManagementRoute,
+		BookingRoute,
+		AddBooking,
+	],
 };
 
 export const OwnerProfileRoute = {

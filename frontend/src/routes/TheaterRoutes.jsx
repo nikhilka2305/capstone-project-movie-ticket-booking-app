@@ -3,6 +3,7 @@ import { AddShow, IndividualShow, ManageShow, ShowRoutes } from "./ShowRoutes";
 import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 import Theaters from "../pages/shared/Theaters";
 import SingleTheater from "../pages/shared/SingleTheater";
+import AddTheater from "../pages/shared/AddTheater";
 
 export const IndividualTheater = {
 	path: ":theaterid",
@@ -19,7 +20,7 @@ export const IndividualTheater = {
 
 export const AddTheaterRoute = {
 	path: "addtheater",
-	element: <h3>Add Theater</h3>,
+	element: <AddTheater />,
 };
 
 export const IndividualTheaterManagementRoute = {
@@ -35,13 +36,15 @@ export const IndividualTheaterManagementRoute = {
 
 export const TheaterManagementRoute = {
 	path: "managetheaters",
-	element: (
-		<h3>
-			Manage Theaters
-			<Outlet />
-		</h3>
-	),
-	children: [IndividualTheaterManagementRoute, AddTheaterRoute],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <h1>Dashboard</h1>,
+		},
+		IndividualTheaterManagementRoute,
+		AddTheaterRoute,
+	],
 };
 
 export const TheaterRoutes = {

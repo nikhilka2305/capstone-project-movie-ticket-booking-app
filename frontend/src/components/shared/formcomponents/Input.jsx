@@ -10,14 +10,15 @@ export default function Input({
 	onChange,
 	minlength,
 	maxlength,
+	min = "1",
 	pattern,
 	...props
 }) {
 	const handleInput = (evt) => {
-		if (type === "file") return onChange(evt.target.files[0]);
-		return onChange(evt.target.value);
+		const value = type === "file" ? evt.target.files[0] : evt.target.value;
+		return onChange(value);
 	};
-	if (props.fileTypes) console.log(`${props.fileTypes}`);
+
 	return (
 		<div className="flex justify-between px-8">
 			<label htmlFor={id} className="py-2 pl-4 pr-2">
@@ -32,7 +33,7 @@ export default function Input({
 					disabled={disabled ? disabled : ""}
 					rows={5}
 					cols={40}
-					className="py-2 pl-4 pr-2 rounded-md border border-slate-300"
+					className="py-2 pl-4 pr-2 rounded-md border border-slate-300 max-w-64"
 					value={value}
 					onChange={handleInput}
 				></textarea>
@@ -45,7 +46,7 @@ export default function Input({
 					placeholder={label}
 					required={required ? required : ""}
 					disabled={disabled ? disabled : ""}
-					className="py-2 pl-4 pr-2 rounded-md border border-slate-300"
+					className="py-2 pl-4 pr-2 rounded-md border border-slate-300 max-w-64"
 					value={value}
 					onChange={handleInput}
 					minLength={minlength}
@@ -53,6 +54,7 @@ export default function Input({
 					pattern={pattern}
 					accept={props.fileTypes}
 					multiple={props.multiple}
+					min={min}
 				/>
 			)}
 		</div>

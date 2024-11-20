@@ -29,7 +29,7 @@ const router = Router();
 
 router.get("/", viewTheaters);
 router.post(
-	"/newTheater",
+	"/addtheater",
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
 	multerMultipleFileHandler("theaterimages", 3),
@@ -41,7 +41,7 @@ router.patch(
 	authenticateToken,
 	authorization("Admin", "TheaterOwner"),
 
-	multerMultipleFileHandler("theaterimages", 4),
+	multerMultipleFileHandler("theaterimages", 3),
 	validateTheater("Patch"),
 	editIndividualTheater
 );

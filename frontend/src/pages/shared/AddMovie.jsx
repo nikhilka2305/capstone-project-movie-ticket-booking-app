@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import SelectActors from "../../components/shared/SelectActors";
+import { buildFormData } from "../../utils/manageFormData";
 
 export default function AddMovie() {
 	const [movie, setMovie] = useState({
@@ -19,8 +20,8 @@ export default function AddMovie() {
 		director: "",
 		posterImage: "",
 	});
-	const [imageFile, setImageFile] = useState(null);
-	const [selectRating, setSelectRating] = useState("U/A");
+	// const [imageFile, setImageFile] = useState(null);
+	// const [selectRating, setSelectRating] = useState("U/A");
 	const [movieCast, setMovieCast] = useState([]);
 	const navigate = useNavigate();
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie/addmovie`;
@@ -33,25 +34,17 @@ export default function AddMovie() {
 			language: movie.language,
 			movieduration: movie.movieduration,
 			genre: movie.genre,
-			rating: selectRating,
+			rating: movie.rating,
 			movieDescription: movie.movieDescription,
 			movieCast: movieCast,
 			director: movie.director,
-			posterImage: imageFile,
+			posterImage: movie.posterImage,
 		};
-
 		console.log(addmovie);
-		console.log(movieCast);
-		if (!imageFile) throw new Error("You must include movie poster");
-		const formData = new FormData();
-		Object.keys(addmovie).forEach((key) => {
-			if (key === "posterImage") formData.append(key, addmovie[key]);
-			else if (key === "movieCast") {
-				addmovie[key].forEach((actor) => {
-					formData.append(`${key}[]`, actor);
-				});
-			} else formData.append(key, addmovie[key]);
-		});
+		console.log(addmovie.posterImage);
+		if (!addmovie.posterImage) throw new Error("You must include movie poster");
+
+		const formData = buildFormData(addmovie, "posterImage");
 
 		console.log(formData);
 		for (let pair of formData.entries()) {
@@ -70,44 +63,9 @@ export default function AddMovie() {
 			console.log(err);
 		}
 	};
-	const handleMovieNameChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, movieName: value };
-		});
-	};
-	const handleReleaseDateChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, releaseDate: value };
-		});
-	};
-	const handleLanguageChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, language: value };
-		});
-	};
-	const handleGenreChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, genre: value };
-		});
-	};
-	const handleDurationChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, movieduration: value };
-		});
-	};
-	const handleDirectorChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, director: value };
-		});
-	};
-	const handleDescriptionChange = (value) => {
-		setMovie((movie) => {
-			return { ...movie, movieDescription: value };
-		});
-	};
-	const handleFileChange = (file) => {
-		console.log(file);
-		setImageFile(file);
+
+	const handleChange = (field, value) => {
+		setMovie((prev) => ({ ...prev, [field]: value }));
 	};
 
 	return (
@@ -126,7 +84,7 @@ export default function AddMovie() {
 					type="text"
 					required
 					value={movie.movieName}
-					onChange={handleMovieNameChange}
+					onChange={(value) => handleChange("movieName", value)}
 					minlength="5"
 					maxlength="15"
 				/>
@@ -137,7 +95,7 @@ export default function AddMovie() {
 					type="date"
 					required
 					value={movie.releaseDate}
-					onChange={handleReleaseDateChange}
+					onChange={(value) => handleChange("releaseDate", value)}
 				/>
 				<Input
 					label="Enter Language"
@@ -146,7 +104,7 @@ export default function AddMovie() {
 					type="text"
 					required
 					value={movie.language}
-					onChange={handleLanguageChange}
+					onChange={(value) => handleChange("language", value)}
 					minlength="4"
 					maxlength="20"
 				/>
@@ -157,7 +115,7 @@ export default function AddMovie() {
 					type="text"
 					required
 					value={movie.genre}
-					onChange={handleGenreChange}
+					onChange={(value) => handleChange("genre", value)}
 					minlength="4"
 					maxlength="20"
 				/>
@@ -168,7 +126,7 @@ export default function AddMovie() {
 					type="number"
 					required
 					value={movie.movieduration}
-					onChange={handleDurationChange}
+					onChange={(value) => handleChange("movieduration", value)}
 					minlength="30"
 					maxlength="240"
 				/>
@@ -178,7 +136,7 @@ export default function AddMovie() {
 					field="rating"
 					options={["R", "U/A", "U", "A"]}
 					defaultValue="U/A"
-					selectValue={setSelectRating}
+					selectValue={(value) => handleChange("rating", value)}
 				/>
 				<SelectActors
 					actors={movieCast}
@@ -194,7 +152,7 @@ export default function AddMovie() {
 					type="text"
 					required
 					value={movie.director}
-					onChange={handleDirectorChange}
+					onChange={(value) => handleChange("director", value)}
 					minlength="5"
 					maxlength="20"
 				/>
@@ -205,8 +163,9 @@ export default function AddMovie() {
 					type="textarea"
 					required
 					value={movie.movieDescription}
-					onChange={handleDescriptionChange}
+					onChange={(value) => handleChange("movieDescription", value)}
 				/>
+
 				<Input
 					label="Add poster Image"
 					name="posterImage"
@@ -214,7 +173,7 @@ export default function AddMovie() {
 					type="file"
 					required
 					value={undefined}
-					onChange={handleFileChange}
+					onChange={(file) => handleChange("posterImage", file)}
 					fileTypes={["image/jpeg", " image/jpg", " image/png"]}
 				/>
 

@@ -6,9 +6,18 @@ import { handleTheaterOwnerDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaterOwners = async (req, res, next) => {
 	console.log(req.user);
-
+	const { active } = req.query;
+	console.log(active);
+	let filterCondition = {};
+	if (active) {
+		filterCondition = { deleted: false, blocked: false };
+	}
+	// active ? {fi}
+	console.log(filterCondition);
 	try {
-		const owners = await TheaterOwner.find().select("-passwordHash");
+		const owners = await TheaterOwner.find(filterCondition).select(
+			"-passwordHash"
+		);
 		res.json(owners);
 	} catch (err) {
 		console.log("Unable to get Theater Owner");

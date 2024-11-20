@@ -12,7 +12,7 @@ function Theaters() {
 	const [page, setPage] = useState(1); // Current page
 	const [totalPages, setTotalPages] = useState(1);
 
-	useState(() => {
+	useEffect(() => {
 		setLoading(true);
 		async function getTheaters() {
 			try {
@@ -21,7 +21,7 @@ function Theaters() {
 				});
 				const responseData = response.data;
 				console.log(responseData);
-
+				console.log("hellooo", page);
 				setTheaters(responseData.theaters);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
