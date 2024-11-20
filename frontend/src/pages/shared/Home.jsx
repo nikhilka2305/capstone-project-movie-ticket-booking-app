@@ -6,7 +6,6 @@ import Poster from "../../components/shared/Poster";
 import { Link } from "react-router-dom";
 
 export default function Home() {
-	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 	const [nowRunningMovies, setNowRunningMovies] = useState([]);
 
 	const [loading, setLoading] = useState(true);
@@ -16,6 +15,7 @@ export default function Home() {
 	const [pageNewRelease, setPageNewRelease] = useState(1);
 	const [totalPagesNewRelease, setTotalPagesNewRelease] = useState(1);
 	useEffect(() => {
+		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 		setLoading(true);
 		async function getNowRunningMovies() {
 			try {
@@ -54,49 +54,38 @@ export default function Home() {
 	}, [pageNewRelease, pageNowRunning]);
 
 	return (
-		<main className="mx-16 my-8">
+		<main className="mx-16 my-8 flex flex-col gap-4 items-center">
 			<h1 className="text-center text-4xl mt- 4">
 				Welcome to Movie Booking System App
 			</h1>
 			{loading && <div>Loading...</div>}
-			<PosterSlider heading="Now Playing">
-				<section className="w-full h-full flex justify-evenly gap-2">
-					{nowRunningMovies.map((item, i) => (
-						<Link
-							to={`movies/${item.movieId}`}
-							key={i}
-							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
-						>
-							<Poster url={item.posterImage} />
-						</Link>
-					))}
-				</section>
-				<Pagination
-					page={pageNowRunning}
-					setPage={setPageNowRunning}
-					totalPages={totalPagesNowRunning}
-				/>
-			</PosterSlider>
-			/
-			<PosterSlider heading="New Releases">
-				<section className="w-full h-full flex  justify-evenly">
-					{newReleaseMovies.map((item, i) => (
-						<Link
-							to={`movies/${item.movieId}`}
-							key={i}
-							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
-						>
-							<Poster url={item.posterImage} />
-						</Link>
-					))}
-				</section>
+			<h2 className="text-center my-4">Now Running</h2>
 
-				<Pagination
-					page={pageNewRelease}
-					setPage={setPageNewRelease}
-					totalPages={totalPagesNewRelease}
-				/>
+			<PosterSlider posters={nowRunningMovies} classes="">
+				{nowRunningMovies.map((item, i) => (
+					<Link to={`/movies/${item.movieId}`} key={i}>
+						<Poster url={item.posterImage} />
+					</Link>
+				))}
 			</PosterSlider>
+			<Pagination
+				page={pageNowRunning}
+				setPage={setPageNowRunning}
+				totalPages={totalPagesNowRunning}
+			/>
+			<h2 className="text-center my-4">New Releases</h2>
+			<PosterSlider posters={newReleaseMovies} classes="">
+				{newReleaseMovies.map((item, i) => (
+					<Link to={`/movies/${item.movieId}`} key={i}>
+						<Poster url={item.posterImage} />
+					</Link>
+				))}
+			</PosterSlider>
+			<Pagination
+				page={pageNewRelease}
+				setPage={setPageNewRelease}
+				totalPages={totalPagesNewRelease}
+			/>
 		</main>
 	);
 }

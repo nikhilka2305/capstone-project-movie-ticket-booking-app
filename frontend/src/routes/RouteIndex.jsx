@@ -30,6 +30,7 @@ import ProtectRoute from "../hooks/ProtectRoute";
 import Home from "../pages/shared/Home";
 import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
+import Error404 from "../pages/shared/Error404";
 
 export default function RouteIndex() {
 	const router = createBrowserRouter([
@@ -182,6 +183,7 @@ export default function RouteIndex() {
 			),
 			children: [AdminLoginRoute, AdminSignUpRoute],
 		},
+
 		{
 			path: "*",
 			element: (
@@ -195,7 +197,7 @@ export default function RouteIndex() {
 			element: (
 				<>
 					<Header />
-					<h1>Page not Found: 404</h1>
+					<Error404 />
 					<Footer />
 				</>
 			),

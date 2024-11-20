@@ -100,7 +100,7 @@ export default function SignUp() {
 				/>
 				<Accordion
 					title="MoviePreferences (Optional)               ▽ "
-					classes="pl-4"
+					classes=""
 				>
 					<Input
 						label="Genre"

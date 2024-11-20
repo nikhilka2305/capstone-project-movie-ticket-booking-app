@@ -16,7 +16,7 @@ export default function Movies() {
 		async function getMovies() {
 			try {
 				const response = await axios.get(`${serverUrl}`, {
-					params: { page, limit: 4 },
+					params: { page, limit: 8 },
 				});
 				const responseData = response.data;
 				console.log(responseData);
@@ -33,23 +33,17 @@ export default function Movies() {
 	}, [page]);
 
 	return (
-		<main className="py-8 px-8 flex flex-col items-center  bg-yellow-200 min-h-svh w-full">
-			<h1 className="text-2xl mb-lg-2 ">Movies Available</h1>
+		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
+			<h1 className="text-2xl mb-lg-2 my-4">Movies Available</h1>
 			{loading && <div>Loading...</div>}
-			<PosterSlider posters={movies}>
-				<section className="w-full h-full flex flex-wrap justify-evenly gap-2">
-					{movies.map((item, i) => (
-						<Link
-							to={`/movies/${item.movieId}`}
-							key={i}
-							className="w-full md:w-2/3 lg:w-1/4 xl:w-1/5"
-						>
-							<Poster url={item.posterImage} />
-						</Link>
-					))}
-				</section>
-				<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+			<PosterSlider posters={movies} classes="">
+				{movies.map((item, i) => (
+					<Link to={`/movies/${item.movieId}`} key={i}>
+						<Poster url={item.posterImage} />
+					</Link>
+				))}
 			</PosterSlider>
+			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);
 }
