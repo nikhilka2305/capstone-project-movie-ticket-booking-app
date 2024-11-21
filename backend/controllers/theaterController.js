@@ -118,31 +118,37 @@ export const editIndividualTheater = async (req, res, next) => {
 		) {
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
-		const { theaterName, location, seats, seatclasses, amenities } = req.body;
+		const { theaterName, location, seats, seatClasses, amenities } = req.body;
 		const images = req.files;
-		let theaterimages;
+		console.log("body");
+		console.log(req.body);
+		let theaterimages = theater.images;
 
-		if (images) {
+		if (images && images.length > 0) {
 			console.log(images);
 			theaterimages = await addMultipleImages(images);
 			console.log(theaterimages);
 		}
+		console.log(req.body);
 		const updatedTheater = await Theater.findOneAndUpdate(
 			{ theaterId: theaterid },
 			{
 				theaterName: theaterName,
 				location,
-				images: theaterimages,
-				seats,
-				seatClasses: seatclasses,
+				images: images && [...images, ...theaterimages],
+				seats: seats && { ...seats },
+				seatClasses: seatClasses && [...seatClasses],
 				amenities,
 			},
-			{ runValidators: true, new: true, upsert: true }
+			{ new: true, upsert: true }
 		);
 		console.log(updatedTheater);
 		return res.json({ message: `Succesfully Updated ${theaterid}` });
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		console.log(err.statusCode ? err.statusCode : 500, err.message, err.stack);
+		return res
+			.status(err.statusCode ? err.statusCode : 500)
+			.json({ message: err.message });
 	}
 };
 

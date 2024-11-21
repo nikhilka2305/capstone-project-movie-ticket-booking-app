@@ -11,6 +11,7 @@ export default function Input({
 	minlength,
 	maxlength,
 	min = "1",
+	max,
 	pattern,
 	...props
 }) {
@@ -55,6 +56,7 @@ export default function Input({
 					accept={props.fileTypes}
 					multiple={props.multiple}
 					min={min}
+					max={max}
 				/>
 			)}
 		</div>

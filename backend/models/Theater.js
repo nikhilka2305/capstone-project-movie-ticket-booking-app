@@ -49,6 +49,7 @@ const theaterSchema = mongoose.Schema(
 			{
 				className: { type: String },
 				price: { type: Number },
+				rows: [{ type: Number, min: 0 }],
 			},
 		],
 		amenities: {

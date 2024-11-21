@@ -25,6 +25,7 @@ const theaterSchema = joi
 					.object({
 						className: joi.string().min(1).required(),
 						price: joi.number().min(0).required(),
+						rows: joi.array().items(joi.number().min(1)).optional(),
 					})
 					.min(1)
 					.max(5)
