@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Login() {
 	const [username, setUsername] = useState("");
@@ -29,6 +30,8 @@ export default function Login() {
 				withCredentials: true,
 			});
 			console.log("Login Success");
+			toast.success("Successfully LoggedIn");
+
 			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
@@ -37,6 +40,7 @@ export default function Login() {
 		} catch (err) {
 			console.log(err);
 			setError("Unable to Log In");
+			toast.error("Unable to Login");
 		}
 	};
 	// const navigate = useNavigate();

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import ThemeToggler from "./ThemeToggler";
+import toast from "react-hot-toast";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
@@ -88,7 +89,10 @@ export default function Header() {
 						</Link>
 					)}
 					<ThemeToggler />
-					<button className="btn btn-square btn-ghost">
+					<button
+						className="btn btn-square btn-ghost"
+						onClick={() => toast("Here is your toast.")}
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
