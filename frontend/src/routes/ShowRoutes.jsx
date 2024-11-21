@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Shows from "../pages/shared/Shows";
 
 export const IndividualShow = {
 	path: ":showid",
@@ -7,13 +8,14 @@ export const IndividualShow = {
 
 export const ShowRoutes = {
 	path: "shows",
-	element: (
-		<h2>
-			Browse Currently Running Shows
-			<Outlet />
-		</h2>
-	),
-	children: [IndividualShow],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <Shows />,
+		},
+		IndividualShow,
+	],
 };
 
 export const AddShow = {

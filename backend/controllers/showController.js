@@ -35,7 +35,7 @@ export const viewShows = async (req, res, next) => {
 		}
 
 		const shows = await Show.find(filterConditions)
-			.populate("movie", "movieName")
+			.populate("movie", "movieName posterImage")
 			.populate("theater", "theaterName seats seatClasses owner");
 
 		res.json(shows);
