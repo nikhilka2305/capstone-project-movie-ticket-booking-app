@@ -17,6 +17,7 @@ const movieSchema = joi
 		movieDescription: joi.string().required().min(20).max(200),
 		movieCast: joi.array().items(joi.string().min(5)).max(10),
 		director: joi.string().required().min(4),
+		// posterImage: joi.any().required(),
 	})
 	.options({ abortEarly: false });
 
@@ -33,6 +34,7 @@ const moviePatchSchema = movieSchema
 			"movieDescription",
 			"movieCast",
 			"director",
+			// "posterImage",
 		],
 		(field) => field.optional()
 	)

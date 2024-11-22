@@ -4,6 +4,7 @@ export default function Input({
 	id,
 	label,
 	required = false,
+	innerRef,
 	disabled = false,
 	inputmode = "text",
 	value,
@@ -13,52 +14,73 @@ export default function Input({
 	min = "1",
 	max,
 	pattern,
+	classes,
+	register = () => {},
+	validationSchema = {},
+	errors,
 	...props
 }) {
 	const handleInput = (evt) => {
 		const value = type === "file" ? evt.target.files[0] : evt.target.value;
 		return onChange(value);
 	};
+	const getNestedError = (obj, path) => {
+		return path.split(".").reduce((acc, key) => acc?.[key], obj);
+	};
 
 	return (
-		<div className="flex justify-between px-8">
-			<label htmlFor={id} className="py-2 pl-4 pr-2">
-				{label}
-			</label>
+		<div className="flex flex-col justify-center px-8">
 			{type === "textarea" ? (
 				<textarea
 					name={name}
 					id={id}
 					placeholder={label}
-					required={required ? required : ""}
 					disabled={disabled ? disabled : ""}
 					rows={5}
-					cols={40}
-					className="py-2 pl-4 pr-2 rounded-md border border-slate-300 max-w-64"
+					className="py-2 pl-4 pr-2 grow w-full textarea textarea-bordered"
 					value={value}
 					onChange={handleInput}
+					{...register(name, validationSchema)}
 				></textarea>
 			) : (
-				<input
-					type={type}
-					inputMode={inputmode}
-					name={name}
-					id={id}
-					placeholder={label}
-					required={required ? required : ""}
-					disabled={disabled ? disabled : ""}
-					className="py-2 pl-4 pr-2 rounded-md border border-slate-300 max-w-64"
-					value={value}
-					onChange={handleInput}
-					minLength={minlength}
-					maxLength={maxlength}
-					pattern={pattern}
-					accept={props.fileTypes}
-					multiple={props.multiple}
-					min={min}
-					max={max}
-				/>
+				<label
+					htmlFor={id}
+					className="input input-bordered flex  items-center gap-2 w-full"
+				>
+					<input
+						type={type}
+						inputMode={inputmode}
+						name={name}
+						id={id}
+						placeholder={label}
+						disabled={disabled ? disabled : ""}
+						className={`${classes} py-2 pl-4 pr-2 grow`}
+						value={value}
+						onChange={handleInput}
+						minLength={minlength}
+						maxLength={maxlength}
+						pattern={pattern}
+						accept={props.fileTypes}
+						multiple={props.multiple}
+						min={min}
+						max={max}
+						ref={innerRef}
+						{...register(name, validationSchema)}
+					/>
+				</label>
 			)}
+			{errors &&
+				(errors[name]?.message ? (
+					<span className="error mx-auto text-sm text-red-600">
+						{errors[name]?.message}
+					</span>
+				) : (
+					<>
+						<span className="error mx-auto text-sm text-red-600">
+							{getNestedError(errors, name)?.message}
+						</span>
+					</>
+				))}
 		</div>
 	);
 }

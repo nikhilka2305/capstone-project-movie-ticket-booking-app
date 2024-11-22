@@ -1,4 +1,5 @@
-export const buildFormData = (data, fileFields = []) => {
+// , fileFields = []
+export const buildFormData = (data) => {
 	const formData = new FormData();
 
 	// Helper function to handle nested data
@@ -21,21 +22,22 @@ export const buildFormData = (data, fileFields = []) => {
 
 	// Loop through the data object and append all fields to FormData
 	Object.keys(data).forEach((key) => {
-		if (fileFields.includes(key)) {
-			// Handle file fields separately
-			const files = data[key];
-			if (files) {
-				if (Array.isArray(files)) {
-					// For multiple files, append each file
-					files.forEach((file, index) => {
-						formData.append(`${key}[${index}]`, file); // Use index to maintain array-like structure
-					});
-				} else {
-					// If it's a single file, append it directly
-					formData.append(key, files);
-				}
-			}
-		} else {
+		// {if (fileFields.includes(key)) {
+		// 	// Handle file fields separately
+		// 	const files = data[key];
+		// 	if (files) {
+		// 		if (Array.isArray(files)) {
+		// 			// For multiple files, append each file
+		// 			files.forEach((file, index) => {
+		// 				formData.append(`${key}[${index}]`, file); // Use index to maintain array-like structure
+		// 			});
+		// 		} else {
+		// 			// If it's a single file, append it directly
+		// 			formData.append(key, files);
+		// 		}
+		// 	}
+		// } else {}
+		{
 			// If it's not a file field, process normally
 			appendDataToFormData(formData, key, data[key]);
 		}

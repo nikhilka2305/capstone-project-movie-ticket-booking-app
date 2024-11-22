@@ -9,6 +9,7 @@ export default function Header() {
 	const navigate = useNavigate();
 	const handleLogOut = () => {
 		logOut();
+		toast.success("Succesfully Logged Out");
 		navigate("/");
 	};
 	const params = {

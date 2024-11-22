@@ -2,12 +2,10 @@ import joi from "joi";
 
 const loginSchema = joi
 	.object({
-		username: joi.string().min(5).required().messages({
-			"string.min": "Username must be at least 5 characters long.",
+		username: joi.string().required().messages({
 			"any.required": "Username is required.",
 		}),
-		password: joi.string().min(6).required().messages({
-			"string.base": "Password must be a string.",
+		password: joi.string().required().messages({
 			"any.required": "Password is required.",
 		}),
 	})

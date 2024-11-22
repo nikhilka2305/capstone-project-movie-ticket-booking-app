@@ -25,6 +25,11 @@ export const IndividualTheaterManagementRoute = {
 	],
 };
 
+export const AddTheaterRoute = {
+	path: "addtheater",
+	element: <AddTheater />,
+};
+
 export const IndividualTheater = {
 	path: ":theaterid",
 	element: <Outlet />,
@@ -43,20 +48,13 @@ export const IndividualTheater = {
 	],
 };
 
-export const AddTheaterRoute = {
-	path: "addtheater",
-	element: <AddTheater />,
-};
-
 export const TheaterManagementRoute = {
 	path: "managetheaters",
-	element: (
-		<h3>
-			Manage Theaters
-			<Outlet />
-		</h3>
-	),
-	children: [AddTheaterRoute],
+	element: <Outlet />,
+	children: [
+		{ index: true, element: <h2>Theater Management - Individual</h2> },
+		AddTheaterRoute,
+	],
 };
 
 export const TheaterRoutes = {

@@ -7,7 +7,7 @@ const userSchema = joi
 		mobile: joi.number().integer().min(1000000000).max(9999999999).required(),
 		moviePreferences: joi
 			.object({
-				genre: joi.string().min(3).max(15).optional(),
+				genre: joi.string().max(15).optional(),
 				favactors: joi.array().items(joi.string().min(5)).max(5).optional(),
 			})
 			.optional(),

@@ -3,18 +3,21 @@ import { useState } from "react";
 function Select({
 	label,
 	field,
-	selectValue,
-	defaultValue,
 	options,
+	value,
+	onChange,
+	errors,
+	selectValue,
+	defaultValue = "",
 	displayKey = null,
 	valueKey = null,
 	...props
 }) {
-	const [value, setValue] = useState(defaultValue);
-	const handleChange = (evt) => {
-		setValue(evt.target.value);
-		selectValue(evt.target.value);
-	};
+	// const [value, setValue] = useState(defaultValue);
+	// const handleChange = (evt) => {
+	// 	setValue(evt.target.value);
+	// 	selectValue(evt.target.value);
+	// };
 	return (
 		<>
 			<div className="flex justify-between px-8">
@@ -25,9 +28,8 @@ function Select({
 					id={field}
 					name={field}
 					value={value}
-					onChange={handleChange}
+					onChange={(evt) => onChange?.(evt.target.value)}
 					className="py-2 pl-4 pr-2 rounded-md border border-slate-300 w-full max-w-56"
-					required={props.required}
 				>
 					<option value="" disabled>
 						-- Select {label} --
@@ -42,6 +44,11 @@ function Select({
 					))}
 				</select>
 			</div>
+			{errors && errors[field]?.message && (
+				<span className="error mx-auto text-sm text-red-600">
+					{errors[field]?.message}
+				</span>
+			)}
 		</>
 	);
 }

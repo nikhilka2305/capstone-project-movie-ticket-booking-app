@@ -4,11 +4,20 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
 
 function AdminLogin() {
-	const [username, setUsername] = useState("");
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		getValues,
+		reset,
+		formState: { errors },
+	} = useForm();
 	axios.defaults.withCredentials = true;
-	const [password, setPassword] = useState("");
+
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
 	const { isAuthenticated, login, checkAuth } = useContext(AuthContext);
@@ -18,10 +27,10 @@ function AdminLogin() {
 	}, []);
 
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/admin/login`;
-	const handleLoginFormSubmit = async (evt) => {
+	const handleLoginFormSubmit = async (data, evt) => {
 		evt.preventDefault();
-		console.log({ username, password });
-		const user = { username, password };
+		const user = { ...data };
+		console.log(user);
 		try {
 			const userSignup = await axios.post(serverUrl, user, {
 				headers: {
@@ -30,6 +39,7 @@ function AdminLogin() {
 				withCredentials: true,
 			});
 			console.log("Login Success");
+			toast.success("Successfully LoggedIn");
 			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
@@ -38,6 +48,7 @@ function AdminLogin() {
 		} catch (err) {
 			console.log(err);
 			setError("Unable to Log In");
+			toast.error("Unable to Login");
 		}
 	};
 	return (
@@ -46,33 +57,47 @@ function AdminLogin() {
 			<form
 				action=""
 				className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
-				onSubmit={handleLoginFormSubmit}
+				onSubmit={handleSubmit(handleLoginFormSubmit)}
+				noValidate
 			>
 				<Input
 					label="Enter Username"
 					name="username"
 					id="username"
 					type="text"
-					required
-					value={username}
-					onChange={setUsername}
-					minlength="5"
-					maxlength="15"
+					register={register}
+					validationSchema={{
+						required: "Username required",
+					}}
+					errors={errors}
 				/>
 				<Input
 					label="Enter Password"
 					name="password"
 					id="password"
 					type="password"
-					required
-					value={password}
-					onChange={setPassword}
-					minlength="5"
-					maxlength="15"
+					register={register}
+					validationSchema={{
+						required: "Password required",
+					}}
+					errors={errors}
 				/>
-				<Button label="Login" />
+				<div className="button-group flex gap-4 justify-center">
+					<Button
+						label="Submit"
+						onClick={() => {
+							console.log(errors);
+						}}
+					/>
+					<Button
+						label="Reset"
+						onClick={() => {
+							reset();
+						}}
+					/>
+				</div>
 			</form>
-			{error && <p className="text-red-600">{error}</p>}
+			{error && <p className="text-red-600 mx-auto my-4">{error}</p>}
 		</section>
 	);
 }

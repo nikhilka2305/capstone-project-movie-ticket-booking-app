@@ -3,6 +3,16 @@ import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 import Movies from "../pages/shared/Movies";
 import SingleMovie from "../pages/shared/SingleMovie";
 import AddMovie from "../pages/shared/AddMovie";
+import ProtectRoute from "../hooks/ProtectRoute";
+
+export const AddMovieRoute = {
+	path: "addmovie",
+	element: (
+		<ProtectRoute roles={["TheaterOwner", "Admin"]}>
+			<AddMovie />
+		</ProtectRoute>
+	),
+};
 
 export const IndividualMovie = {
 	path: ":movieid",
@@ -33,11 +43,6 @@ export const MovieManagementRoute = {
 	children: [IndividualMovieManagementRoute],
 };
 
-export const AddMovieRoute = {
-	path: "addmovie",
-	element: <AddMovie />,
-};
-
 export const MovieRoutes = {
 	path: "movies",
 	element: <Outlet />,
@@ -47,5 +52,6 @@ export const MovieRoutes = {
 			element: <Movies />,
 		},
 		IndividualMovie,
+		AddMovieRoute,
 	],
 };

@@ -6,8 +6,20 @@ import { useNavigate } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import { buildFormData } from "../../utils/manageFormData";
 import { AuthContext } from "../../context/AuthContext";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import toast from "react-hot-toast";
+import ForwardedInput from "../../components/shared/ForwardedInput";
 
 function AddTheater() {
+	const {
+		control,
+		register,
+		handleSubmit,
+		setValue,
+		getValues,
+		reset,
+		formState: { errors },
+	} = useForm();
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 
@@ -36,8 +48,13 @@ function AddTheater() {
 	});
 	const [feedback, setFeedback] = useState("");
 	const handleChange = (field, value) => {
-		setTheater((prev) => ({ ...prev, [field]: value }));
+		// setTheater((prev) => ({ ...prev, [field]: value }));
 	};
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "seatClasses",
+	});
 
 	useEffect(() => {
 		if (user.role === "TheaterOwner") {
@@ -69,12 +86,10 @@ function AddTheater() {
 			const updatedTheater = { ...prev };
 			const keys = fieldPath.split("."); // e.g., "seats.row"
 			let current = updatedTheater;
-
 			keys.slice(0, -1).forEach((key) => {
 				current[key] = { ...current[key] }; // Clone nested objects
 				current = current[key];
 			});
-
 			current[keys[keys.length - 1]] = value; // Set the value
 			return updatedTheater;
 		});
@@ -111,12 +126,22 @@ function AddTheater() {
 			return { ...prev, seatClasses: updatedSeatClasses };
 		});
 	};
-	const handleAddTheater = async (evt) => {
+	const handleAddTheater = async (data, evt) => {
 		evt.preventDefault();
-		console.log(theater);
+		console.log("Hello");
+		let loadingToast = toast.loading("Adding Movie....");
+		const addtheater = { ...data };
+		console.log(addtheater);
+		console.log(addtheater.theaterimages);
+		if (!addtheater.theaterimages)
+			throw new Error("You must include movie poster");
 
-		const theaterFD = buildFormData(theater, "theaterimages");
+		const theaterFD = buildFormData(addtheater);
 		console.log(theaterFD);
+		let files = addtheater.theaterimages;
+		for (let i = 0; i < files.length; i++) {
+			theaterFD.append("theaterimages", files[i]);
+		}
 		for (var pair of theaterFD.entries()) {
 			console.log(pair[0] + ", " + pair[1]);
 		}
@@ -126,15 +151,22 @@ function AddTheater() {
 		}/theater/addtheater`;
 
 		try {
+			console.log("Data");
+			console.log(data);
+
 			const theaterAdded = await axios.post(serverUrl, theaterFD, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
 			});
+			toast.dismiss(loadingToast);
+			toast.success("Successfully Added Movie");
 			console.log(theaterAdded);
 			navigate("/theaters");
 		} catch (err) {
 			console.log(err);
+			toast.error("Unable to Add Movie");
+			toast.dismiss(loadingToast);
 		}
 	};
 	return (
@@ -144,89 +176,151 @@ function AddTheater() {
 			<form
 				action=""
 				className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
-				onSubmit={handleAddTheater}
+				onSubmit={handleSubmit(handleAddTheater)}
+				noValidate
 			>
 				<Input
 					label="Enter Theater Name"
 					name="theaterName"
 					id="theaterName"
 					type="text"
-					required
-					value={theater.theaterName}
-					onChange={(value) => handleChange("theaterName", value)}
-					minlength="5"
-					maxlength="15"
+					register={register}
+					validationSchema={{
+						required: "Theater Name required",
+						minLength: {
+							value: 5,
+							message: "Please enter a minimum of 5 characters",
+						},
+					}}
+					errors={errors}
 				/>
 				<Input
 					label="Enter Location"
 					name="location"
 					id="location"
 					type="text"
-					required
-					value={theater.location}
-					onChange={(value) => handleChange("location", value)}
+					register={register}
+					validationSchema={{
+						required: "Location required",
+						minLength: {
+							value: 5,
+							message: "Please enter a minimum of 5 characters",
+						},
+					}}
+					errors={errors}
 				/>
 				{user.role === "Admin" && (
-					<Select
-						label="Select an Owner"
-						field="owner"
-						selectValue={(value) => handleChange("owner", value)}
-						defaultValue={theater.owner || ""}
-						options={owners} /* Need to grab from API */
-						required
-						displayKey="username"
-						valueKey="_id"
+					<Controller
+						name="owner"
+						control={control}
+						defaultValue={""}
+						rules={{
+							required: "Please select a rating",
+						}}
+						render={({ field }) => (
+							<Select
+								label="Select an Owner"
+								field="owner"
+								options={owners}
+								displayKey="username"
+								valueKey="_id"
+								defaultValue={""}
+								onChange={field.onChange}
+								errors={errors}
+							/>
+						)}
 					/>
 				)}
 
 				<Input
 					label="Enter No: of Rows"
-					name="row"
-					id="row"
+					name="seats.rows"
+					id="rows"
 					type="number"
-					required
-					value={theater.seats.rows}
-					onChange={(value) => handleNestedChange("seats.rows", value)}
-					min="1"
+					register={register}
+					validationSchema={{
+						required: "No of Rows required",
+						min: {
+							value: 5,
+							message: "Rows cannot be less than 5",
+						},
+					}}
+					errors={errors}
 				/>
 				<Input
 					label="Enter Seats Per Row"
-					name="seatsPerRow"
+					name="seats.seatsPerRow"
 					id="seatsPerRow"
 					type="number"
-					required
-					value={theater.seats.seatsPerRow}
-					onChange={(value) => handleNestedChange("seats.seatsPerRow", value)}
-					min="1"
+					register={register}
+					validationSchema={{
+						required: "No of Rows required",
+						min: {
+							value: 5,
+							message: "Seats per Row cannot be less than 5",
+						},
+					}}
+					errors={errors}
 				/>
-				{theater.seatClasses.map((seatClass, index) => (
-					<div key={index} className="flex gap-4 items-center">
-						<Input
-							type="text"
-							name={`seatClass-${index}`}
-							id={`seatClass-${index}`}
-							label="Class Name"
-							value={seatClass.className}
-							onChange={(value) =>
-								handleSeatClassChange(index, "className", value)
-							}
-							required
+				{/* {theater.seatClasses.map((seatClass, index) => ( */}
+				{fields.map((seatClass, index) => (
+					<div
+						key={`seatClass-${index}`}
+						className="flex gap-4 items-center flex-wrap mx-auto max-w-full"
+					>
+						<Controller
+							name={`seatClasses.${index}.className`}
+							control={control}
+							rules={{
+								required: "Class Name required",
+								minLength: {
+									value: 5,
+									message: "Minimum 5 characters required",
+								},
+							}}
+							render={({ field }) => (
+								<ForwardedInput
+									{...field}
+									label="Class Name"
+									type="text"
+									errors={errors}
+								/>
+							)}
 						/>
-						<Input
-							type="number"
-							name={`seatPrice-${index}`}
-							id={`seatPrice-${index}`}
-							label="Price"
-							value={seatClass.price}
-							onChange={(value) => handleSeatClassChange(index, "price", value)}
-							required
+
+						<Controller
+							name={`seatClasses.${index}.price`}
+							control={control}
+							rules={{
+								required: "Price required",
+								min: { value: 0, message: "Price must be greater than 0" },
+							}}
+							render={({ field }) => (
+								<ForwardedInput
+									{...field}
+									label="Price"
+									type="number"
+									errors={errors}
+								/>
+							)}
 						/>
-						<button
-							type="button"
-							onClick={() => removeSeatClass(index)}
-							className="px-4 py-2 bg-red-500 text-white rounded"
-						>
-							Remove
+
+						<button className="flex flex-col justify-center px-8" type="button">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth="1.5"
+								stroke="currentColor"
+								className="size-8 hover:text-red-700 "
+								onClick={() => removeSeatClass(index)}
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+								/>
+							</svg>
 						</button>
 					</div>
 				))}
@@ -234,7 +328,7 @@ function AddTheater() {
 
 				<Button
 					label="Add Seat Class"
-					onClick={addSeatClass}
+					onClick={() => append({ className: "", price: "" })}
 					type="button"
 					colorClass="bg-blue-500 text-white hover:bg-white hover:text-blue-500 my-4"
 				/>
@@ -245,38 +339,45 @@ function AddTheater() {
 
 				<Input
 					label="Enter Parking Details"
-					name="parking"
+					name="amenities.parking"
 					id="parking"
 					type="textarea"
-					required
-					value={theater.amenities.parking}
-					onChange={(value) => handleNestedChange("amenities.parking", value)}
-					minlength="5"
-					maxlength="40"
+					register={register}
+					validationSchema={{
+						minLength: {
+							value: 20,
+							message: "Enter atleast 20 characters",
+						},
+					}}
+					errors={errors}
 				/>
 				<Input
 					label="Enter Restroom Details"
-					name="restroom"
+					name="amenities.restroom"
 					id="restroom"
 					type="textarea"
-					required
-					value={theater.amenities.restroom}
-					onChange={(value) => handleNestedChange("amenities.restroom", value)}
-					minlength="5"
-					maxlength="40"
+					register={register}
+					validationSchema={{
+						minLength: {
+							value: 20,
+							message: "Enter atleast 20 characters",
+						},
+					}}
+					errors={errors}
 				/>
 				<Input
 					label="Enter Food Counter Details"
-					name="foodCounter"
+					name="amenities.foodCounters"
 					id="foodCounter"
 					type="textarea"
-					required
-					value={theater.amenities.foodCounters}
-					onChange={(value) =>
-						handleNestedChange("amenities.foodCounters", value)
-					}
-					minlength="5"
-					maxlength="40"
+					register={register}
+					validationSchema={{
+						minLength: {
+							value: 20,
+							message: "Enter atleast 20 characters",
+						},
+					}}
+					errors={errors}
 				/>
 
 				<Input
@@ -284,14 +385,31 @@ function AddTheater() {
 					name="theaterimages"
 					id="theaterimages"
 					type="file"
-					required
-					value={undefined}
-					onChange={(file) => handleChange("theaterimages", file)}
-					fileTypes={["image/jpeg", " image/jpg", " image/png"]}
 					multiple
+					classes="file-input file-input-lg file-input-ghost w-full"
+					fileTypes={["image/jpeg", " image/jpg", " image/png"]}
+					register={register}
+					validationSchema={{
+						required: "Theater Images required",
+					}}
+					errors={errors}
 				/>
 
-				<Button label="Submit" />
+				<div className="button-group flex gap-4 justify-center">
+					<Button
+						label="Submit"
+						onClick={() => {
+							console.log(errors);
+						}}
+						type="submit"
+					/>
+					<Button
+						label="Reset"
+						onClick={() => {
+							reset();
+						}}
+					/>
+				</div>
 			</form>
 		</section>
 	);
