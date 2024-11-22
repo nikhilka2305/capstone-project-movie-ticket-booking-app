@@ -14,9 +14,9 @@ const generateGrid = (rows, columns, bookedSeats = [], seatClasses) => {
 			const seatClass = seatClasses.find((cls) => {
 				return cls.rows.includes(i);
 			});
-			if (seatClass) console.log("done");
+
 			const className = seatClass ? seatClass.className : "Unallocated";
-			console.log(className);
+
 			const seatNumber = `${i}-${j}`;
 			row.push({
 				seatNumber,
@@ -24,8 +24,10 @@ const generateGrid = (rows, columns, bookedSeats = [], seatClasses) => {
 				className,
 			});
 		}
+
 		grid.push(row);
 	}
+
 	return grid;
 };
 
@@ -60,7 +62,7 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors }) {
 							className={`w-12 h-12 rounded rounded-md text-sm ${
 								seat.isBooked
 									? "bg-red-500 text-black"
-									: classColors[seat.className] || "bg-gray-300"
+									: classColors[seat.className] || "bg-gray-300 text-black"
 							}`}
 							disabled={seat.isBooked}
 							onClick={() => onSeatSelect(seat.seatNumber)}
@@ -79,7 +81,7 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors }) {
 
 export function SeatSelection({ theaterSeats }) {
 	const classColors = generateClassColors(theaterSeats.seatClasses);
-	console.log(theaterSeats);
+
 	const [seatGrid, setSeatGrid] = useState(() =>
 		generateGrid(
 			theaterSeats.rows,
@@ -111,7 +113,7 @@ export function SeatSelection({ theaterSeats }) {
 	};
 
 	return (
-		<div>
+		<div className="w-full flex flex-col justify-center items-center">
 			<SeatGrid
 				seatGrid={seatGrid}
 				onSeatSelect={handleSeatSelect}

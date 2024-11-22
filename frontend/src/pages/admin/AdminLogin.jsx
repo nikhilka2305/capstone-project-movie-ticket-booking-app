@@ -84,6 +84,7 @@ function AdminLogin() {
 				/>
 				<div className="button-group flex gap-4 justify-center">
 					<Button
+						type="submit"
 						label="Submit"
 						onClick={() => {
 							console.log(errors);

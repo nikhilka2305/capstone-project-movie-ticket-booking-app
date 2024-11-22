@@ -3,6 +3,7 @@ import Button from "./formcomponents/Button";
 export default function Card({
 	image = "https://community.softr.io/uploads/db9110/original/2X/7/74e6e7e382d0ff5d7773ca9a87e6f6f8817a68a6.jpeg",
 	title,
+	subtitle,
 	otherInfo,
 	children,
 }) {
@@ -16,7 +17,8 @@ export default function Card({
 				/>
 			</figure>
 			<div className="card-body">
-				<h2 className="card-title text-lg md:text-xl">{title}</h2>
+				<h1 className="card-title text-lg md:text-xl">{title}</h1>
+				{subtitle && <h3>{subtitle}</h3>}
 				{children}
 				<div className="card-actions justify-end mt-4">
 					<Button label="Book Now" />

@@ -103,8 +103,8 @@ export const individualShow = async (req, res, next) => {
 		console.log(showId);
 
 		const show = await Show.findOne({ showId: showId })
-			.populate("movie", "movieName")
-			.populate("theater", "theaterName seats seatClasses owner");
+			.populate("movie")
+			.populate("theater", "theaterName theaterId seats seatClasses owner");
 		if (!show) throw new Error("No such show exists");
 		return res.status(200).json(show);
 	} catch (err) {
