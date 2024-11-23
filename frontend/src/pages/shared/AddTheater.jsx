@@ -47,21 +47,22 @@ function AddTheater() {
 		theaterimages: "",
 	});
 	const [feedback, setFeedback] = useState("");
-	const handleChange = (field, value) => {
-		// setTheater((prev) => ({ ...prev, [field]: value }));
-	};
 
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "seatClasses",
 	});
 
-	useEffect(() => {
-		if (user.role === "TheaterOwner") {
-			setTheater((prevTheater) => {
-				return { ...prevTheater, owner: user.loggedUserObjectId };
-			});
+	const handleRemoveSeatClass = (index) => {
+		if (fields.length === 1) {
+			setFeedback("There must be at least one seat class.");
+			return;
 		}
+		setFeedback(""); // Clear feedback if the action is valid
+		remove(index);
+	};
+
+	useEffect(() => {
 		async function getOwners() {
 			setLoading(true);
 			const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theaterowner`;
@@ -78,59 +79,20 @@ function AddTheater() {
 			}
 		}
 		setLoading(false);
-		getOwners();
+		if (user.role === "Admin") {
+			getOwners();
+		}
 	}, []);
 
-	const handleNestedChange = (fieldPath, value) => {
-		setTheater((prev) => {
-			const updatedTheater = { ...prev };
-			const keys = fieldPath.split("."); // e.g., "seats.row"
-			let current = updatedTheater;
-			keys.slice(0, -1).forEach((key) => {
-				current[key] = { ...current[key] }; // Clone nested objects
-				current = current[key];
-			});
-			current[keys[keys.length - 1]] = value; // Set the value
-			return updatedTheater;
-		});
-	};
-
-	const addSeatClass = () => {
-		setTheater((prev) => ({
-			...prev,
-			seatClasses: [...prev.seatClasses, { className: "", price: "" }],
-		}));
-		setFeedback("");
-	};
-	const removeSeatClass = (index) => {
-		setTheater((prevState) => {
-			if (prevState.seatClasses.length === 1) {
-				setFeedback("Atleast one seat Class is needed");
-				return { ...prevState };
-			}
-
-			const updatedSeatClasses = prevState.seatClasses.filter(
-				(_, i) => i !== index
-			); // Remove the selected seat class
-			setFeedback("");
-			return { ...prevState, seatClasses: updatedSeatClasses };
-		});
-	};
-	const handleSeatClassChange = (index, field, value) => {
-		setTheater((prev) => {
-			const updatedSeatClasses = [...prev.seatClasses];
-			updatedSeatClasses[index] = {
-				...updatedSeatClasses[index],
-				[field]: value,
-			};
-			return { ...prev, seatClasses: updatedSeatClasses };
-		});
-	};
 	const handleAddTheater = async (data, evt) => {
 		evt.preventDefault();
 		console.log("Hello");
+		console.log(user);
 		let loadingToast = toast.loading("Adding Movie....");
 		const addtheater = { ...data };
+		if (user.role === "TheaterOwner") {
+			addtheater.owner = user.loggedUserObjectId;
+		}
 		console.log(addtheater);
 		console.log(addtheater.theaterimages);
 		if (!addtheater.theaterimages)
@@ -313,7 +275,7 @@ function AddTheater() {
 								strokeWidth="1.5"
 								stroke="currentColor"
 								className="size-8 hover:text-red-700 "
-								onClick={() => removeSeatClass(index)}
+								onClick={() => handleRemoveSeatClass(index)}
 							>
 								<path
 									strokeLinecap="round"
@@ -328,7 +290,10 @@ function AddTheater() {
 
 				<Button
 					label="Add Seat Class"
-					onClick={() => append({ className: "", price: "" })}
+					onClick={() => {
+						append({ className: "", price: "" });
+						setFeedback("");
+					}}
 					type="button"
 					colorClass="bg-blue-500 text-white hover:bg-white hover:text-blue-500 my-4"
 				/>

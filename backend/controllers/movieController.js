@@ -30,19 +30,27 @@ export const viewMovies = async (req, res, next) => {
 
 			filterConditions._id = { $in: runningMovies };
 		}
-		const skip = (page - 1) * limit;
-		const movies = await Movie.find(filterConditions)
-			.select("movieName movieId posterImage")
-			.skip(skip)
-			.limit(limit);
-		const totalMovies = await Movie.countDocuments(filterConditions);
 
-		res.json({
-			movies,
-			totalMovies,
-			totalPages: Math.ceil(totalMovies / limit),
-			currentPage: page,
-		});
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const movies = await Movie.find(filterConditions)
+				.select("movieName movieId posterImage")
+				.skip(skip)
+				.limit(limit);
+			const totalMovies = await Movie.countDocuments(filterConditions);
+
+			res.status(200).json({
+				movies,
+				totalMovies,
+				totalPages: Math.ceil(totalMovies / limit),
+				currentPage: page,
+			});
+		} else {
+			const movies = await Movie.find(filterConditions).select(
+				"movieName _id movieId"
+			);
+			res.status(200).json(movies);
+		}
 	} catch (err) {
 		console.log("Unable to get Movies");
 		console.log(err.message);

@@ -47,7 +47,7 @@ function SeatLegend({ classColors }) {
 	);
 }
 
-function SeatGrid({ seatGrid, onSeatSelect, classColors }) {
+function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
 	console.log(classColors);
 	return (
 		<section className="grid grid-rows gap-2 mt-8">
@@ -64,7 +64,7 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors }) {
 									? "bg-red-500 text-black"
 									: classColors[seat.className] || "bg-gray-300 text-black"
 							}`}
-							disabled={seat.isBooked}
+							disabled={seat.isBooked || displayOnly}
 							onClick={() => onSeatSelect(seat.seatNumber)}
 							// onClick={() => {
 							// 	console.log(seat.seatNumber);
@@ -79,7 +79,7 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors }) {
 	);
 }
 
-export function SeatSelection({ theaterSeats }) {
+export function SeatSelection({ theaterSeats, displayOnly = true }) {
 	const classColors = generateClassColors(theaterSeats.seatClasses);
 
 	const [seatGrid, setSeatGrid] = useState(() =>
@@ -118,12 +118,15 @@ export function SeatSelection({ theaterSeats }) {
 				seatGrid={seatGrid}
 				onSeatSelect={handleSeatSelect}
 				classColors={classColors}
+				displayOnly={displayOnly}
 			/>
 			<SeatLegend classColors={classColors} />
-			<div className="mt-4">
-				<h3>Selected Seats:</h3>
-				{selectedSeats.join(", ")}
-			</div>
+			{!displayOnly && (
+				<div className="mt-4">
+					<h3>Selected Seats:</h3>
+					{selectedSeats.join(", ")}
+				</div>
+			)}
 		</div>
 	);
 }

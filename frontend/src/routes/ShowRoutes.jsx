@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Shows from "../pages/shared/Shows";
 import SingleShow from "../pages/shared/SingleShow";
+import AddShow from "../pages/shared/AddShow";
 
 export const IndividualShow = {
 	path: ":showid",
@@ -19,9 +20,9 @@ export const ShowRoutes = {
 	],
 };
 
-export const AddShow = {
+export const AddTheaterShow = {
 	path: "addshow",
-	element: <h2>Add Show</h2>,
+	element: <AddShow />,
 };
 
 export const ManageShow = {

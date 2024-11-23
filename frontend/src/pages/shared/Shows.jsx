@@ -21,8 +21,8 @@ export default function Shows() {
 				});
 				const responseData = response.data;
 				console.log(responseData);
-
-				setShows(responseData);
+				const shows = responseData.shows;
+				setShows(shows);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {

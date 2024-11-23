@@ -26,20 +26,26 @@ export const viewTheaters = async (req, res, next) => {
 		} else if (!adminid) {
 			filterConditions.adminApprovalStatus = "Approved";
 		}
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const theaters = await Theater.find(filterConditions)
+				.skip(skip)
+				.limit(limit)
+				.populate("owner", "username");
+			const totalTheaters = await Theater.countDocuments(filterConditions);
 
-		const skip = (page - 1) * limit;
-		const theaters = await Theater.find(filterConditions)
-			.skip(skip)
-			.limit(limit)
-			.populate("owner", "username");
-		const totalTheaters = await Theater.countDocuments(filterConditions);
-
-		res.json({
-			theaters,
-			totalTheaters,
-			totalPages: Math.ceil(totalTheaters / limit),
-			currentPage: page,
-		});
+			res.status(200).json({
+				theaters,
+				totalTheaters,
+				totalPages: Math.ceil(totalTheaters / limit),
+				currentPage: page,
+			});
+		} else {
+			const theaters = await Theater.find(filterConditions).select(
+				"theaterName _id theaterId"
+			);
+			res.status(200).json(movies);
+		}
 	} catch (err) {
 		console.log("Unable to get Theaters");
 		console.log(err.message);
@@ -67,7 +73,7 @@ export const viewIndividualTheater = async (req, res, next) => {
 	} catch (err) {
 		console.log("Unable to get that Theater");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res.status(404).json({ message: "Error", error: err.message });
 	}
 };
 
@@ -116,6 +122,7 @@ export const editIndividualTheater = async (req, res, next) => {
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner)
 		) {
+			console.log("not true owner");
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
 		const { theaterName, location, seats, seatClasses, amenities } = req.body;

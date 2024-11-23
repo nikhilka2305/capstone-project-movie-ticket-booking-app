@@ -18,6 +18,7 @@ function Select({
 	// 	setValue(evt.target.value);
 	// 	selectValue(evt.target.value);
 	// };
+
 	return (
 		<>
 			<div className="flex justify-between px-8">

@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SeatClassRangeSelector from "./SeatClassRangeSelector";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Button from "../../components/shared/formcomponents/Button";
 import { SeatSelection } from "./SeatGrid";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function SeatManagement() {
+	const navigate = useNavigate();
 	const [seatClasses, setSeatClasses] = useState([
 		{ className: "VIP", price: 500, rows: [] },
 		{ className: "Regular", price: 300, rows: [] },
 	]);
+	const { isAuthenticated, user } = useContext(AuthContext);
+	console.log(user);
 	const [theaterSeats, setTheaterSeats] = useState({
 		rows: 5,
 		columns: 6,
@@ -19,6 +23,7 @@ export default function SeatManagement() {
 			{ className: "Regular", price: 300, rows: [] },
 		], // Sample booked seats
 	});
+	const [loading, setLoading] = useState(false);
 	const [maxRows, setMaxRows] = useState(10);
 	const { theaterid } = useParams();
 	console.log(theaterid);
@@ -28,16 +33,23 @@ export default function SeatManagement() {
 		}/theater/${theaterid}`;
 		async function getTheaterDetails() {
 			try {
+				setLoading(true);
 				console.log("Use effect ran");
 				const theaterData = await axios.get(serverUrl);
 				console.log(theaterData);
 				const theater = theaterData.data;
+				if (user.loggedUserObjectId !== theater.owner.toString()) {
+					console.log("logged User Id", user.loggedObjectIdm, theater.owner);
+					console.log("NOt owner");
+					navigate("/theaters");
+				} else console.log("Yes Owner");
 				setSeatClasses(theater.seatClasses || []);
 				setMaxRows(theater.seats.rows);
 			} catch (err) {
 				console.log(err);
 			}
 		}
+		setLoading(false);
 		getTheaterDetails();
 	}, [theaterid]);
 	useEffect(() => {
@@ -47,6 +59,7 @@ export default function SeatManagement() {
 			}/theater/${theaterid}`;
 			try {
 				console.log("Use effect ran");
+
 				const theaterData = await axios.get(serverUrl);
 				console.log(theaterData);
 				const theater = theaterData.data;

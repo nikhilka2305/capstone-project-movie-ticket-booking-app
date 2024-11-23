@@ -52,16 +52,16 @@ export default function Header() {
 							className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
 						>
 							<li>
-								<a>Homepage</a>
+								<Link to={"/"}>Home</Link>
 							</li>
 							<li>
-								<a>Movies</a>
+								<Link to={"/movies"}>Movies</Link>
 							</li>
 							<li>
-								<a>Theaters</a>
+								<Link to={"/theaters"}>Theaters</Link>
 							</li>
 							<li>
-								<a>Shows</a>
+								<Link to={"/shows"}>Shows</Link>
 							</li>
 							<li>
 								<a>About</a>
@@ -73,8 +73,7 @@ export default function Header() {
 					<Link to={"/"} className="btn btn-ghost text-xl">
 						MBS
 					</Link>
-					<Link to={"/movies"}>Movies</Link>
-					<Link to={"/theaters"}>Theaters</Link>
+
 					{!isAuthenticated && <Link to="/login">Login</Link>}
 					{isAuthenticated && <button onClick={handleLogOut}>LogOut</button>}
 				</div>

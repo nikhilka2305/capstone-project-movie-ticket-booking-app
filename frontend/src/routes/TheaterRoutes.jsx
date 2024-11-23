@@ -1,5 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { AddShow, IndividualShow, ManageShow, ShowRoutes } from "./ShowRoutes";
+import {
+	AddTheaterShow,
+	IndividualShow,
+	ManageShow,
+	ShowRoutes,
+} from "./ShowRoutes";
 import { AddReview, ReviewRoutes } from "./ReviewRoutes";
 import Theaters from "../pages/shared/Theaters";
 import SingleTheater from "../pages/shared/SingleTheater";
@@ -38,7 +43,7 @@ export const IndividualTheater = {
 			index: true,
 			element: <SingleTheater />,
 		},
-		AddShow,
+		AddTheaterShow,
 		ManageShow,
 		ShowRoutes,
 		IndividualShow,

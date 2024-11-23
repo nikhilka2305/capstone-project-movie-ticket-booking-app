@@ -7,6 +7,8 @@ import HandleError from "../middleware/errorHandling.js";
 import { validateDateTime } from "../utils/validateDate.js";
 
 export const viewShows = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
+	console.log(req.query);
 	const { movieid, theaterid } = req.params;
 	console.log(movieid, theaterid);
 	const now = new Date();
@@ -33,12 +35,28 @@ export const viewShows = async (req, res, next) => {
 			console.log(theater._id);
 			filterConditions.theater = theater._id;
 		}
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const shows = await Show.find(filterConditions)
+				.populate("movie", "movieName movieId posterImage")
+				.populate("theater", "theaterName seats seatClasses owner")
+				.skip(skip)
+				.limit(limit);
+			const totalShows = await Show.countDocuments(filterConditions);
 
-		const shows = await Show.find(filterConditions)
-			.populate("movie", "movieName posterImage")
-			.populate("theater", "theaterName seats seatClasses owner");
+			res.status(200).json({
+				shows,
+				totalShows,
+				totalPages: Math.ceil(totalShows / limit),
+				currentPage: page,
+			});
+		} else {
+			const shows = await Show.find(filterConditions)
+				.populate("movie", "movieName posterImage")
+				.populate("theater", "theaterName seats seatClasses owner");
 
-		res.json(shows);
+			res.status(200).json(shows);
+		}
 	} catch (err) {
 		console.log("Unable to get Shows");
 		console.log(err.message);

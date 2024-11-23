@@ -164,7 +164,7 @@ function SingleShow() {
 						<div className="card-body">
 							<h2 className="card-title mx-auto">Seat Availablity</h2>
 						</div>
-						<SeatSelection theaterSeats={theaterSeats} />
+						<SeatSelection theaterSeats={theaterSeats} displayOnly={true} />
 					</div>
 				</>
 			)}
