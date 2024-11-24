@@ -72,11 +72,6 @@ function SingleShow() {
 					averageRating: theaterReviewResponse.data.averageRating,
 					reviewCount: theaterReviewResponse.data.reviewCount,
 				});
-
-				// setTheaterRating({
-				// 	averageRating: reviewResponse.data.averageRating,
-				// 	reviewCount: reviewResponse.data.reviewCount,
-				// });
 			} catch (err) {
 				console.log(err);
 				navigate("/theaters");

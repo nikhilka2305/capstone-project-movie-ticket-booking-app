@@ -15,12 +15,16 @@ export const IndividualUserManagementRoute = {
 
 export const AdminDashboard = {
 	path: ":adminid",
-	element: (
-		<h3>
-			Admin Dashboard of 1<Outlet />
-		</h3>
-	),
-	children: [TheaterManagementRoute, BookingRoute, AddBooking],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <h2>Admin Dashboard</h2>,
+		},
+		TheaterManagementRoute,
+		BookingRoute,
+		AddBooking,
+	],
 };
 export const AdminProfileRoute = {
 	path: ":adminid/profile",

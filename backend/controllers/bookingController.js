@@ -7,14 +7,16 @@ import HandleError from "../middleware/errorHandling.js";
 import { handleBookingCancellation } from "../utils/deleteCascadeManager.js";
 
 export const viewPersonalBookings = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
-	const filterOptions = { user: req.user.loggedUserObjectId };
-	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
-		return res.status(403).json({
-			error: "Authorization Error",
-			message: "You are not authorized to see this page",
-		});
+	console.log(userid);
 
+	let filterOptions = {};
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+		throw new HandleError("You are not authorized to see this page", 403);
+	else if (req.user.loggedUserId === userid) {
+		filterOptions = { user: req.user.loggedUserObjectId };
+	}
 	try {
 		if (req.user.role === "Admin") {
 			console.log("chek user");
@@ -34,34 +36,72 @@ export const viewPersonalBookings = async (req, res, next) => {
 				);
 			}
 		}
+		console.log(filterOptions);
 
-		const bookings = await Booking.find(filterOptions)
-			.populate({
-				path: "user",
-				select: "username",
-			})
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const bookings = await Booking.find(filterOptions)
+				.skip(skip)
+				.limit(limit)
+				.populate({
+					path: "user",
+					select: "username",
+				})
 
-			.populate({
-				path: "showInfo",
-				populate: [
-					{
-						path: "movie",
-						select: "movieName",
-					},
-					{
-						path: "theater",
-						select: "theaterName",
-					},
-				],
+				.populate({
+					path: "showInfo",
+					populate: [
+						{
+							path: "movie",
+							select: "movieName posterImage",
+						},
+						{
+							path: "theater",
+							select: "theaterName",
+						},
+					],
 
-				select: "-bookedSeats",
+					select: "-bookedSeats",
+				});
+			const totalBookings = await Booking.countDocuments(filterOptions);
+
+			res.status(200).json({
+				bookings,
+				totalBookings,
+				totalPages: Math.ceil(totalBookings / limit),
+				currentPage: page,
 			});
+		} else {
+			const bookings = await Booking.find(filterOptions)
+				.populate({
+					path: "user",
+					select: "username",
+				})
 
-		res.json(bookings);
+				.populate({
+					path: "showInfo",
+					populate: [
+						{
+							path: "movie",
+							select: "movieName posterImage",
+						},
+						{
+							path: "theater",
+							select: "theaterName",
+						},
+					],
+
+					select: "-bookedSeats",
+				});
+
+			res.status(200).json(bookings);
+		}
 	} catch (err) {
 		console.log("Unable to get Bookings");
 		console.log(err.message);
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -69,19 +109,23 @@ export const viewIndividualBooking = async (req, res, nex) => {
 	const { bookingid } = req.params;
 
 	try {
-		const booking = await Booking.findOne({ bookingId: bookingid })
-			.lean()
-			.populate({
-				path: "showInfo",
-				select: " -seats ",
-				populate: {
-					path: "theater",
-					select: "owner",
+		const booking = await Booking.findOne({ bookingId: bookingid }).populate({
+			path: "showInfo",
+			populate: [
+				{
+					path: "movie",
+					select: "movieName posterImage movieId",
 				},
-			})
-			.select("-bookedSe");
+				{
+					path: "theater",
+					select: "theaterName theaterId location",
+				},
+			],
 
-		if (!booking) throw new HandleError("No such booking found", 404);
+			select: "-bookedSeats",
+		});
+
+		if (!booking) throw new HandleError("No bookings found", 404);
 		console.log(booking.user, req.user.loggedUserObjectId);
 		console.log(booking);
 		if (

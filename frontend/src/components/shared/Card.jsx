@@ -5,7 +5,9 @@ export default function Card({
 	title,
 	subtitle,
 	otherInfo,
+	btnLabel = "Book Now",
 	children,
+	btndisabled = false,
 }) {
 	return (
 		<div className="card card-side bg-base-100 w-full max-w-4xl mx-auto my-auto shadow-xl my-8 flex flex-col md:flex-row">
@@ -21,7 +23,7 @@ export default function Card({
 				{subtitle && <h3>{subtitle}</h3>}
 				{children}
 				<div className="card-actions justify-end mt-4">
-					<Button label="Book Now" />
+					<Button label={btnLabel} disabled={btndisabled ? "disabled" : ""} />
 				</div>
 			</div>
 		</div>

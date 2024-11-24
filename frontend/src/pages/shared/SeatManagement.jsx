@@ -38,7 +38,10 @@ export default function SeatManagement() {
 				const theaterData = await axios.get(serverUrl);
 				console.log(theaterData);
 				const theater = theaterData.data;
-				if (user.loggedUserObjectId !== theater.owner.toString()) {
+				if (
+					user.role !== "Admin" &&
+					user.loggedUserObjectId !== theater.owner.toString()
+				) {
 					console.log("logged User Id", user.loggedObjectIdm, theater.owner);
 					console.log("NOt owner");
 					navigate("/theaters");

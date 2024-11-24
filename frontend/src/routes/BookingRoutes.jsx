@@ -1,4 +1,6 @@
 import { Outlet } from "react-router-dom";
+import Bookings from "../pages/shared/Bookings";
+import SingleBooking from "../pages/shared/SingleBooking";
 
 export const ManageBooking = {
 	path: "manage",
@@ -11,23 +13,25 @@ export const ManageBooking = {
 };
 export const IndividualBooking = {
 	path: ":bookingid",
-	element: (
-		<h4>
-			Individual Booking
-			<Outlet />
-		</h4>
-	),
-	children: [ManageBooking],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <SingleBooking />,
+		},
+		ManageBooking,
+	],
 };
 export const BookingRoute = {
 	path: "bookings",
-	element: (
-		<h4>
-			All/Filtered Booking
-			<Outlet />
-		</h4>
-	),
-	children: [IndividualBooking],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <Bookings />,
+		},
+		IndividualBooking,
+	],
 };
 
 export const TheaterBookingRoute = {

@@ -12,6 +12,7 @@ const userSchema = joi
 			})
 			.optional(),
 		password: joi.string().required().min(6),
+		newPassword: joi.string().optional(),
 	})
 	.options({ abortEarly: false });
 
@@ -21,6 +22,7 @@ const theaterOwnerSchema = joi
 		email: joi.string().email().required(),
 		mobile: joi.number().integer().min(1000000000).max(9999999999).required(),
 		password: joi.string().required().min(6),
+		newPassword: joi.string().optional(),
 	})
 	.options({ abortEarly: false });
 
@@ -30,6 +32,7 @@ const adminSchema = joi
 		email: joi.string().email().required(),
 		mobile: joi.number().integer().min(1000000000).max(9999999999).required(),
 		password: joi.string().required().min(6),
+		newPassword: joi.string().optional(),
 	})
 	.options({ abortEarly: false });
 
@@ -64,17 +67,24 @@ export const validateUserReg = (validator) => {
 
 // Patch Schemas
 const userPatchSchema = userSchema.fork(
-	["username", "email", "mobile", "moviePreferences", "password"],
+	[
+		"username",
+		"email",
+		"mobile",
+		"moviePreferences",
+		"password",
+		"newPassword",
+	],
 	(field) => field.optional()
 );
 
 const theaterOwnerPatchSchema = theaterOwnerSchema.fork(
-	["username", "email", "mobile", "password"],
+	["username", "email", "mobile", "password", "newPassword"],
 	(field) => field.optional()
 );
 
 const adminPatchSchema = adminSchema.fork(
-	["username", "email", "mobile", "password"],
+	["username", "email", "mobile", "password", "newPassword"],
 	(field) => field.optional()
 );
 
