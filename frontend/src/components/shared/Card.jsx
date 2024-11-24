@@ -10,7 +10,7 @@ export default function Card({
 	btndisabled = false,
 }) {
 	return (
-		<div className="card card-side bg-base-100 w-full max-w-4xl mx-auto my-auto shadow-xl my-8 flex flex-col md:flex-row">
+		<div className="card card-side bg-base-100 w-full max-w-4xl mx-auto shadow-xl my-8 flex flex-col md:flex-row">
 			<figure className="w-full md:w-2/5 min-w-64 flex justify-center items-center">
 				<img
 					src={image}

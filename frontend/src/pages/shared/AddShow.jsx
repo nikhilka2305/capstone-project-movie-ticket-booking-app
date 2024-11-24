@@ -84,7 +84,7 @@ function AddShow() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<h2 className="text-center">Add New Theater</h2>
+			<h2 className="text-center">Add New Show</h2>
 			{loading && <p>Loading</p>}
 			{!loading && (
 				<form

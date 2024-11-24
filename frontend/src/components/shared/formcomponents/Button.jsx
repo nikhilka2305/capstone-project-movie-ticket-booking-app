@@ -6,7 +6,7 @@ export default function Button({ label, type = "button", disabled, ...props }) {
 		<button
 			disabled={disabled}
 			onClick={props.onClick}
-			className={`${colorClasses} py-2 px-5 md:py-3 md:px-6  font-bold md:text-lg rounded-lg shadow-md mx-auto disabled:bg-gray-500 disabled: text-black`}
+			className={`${colorClasses} py-2 px-5 md:py-3 md:px-6  font-bold md:text-lg rounded-lg shadow-md mx-auto  disabled:bg-gray-500 disabled: text-black`}
 			type={type}
 		>
 			{label}

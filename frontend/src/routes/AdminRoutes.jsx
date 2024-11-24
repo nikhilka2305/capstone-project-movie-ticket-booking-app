@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { TheaterManagementRoute } from "./TheaterRoutes";
-import { AddBooking, BookingRoute } from "./BookingRoutes";
+import { BookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
 
 export const IndividualTheaterOwnerManagementRoute = {
@@ -23,7 +23,6 @@ export const AdminDashboard = {
 		},
 		TheaterManagementRoute,
 		BookingRoute,
-		AddBooking,
 	],
 };
 export const AdminProfileRoute = {

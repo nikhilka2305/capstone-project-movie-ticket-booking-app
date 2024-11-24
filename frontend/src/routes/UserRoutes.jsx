@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { ManageReview, ReviewRoutes } from "./ReviewRoutes";
-import { AddBooking, BookingRoute } from "./BookingRoutes";
+import { BookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
 
 export const UserDashboard = {
@@ -14,7 +14,6 @@ export const UserDashboard = {
 		ReviewRoutes,
 		ManageReview,
 		BookingRoute,
-		AddBooking,
 	],
 };
 

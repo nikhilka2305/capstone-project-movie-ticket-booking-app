@@ -5,7 +5,13 @@ import {
 	formatSeatNumber,
 } from "../../utils/numbertoLetterID";
 
-const generateGrid = (rows, columns, bookedSeats = [], seatClasses) => {
+const generateGrid = (
+	rows,
+	columns,
+	bookedSeats = [],
+	selectedSeats = [],
+	seatClasses
+) => {
 	const grid = [];
 	const seatIndex = 0;
 	for (let i = 1; i <= rows; i++) {
@@ -17,11 +23,18 @@ const generateGrid = (rows, columns, bookedSeats = [], seatClasses) => {
 
 			const className = seatClass ? seatClass.className : "Unallocated";
 
+			const price = seatClass ? seatClass.price : 0;
+
 			const seatNumber = `${i}-${j}`;
+			const isSelected = selectedSeats.some(
+				(selected) => selected.seatNumber === seatNumber
+			);
 			row.push({
 				seatNumber,
 				isBooked: bookedSeats.includes(seatNumber),
+				isSelected,
 				className,
+				price,
 			});
 		}
 
@@ -62,6 +75,8 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
 							className={`w-12 h-12 rounded rounded-md text-sm ${
 								seat.isBooked
 									? "bg-red-500 text-black"
+									: seat.isSelected
+									? "bg-gray-600 text-white"
 									: classColors[seat.className] || "bg-gray-300 text-black"
 							}`}
 							disabled={seat.isBooked || displayOnly}
@@ -79,14 +94,20 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
 	);
 }
 
-export function SeatSelection({ theaterSeats, displayOnly = true }) {
+export function SeatSelection({
+	theaterSeats,
+	displayOnly = true,
+	selectedSeats,
+	setSelectedSeats,
+}) {
 	const classColors = generateClassColors(theaterSeats.seatClasses);
-
+	console.log(selectedSeats);
 	const [seatGrid, setSeatGrid] = useState(() =>
 		generateGrid(
 			theaterSeats.rows,
 			theaterSeats.columns,
 			theaterSeats.bookedSeats,
+			theaterSeats.selectedSeats,
 			theaterSeats.seatClasses
 		)
 	);
@@ -97,19 +118,46 @@ export function SeatSelection({ theaterSeats, displayOnly = true }) {
 				theaterSeats.rows,
 				theaterSeats.columns,
 				theaterSeats.bookedSeats,
+				theaterSeats.selectedSeats,
 				theaterSeats.seatClasses
 			)
 		);
 	}, [theaterSeats]);
 
-	const [selectedSeats, setSelectedSeats] = useState([]);
-	console.log(selectedSeats);
+	// const [selectedSeats, setSelectedSeats] = useState([]);
+
 	const handleSeatSelect = (seatNumber) => {
-		setSelectedSeats((prev) =>
-			prev.includes(seatNumber)
-				? prev.filter((seat) => seat !== seatNumber)
-				: [...prev, formatSeatNumber(seatNumber)]
+		console.log(seatNumber);
+		const row = parseInt(seatNumber.split("-")[0]);
+		const seatClass = theaterSeats.seatClasses.find((seatClass) =>
+			seatClass.rows.includes(row)
 		);
+		if (!seatClass) {
+			console.error("Seat class not found for row:", row);
+			return;
+		}
+		// console.log(...selectedSeats);
+		// setSelectedSeats((prev) =>
+		// 	prev.includes(seatNumber)
+		// 		? prev.filter((seat) => seat !== seatNumber)
+		// 		: [...prev, seatNumber]
+		// );
+		const isSelected = selectedSeats.find(
+			(seat) => seat.seatNumber === seatNumber
+		);
+
+		if (isSelected) {
+			// If already selected, remove it
+			setSelectedSeats(
+				selectedSeats.filter((seat) => seat.seatNumber !== seatNumber)
+			);
+		} else {
+			// If not selected, add it with class details
+			setSelectedSeats((selSeats) => [
+				...selSeats,
+				{ seatNumber, className: seatClass.className, price: seatClass.price },
+			]);
+		}
 	};
 
 	return (
@@ -121,12 +169,6 @@ export function SeatSelection({ theaterSeats, displayOnly = true }) {
 				displayOnly={displayOnly}
 			/>
 			<SeatLegend classColors={classColors} />
-			{!displayOnly && (
-				<div className="mt-4">
-					<h3>Selected Seats:</h3>
-					{selectedSeats.join(", ")}
-				</div>
-			)}
 		</div>
 	);
 }

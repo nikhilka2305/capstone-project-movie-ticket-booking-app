@@ -2,10 +2,18 @@ import { Outlet } from "react-router-dom";
 import Shows from "../pages/shared/Shows";
 import SingleShow from "../pages/shared/SingleShow";
 import AddShow from "../pages/shared/AddShow";
+import { AddBookingRoute } from "./BookingRoutes";
 
 export const IndividualShow = {
 	path: ":showid",
-	element: <SingleShow />,
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <SingleShow />,
+		},
+		AddBookingRoute,
+	],
 };
 
 export const ShowRoutes = {

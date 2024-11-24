@@ -1,13 +1,35 @@
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import Card from "../../components/shared/Card";
+import React from "react";
+import { useContext, useEffect, useState } from "react";
+import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
-import { useEffect, useState } from "react";
-import { formatDate } from "../../utils/dateFormatter";
+import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
+
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import Select from "../../components/shared/formcomponents/Select";
+import Card from "../../components/shared/Card";
 import { SeatSelection } from "./SeatGrid";
+import { formatDate } from "../../utils/dateFormatter";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 
-function SingleShow() {
+function AddBooking() {
+	const navigate = useNavigate();
+	const [booking, setBooking] = useState({
+		showInfo: "",
+		seats: [
+			{
+				seatNumber: {
+					row: "",
+					col: "",
+				},
+				seatClass: {
+					className: "",
+					price: "",
+				},
+			},
+		],
+	});
 	const [show, setShow] = useState();
 	const [movieRating, setMovieRating] = useState({
 		averageRating: 0,
@@ -21,16 +43,17 @@ function SingleShow() {
 		rows: "",
 		columns: "",
 		bookedSeats: [],
+		selectedSeats: [],
 		seatClasses: [], // Sample booked seats
 	});
-	const navigate = useNavigate();
-	const [loading, setLoading] = useState(false);
+	const [selectedSeats, setSelectedSeats] = useState([]);
 
+	const { user } = useContext(AuthContext);
+	const [loading, setLoading] = useState(true);
 	const { showid } = useParams();
 	const tagsClasses =
 		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1 text-center";
 	console.log(showid);
-
 	useEffect(() => {
 		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/show/${showid}`;
 		setLoading(true);
@@ -41,13 +64,14 @@ function SingleShow() {
 				console.log(responseData);
 				setShow(responseData);
 				const theaterData = responseData.theater;
-				console.log;
+
 				setTheaterSeats({
 					rows: theaterData.seats.rows,
 					columns: theaterData.seats.seatsPerRow,
 					bookedSeats: responseData.bookedSeats.map(
 						(seat) => `${seat.seatNumber.row}-${seat.seatNumber.col}`
 					),
+					selectedSeats: selectedSeats,
 					seatClasses: theaterData.seatClasses,
 				});
 
@@ -74,12 +98,53 @@ function SingleShow() {
 				});
 			} catch (err) {
 				console.log(err);
-				// navigate("/theaters");
+				navigate("/theaters");
 			}
 		}
 		setLoading(false);
 		getShow();
-	}, [showid, navigate]);
+	}, [showid, navigate, selectedSeats]);
+
+	const handleAddBooking = async function (evt) {
+		const selectedSeatInfo = selectedSeats.map((seat) => {
+			const [row, col] = seat.seatNumber.split("-");
+			return {
+				seatNumber: {
+					row: row,
+					col: col,
+				},
+				seatClass: {
+					className: seat.className,
+					price: seat.price,
+				},
+			};
+		});
+		const bookingInfo = {
+			showInfo: show._id,
+			seats: selectedSeatInfo,
+		};
+		const serverUrl = `${
+			import.meta.env.VITE_SERVER_BASE_URL
+		}/booking/newBooking`;
+		evt.preventDefault();
+		let loadingToast = toast.loading("Confirming Booking..");
+		console.log(bookingInfo);
+		try {
+			let bookingData = await axios.post(serverUrl, bookingInfo, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			console.log(bookingData);
+			toast.dismiss(loadingToast);
+			toast.success("Booking Completed");
+			navigate(-1);
+		} catch (err) {
+			toast.dismiss(loadingToast);
+			toast.error("Unable to Complete Booking");
+			console.log(err);
+		}
+	};
 
 	return (
 		<>
@@ -156,10 +221,64 @@ function SingleShow() {
 					</Card>
 					{/* md:flex-row */}
 					<div className="card bg-base-100 w-full shadow-xl mx-auto">
-						<div className="card-body">
-							<h2 className="card-title mx-auto">Seat Availablity</h2>
+						<div className=" flex justify-between items-center">
+							<h2 className="text-3xl font-semibold mx-auto">
+								Seat Availablity
+							</h2>
+							<Button
+								label="Proceed to Booking"
+								disabled={selectedSeats.length === 0}
+								onClick={() =>
+									document.getElementById("my_modal_3").showModal()
+								}
+							/>
 						</div>
-						<SeatSelection theaterSeats={theaterSeats} displayOnly={true} />
+						<dialog id="my_modal_3" className="modal">
+							<div className="modal-box flex flex-col gap-4">
+								<form method="dialog">
+									{/* if there is a button in form, it will close the modal */}
+									<button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+										✕
+									</button>
+								</form>
+
+								<h3 className="text-center text-2xl font-bold mb-4">
+									Confirm The Details
+								</h3>
+								<p className="text-xl mb-4">Seats: </p>
+								<ul className="">
+									{selectedSeats.map((seat) => {
+										console.log(seat);
+										return (
+											<li key={seat.seatNumber} className="text-center mb-2">
+												{`${formatSeatNumber(seat.seatNumber)} - ${
+													seat.className
+												} (₹${seat.price}) `}
+											</li>
+										);
+									})}
+								</ul>
+								<p className="mt-8 text-2xl">
+									<strong className="font-semibold text-xl mr-16">
+										Total Price:
+									</strong>{" "}
+									₹
+									{selectedSeats.reduce((total, seat) => total + seat.price, 0)}
+								</p>
+
+								<Button
+									colorClass="bg-green-500 text-white"
+									label="Complete Booking"
+									onClick={handleAddBooking}
+								/>
+							</div>
+						</dialog>
+						<SeatSelection
+							theaterSeats={theaterSeats}
+							displayOnly={false}
+							selectedSeats={selectedSeats}
+							setSelectedSeats={setSelectedSeats}
+						/>
 					</div>
 				</>
 			)}
@@ -167,4 +286,4 @@ function SingleShow() {
 	);
 }
 
-export default SingleShow;
+export default AddBooking;

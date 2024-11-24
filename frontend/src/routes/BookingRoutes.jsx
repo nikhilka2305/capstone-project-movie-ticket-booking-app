@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Bookings from "../pages/shared/Bookings";
 import SingleBooking from "../pages/shared/SingleBooking";
+import AddBooking from "../pages/shared/AddBooking";
+import ProtectRoute from "../hooks/ProtectRoute";
 
 export const ManageBooking = {
 	path: "manage",
@@ -45,7 +47,12 @@ export const TheaterBookingRoute = {
 	children: [IndividualBooking],
 };
 
-export const AddBooking = {
+export const AddBookingRoute = {
 	path: "addBooking",
-	element: <h4>Book Your Seats</h4>,
+	element: (
+		<ProtectRoute roles={["User", "Admin"]}>
+			{" "}
+			<AddBooking />
+		</ProtectRoute>
+	),
 };
