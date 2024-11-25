@@ -7,23 +7,27 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
-function AddShow() {
+
+function EditSingleReview() {
+	const [editReview, setEditReview] = useState({});
 	const {
 		control,
 		register,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm();
-
+	} = useForm({
+		defaultValues: {
+			userRating: editReview.userRating || "", // Provide default empty values
+			userReview: editReview.userReview || "",
+		},
+	});
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [theater, setTheater] = useState({});
-	const [movies, setMovies] = useState({});
-	const [show, setShow] = useState({});
+
 	const [loading, setLoading] = useState(true);
-	const { theaterid } = useParams();
-	console.log(theaterid);
+	const { reviewid } = useParams();
+	console.log(reviewid);
 
 	useEffect(() => {
 		setLoading(true);
@@ -31,24 +35,23 @@ function AddShow() {
 		async function fetchData() {
 			const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 			try {
-				const theaterData = await axios.get(
-					`${serverUrl}/theater/${theaterid}`
-				);
-				const theater = theaterData.data;
-				console.log(theater);
+				const reviewData = await axios.get(`${serverUrl}/review/${reviewid}`);
+				const review = reviewData.data;
+				console.log(review);
 				if (
 					user.role !== "Admin" &&
-					user.loggedUserObjectId !== theater.owner.toString()
+					user.loggedUserObjectId !== review.userId.toString()
 				) {
-					console.log("logged User Id", user.loggedUserObjectId, theater.owner);
+					console.log("logged User Id", user.loggedUserObjectId, review.userId);
 					console.log("NOt owner");
-					navigate("/theaters");
+					throw new Error("Unable to show this review");
+					// navigate("/");
 				} else console.log("Yes Ad...");
-				setTheater(theater);
-				const movieData = await axios.get(`${serverUrl}/movie`);
-				const movies = movieData.data;
-				console.log(movies);
-				setMovies(movies);
+				setEditReview(review);
+				reset({
+					userRating: review.userRating || "",
+					userReview: review.userReview || "",
+				});
 				setLoading(false);
 			} catch (err) {
 				console.log(err);
@@ -56,34 +59,32 @@ function AddShow() {
 			}
 		}
 		fetchData();
-	}, [theaterid, theaterData]);
+	}, [reviewid, reset, user]);
 
-	const handleAddShow = async function (data, evt) {
+	const handleUpdateReview = async function (data, evt) {
 		evt.preventDefault();
-		let loadingToast = toast.loading("Adding Show....");
-		console.log("Handle Show.");
-		const serverUrl = `${
-			import.meta.env.VITE_SERVER_BASE_URL
-		}/theater/${theaterid}/newShow`;
-		const show = { ...data };
-		console.log(show);
+		let loadingToast = toast.loading("Updating Review....");
 		try {
-			const addShow = await axios.post(serverUrl, show, {
+			const serverUrl = `${
+				import.meta.env.VITE_SERVER_BASE_URL
+			}/review/${reviewid}`;
+			const updatedReview = { ...data };
+			console.log(updatedReview);
+			const reviewUpdated = await axios.patch(serverUrl, updatedReview, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(addShow);
+			console.log(reviewUpdated);
 			toast.dismiss(loadingToast);
-			toast.success("Successfully Added Show");
-			navigate("/login");
+			toast.success("Successfully Updated Review");
+			navigate(`/movies/`);
 		} catch (err) {
-			toast.dismiss(loadingToast);
-			toast.error("Unable to Add Show");
 			console.log(err);
+			toast.dismiss(loadingToast);
+			toast.error("Unable to update review");
 		}
 	};
-
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
 			<h2 className="text-center">Add New Show</h2>
@@ -92,37 +93,34 @@ function AddShow() {
 				<form
 					action=""
 					className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
-					onSubmit={handleSubmit(handleAddShow)}
+					onSubmit={handleSubmit(handleUpdateReview)}
 					noValidate
 				>
 					<Controller
-						name="movie"
+						name="userRating"
 						control={control}
 						defaultValue={""}
 						rules={{
-							required: "Please select a movie",
+							required: "Please select a rating",
 						}}
 						render={({ field }) => (
 							<Select
-								label="Choose a Movie"
-								field="movie"
-								options={movies}
-								displayKey="movieName"
-								valueKey="_id"
-								defaultValue={""}
+								label="Choose a Rating"
+								{...field}
+								options={[1, 2, 3, 4, 5]}
 								onChange={field.onChange}
 								errors={errors}
 							/>
 						)}
 					/>
 					<Input
-						label="Enter Show Date & Tome"
-						name="showTime"
-						id="showTime"
-						type="datetime-local"
+						label="Update User review"
+						name="userReview"
+						id="userReview"
+						type="text-area"
 						register={register}
 						validationSchema={{
-							required: "Date & Time required",
+							required: "Review required",
 						}}
 						errors={errors}
 					/>
@@ -147,4 +145,4 @@ function AddShow() {
 	);
 }
 
-export default AddShow;
+export default EditSingleReview;

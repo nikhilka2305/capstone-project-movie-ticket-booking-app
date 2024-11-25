@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { AddReview, ReviewRoutes } from "./ReviewRoutes";
+import { AddReviewRoute, ReviewRoutes } from "./ReviewRoutes";
 import Movies from "../pages/shared/Movies";
 import SingleMovie from "../pages/shared/SingleMovie";
 import AddMovie from "../pages/shared/AddMovie";
@@ -23,7 +23,7 @@ export const IndividualMovie = {
 			element: <SingleMovie />,
 		},
 		ReviewRoutes,
-		AddReview,
+		AddReviewRoute,
 	],
 };
 

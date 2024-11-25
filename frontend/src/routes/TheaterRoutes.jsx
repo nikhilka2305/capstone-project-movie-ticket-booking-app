@@ -5,7 +5,7 @@ import {
 	ManageShow,
 	ShowRoutes,
 } from "./ShowRoutes";
-import { AddReview, ReviewRoutes } from "./ReviewRoutes";
+import { AddReviewRoute, ReviewRoutes } from "./ReviewRoutes";
 import Theaters from "../pages/shared/Theaters";
 import SingleTheater from "../pages/shared/SingleTheater";
 import SeatManagement from "../pages/shared/SeatManagement";
@@ -48,7 +48,7 @@ export const IndividualTheater = {
 		ShowRoutes,
 		IndividualShow,
 		ReviewRoutes,
-		AddReview,
+		AddReviewRoute,
 		IndividualTheaterManagementRoute,
 	],
 };

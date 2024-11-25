@@ -6,6 +6,8 @@ import { Theater } from "../models/Theater.js";
 import { ObjectId } from "mongodb";
 import { User } from "../models/User.js";
 export const viewReviews = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
+	console.log(req.query);
 	const { movieid, theaterid } = req.params;
 	console.log(movieid, theaterid);
 	const filterConditions = { deleted: false };
@@ -25,13 +27,34 @@ export const viewReviews = async (req, res, next) => {
 			}
 			filterConditions.theaterId = theater._id;
 		}
-		const reviews = await Review.find(filterConditions)
-			.populate("movieId", "movieName")
-			.populate("theaterId", "theaterName")
-			.populate("userId", "username");
-		res.json(reviews);
+
+		if (req.query.page && req.query.limit) {
+			console.log(page, limit);
+			const skip = (page - 1) * limit;
+			const reviews = await Review.find(filterConditions)
+				.populate("movieId", "movieName")
+				.populate("theaterId", "theaterName")
+				.populate("userId", "username displayImage")
+				.skip(skip)
+				.limit(limit);
+			const totalReviews = await Review.countDocuments(filterConditions);
+			res.status(200).json({
+				reviews,
+				totalReviews,
+				totalPages: Math.ceil(totalReviews / limit),
+				currentPage: page,
+			});
+		} else {
+			const reviews = await Review.find(filterConditions)
+				.populate("movieId", "movieName")
+				.populate("theaterId", "theaterName")
+				.populate("userId", "username");
+			res.status(200).json(reviews);
+		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode)
+			.json({ message: "Error", error: err.message });
 	}
 };
 

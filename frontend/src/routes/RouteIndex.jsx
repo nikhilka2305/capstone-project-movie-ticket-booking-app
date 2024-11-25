@@ -23,7 +23,7 @@ import {
 } from "./MovieRoutes";
 import { TheaterManagementRoute, TheaterRoutes } from "./TheaterRoutes";
 import { ShowRoutes } from "./ShowRoutes";
-import { ManageReview, ReviewRoutes } from "./ReviewRoutes";
+import { IndividualReview, ManageReview, ReviewRoutes } from "./ReviewRoutes";
 import { TheaterBookingRoute } from "./BookingRoutes";
 
 import ProtectRoute from "../hooks/ProtectRoute";
@@ -160,6 +160,17 @@ export default function RouteIndex() {
 				ReviewRoutes,
 				ManageReview,
 			],
+		},
+		{
+			path: "managereviews",
+			element: (
+				<>
+					<Header />
+					<Outlet />
+					<Footer />
+				</>
+			),
+			children: [IndividualReview],
 		},
 		{
 			path: "owner",

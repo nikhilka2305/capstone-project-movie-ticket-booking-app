@@ -15,21 +15,7 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 
 function AddBooking() {
 	const navigate = useNavigate();
-	const [booking, setBooking] = useState({
-		showInfo: "",
-		seats: [
-			{
-				seatNumber: {
-					row: "",
-					col: "",
-				},
-				seatClass: {
-					className: "",
-					price: "",
-				},
-			},
-		],
-	});
+
 	const [show, setShow] = useState();
 	const [movieRating, setMovieRating] = useState({
 		averageRating: 0,
@@ -48,7 +34,6 @@ function AddBooking() {
 	});
 	const [selectedSeats, setSelectedSeats] = useState([]);
 
-	const { user } = useContext(AuthContext);
 	const [loading, setLoading] = useState(true);
 	const { showid } = useParams();
 	const tagsClasses =
@@ -138,7 +123,7 @@ function AddBooking() {
 			console.log(bookingData);
 			toast.dismiss(loadingToast);
 			toast.success("Booking Completed");
-			navigate(-1);
+			navigate(`/shows/${show.showId}`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Complete Booking");
@@ -219,7 +204,7 @@ function AddBooking() {
 							</div>
 						</div>
 					</Card>
-					{/* md:flex-row */}
+
 					<div className="card bg-base-100 w-full shadow-xl mx-auto">
 						<div className=" flex justify-between items-center">
 							<h2 className="text-3xl font-semibold mx-auto">
@@ -236,7 +221,6 @@ function AddBooking() {
 						<dialog id="my_modal_3" className="modal">
 							<div className="modal-box flex flex-col gap-4">
 								<form method="dialog">
-									{/* if there is a button in form, it will close the modal */}
 									<button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
 										✕
 									</button>

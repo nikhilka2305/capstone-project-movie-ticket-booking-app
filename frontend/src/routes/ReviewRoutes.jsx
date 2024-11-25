@@ -1,5 +1,8 @@
 import { Outlet } from "react-router-dom";
 import ProtectRoute from "../hooks/ProtectRoute";
+import Reviews from "../pages/shared/Reviews";
+import EditSingleReview from "../pages/shared/EditSingleReview";
+import AddReview from "../pages/shared/AddReview";
 
 export const ManageReview = {
 	path: "reviews/:reviewid/manage",
@@ -7,24 +10,26 @@ export const ManageReview = {
 };
 export const IndividualReview = {
 	path: ":reviewid",
-	element: <h3>Individual review</h3>,
+	element: <EditSingleReview />,
+};
+
+export const AddReviewRoute = {
+	path: "addreview",
+	element: (
+		<ProtectRoute roles={["User"]}>
+			<AddReview />
+		</ProtectRoute>
+	),
 };
 
 export const ReviewRoutes = {
 	path: "reviews",
-	element: (
-		<h3>
-			Reviews <Outlet />
-		</h3>
-	),
-	children: [IndividualReview],
-};
-
-export const AddReview = {
-	path: "addreview",
-	element: (
-		<ProtectRoute roles={["User"]}>
-			<h3>Add Reviews</h3>
-		</ProtectRoute>
-	),
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <Reviews />,
+		},
+		AddReviewRoute,
+	],
 };
