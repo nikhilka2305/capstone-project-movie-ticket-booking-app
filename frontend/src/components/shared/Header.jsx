@@ -1,11 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ThemeToggler from "./ThemeToggler";
 import toast from "react-hot-toast";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
+	console.log("Header received context:", { isAuthenticated, user });
+	useEffect(() => {
+		console.log("Header updated:", { isAuthenticated, user });
+	}, [isAuthenticated, user]);
 	const navigate = useNavigate();
 	const handleLogOut = () => {
 		logOut();

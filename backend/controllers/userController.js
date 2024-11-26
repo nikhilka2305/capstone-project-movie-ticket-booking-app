@@ -72,7 +72,7 @@ export const updateUserProfile = async (req, res, next) => {
 		console.log(req.body);
 		console.log("Updating User Profile");
 
-		res.status(201).json("Profile updated");
+		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
 		res
 			.status(500)

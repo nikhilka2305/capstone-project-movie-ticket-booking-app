@@ -39,7 +39,7 @@ export const multerSingleFileHandler = function (fieldname) {
 				// Multer-specific errors
 
 				return res
-					.status(err.statusCode)
+					.status(err?.statusCode || 500)
 					.json({ Error: "Multer Error", message: err.message });
 			} else if (err) {
 				// Other errors

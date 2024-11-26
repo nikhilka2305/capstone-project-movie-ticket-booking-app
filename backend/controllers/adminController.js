@@ -56,7 +56,7 @@ export const updateAdminProfile = async (req, res, next) => {
 		console.log(user);
 		console.log("Updating Admin Profile");
 
-		res.status(201).json("Profile updated");
+		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
 		res
 			.status(500)

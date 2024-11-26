@@ -51,13 +51,16 @@ export const viewTheaterOwnerProfile = async (req, res, next) => {
 export const updateTheaterOwnerProfile = async (req, res, next) => {
 	const { ownerid } = req.params;
 
-	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
+	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid) {
+		console.log(req.user.loggedUserId, ownerid);
 		return res.status(403).json({
 			error: "Authorization Error",
 			message: "You are not authorized to see this page",
 		});
+	}
 
 	try {
+		console.log("hello");
 		const { mobile, email } = req.body;
 		const image = req.file;
 		let displayImage;
@@ -75,7 +78,7 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 		console.log(user);
 		console.log("Updating Theater Owner Profile");
 
-		res.status(201).json("Profile updated");
+		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
 		res
 			.status(500)

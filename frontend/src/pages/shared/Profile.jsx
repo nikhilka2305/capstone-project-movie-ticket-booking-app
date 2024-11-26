@@ -3,16 +3,54 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import MoviePreferences from "../../components/user/MoviePreferences";
+import Input from "../../components/shared/formcomponents/Input";
+import Button from "../../components/shared/formcomponents/Button";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { buildFormData } from "../../utils/manageFormData";
+import SelectActors from "../../components/shared/SelectActors";
 
 function Profile({ type, idtype }) {
-	const { isAuthenticated, user } = useContext(AuthContext);
-	const [userData, setUserData] = useState();
+	const { isAuthenticated, user, setAuth, checkAuth } = useContext(AuthContext);
+	const [userData, setUserData] = useState({
+		username: "",
+		email: "",
+		mobile: "",
+	});
+	const {
+		register,
+		handleSubmit,
+		reset,
+		getValues,
+		setValue,
+		formState: { errors },
+	} = useForm();
+	useEffect(() => {
+		const defaultValues = {
+			username: userData.username || "",
+			email: userData.email || "",
+			mobile: userData.mobile || "",
+			...(user.role === "User" && {
+				moviePreferences: {
+					genre: userData.moviePreferences?.genre || "",
+					favactors: userData.moviePreferences?.favactors || [],
+				},
+			}),
+		};
+
+		reset(defaultValues, {
+			keepDirty: false, // Optional: Resets all fields to these values
+			keepTouched: true, // Optional: Keeps track of which fields were touched
+		});
+	}, [userData, user.role, reset]);
+
+	const [isEdittable, setIsEdittable] = useState(false);
 	const navigate = useNavigate();
 	console.log(type);
 	const [loading, setLoading] = useState(false);
 	console.log(user);
 	const params = useParams();
-
+	const [showUploadForm, setShowUploadForm] = useState(false);
 	const idValue = params[idtype];
 	console.log(idValue);
 
@@ -27,6 +65,10 @@ function Profile({ type, idtype }) {
 				const responseData = response.data;
 				console.log(responseData);
 				setUserData(responseData);
+				reset({
+					email: responseData.email || "",
+					mobile: responseData.mobile || "",
+				});
 			} catch (err) {
 				console.log(err);
 				if (!isAuthenticated) navigate("/");
@@ -40,13 +82,145 @@ function Profile({ type, idtype }) {
 		}
 		setLoading(false);
 		getUser();
-	}, [idValue, navigate, isAuthenticated, user]);
+	}, [idValue, navigate, isAuthenticated, user, type]);
+
+	useEffect(() => {});
+
+	const handleUploadPhoto = async function (data, evt) {
+		evt.preventDefault();
+		let loadingToast = toast.loading("Adding Display image....");
+		console.log(data);
+		const userInfo = { ...data };
+		console.log(userInfo.displayimage);
+		const userFormData = buildFormData(userInfo);
+		let files = userInfo.displayimage;
+		for (let i = 0; i < files.length; i++) {
+			userFormData.append("displayimage", files[i]);
+		}
+
+		for (let pair of userFormData.entries()) {
+			console.log(pair[0] + ": " + pair[1]); // Logs "name: John Doe", "age: 30"
+		}
+
+		try {
+			console.log("Data");
+			console.log(userFormData);
+			// const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/user/${
+			// 	userData.userId
+			// }/profile`;
+			const serverUrl = `${
+				import.meta.env.VITE_SERVER_BASE_URL
+			}/${type}/${idValue}/profile`;
+			let userInfoData = await axios.patch(serverUrl, userFormData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			});
+			console.log(userInfoData);
+
+			setUserData((prev) => ({
+				...prev,
+				displayImage: userInfoData.data.user.displayImage,
+			}));
+			toast.dismiss(loadingToast);
+			reset();
+			setShowUploadForm(false);
+			toast.success("Successfully Updated IMage");
+		} catch (err) {
+			console.log(err);
+			toast.dismiss(loadingToast);
+			toast.error("Unable to update Image");
+		}
+		// if (!userInfo.posterImage) throw new Error("You must include movie poster");
+	};
+
+	const filterUserData = (data, role) => {
+		const filteredData = { ...data };
+
+		if (role === "User") {
+			// Ensure `moviePreferences` exists for users
+			filteredData.moviePreferences = filteredData.moviePreferences || {
+				favGenre: "",
+				favActors: [],
+			};
+		} else {
+			// Remove `moviePreferences` for non-user roles
+			delete filteredData.moviePreferences;
+		}
+
+		return filteredData;
+	};
+
+	const handleEditDetails = async function (data, evt) {
+		evt.preventDefault();
+		let loadingToast = toast.loading("Updating....");
+		console.log(data);
+		const updatedInfo = filterUserData(data, user.role);
+
+		console.log(updatedInfo);
+		const serverUrl = `${
+			import.meta.env.VITE_SERVER_BASE_URL
+		}/${type}/${idValue}/profile`;
+		try {
+			let updatedUserInfo = await axios.patch(serverUrl, updatedInfo, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			console.log(updatedUserInfo);
+			setUserData((prev) => ({
+				...prev,
+				...updatedUserInfo.data.user,
+			}));
+			toast.dismiss(loadingToast);
+			reset(updatedUserInfo.data.user);
+			setIsEdittable(false);
+			toast.success("Succesfully updated details");
+		} catch (err) {
+			console.log(err);
+			toast.dismiss(loadingToast);
+			toast.error("Unable to update details");
+		}
+	};
+
+	const handleDeleteUser = async function (evt) {
+		evt.preventDefault();
+		console.log("Deleting ", idValue);
+		let loadingToast = toast.loading("Deleting ", idValue);
+		const serverUrl = `${
+			import.meta.env.VITE_SERVER_BASE_URL
+		}/${type}/${idValue}/`;
+		try {
+			const deletedUserInfo = await axios.delete(serverUrl);
+			console.log(deletedUserInfo);
+
+			toast.dismiss(loadingToast);
+			// setAuth({
+			// 	isAuthenticated: false,
+			// 	user: {
+			// 		loggedUserId: "",
+			// 		loggedUserName: "",
+			// 		loggedUserObjectId: "",
+			// 		role: "",
+			// 	},
+			// 	loading: false,
+			// });
+			await checkAuth();
+			toast.success("Succesfully deleted ", idValue);
+			// await logOut();
+			navigate("/login");
+		} catch (err) {
+			console.log(err);
+			toast.dismiss(loadingToast);
+			toast.error("Unable to delete ", idValue);
+		}
+	};
 
 	return (
 		<>
 			{loading && <div>Loading..</div>}
 			{userData ? (
-				<div className="py-8 px-8 w-2/3 min-h-full mx-auto bg-white rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
+				<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
 					<img
 						className="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0"
 						src={
@@ -56,50 +230,201 @@ function Profile({ type, idtype }) {
 						}
 						alt={`Profile photo of ${userData.username}`}
 					/>
-
+					{showUploadForm && (
+						<form
+							className="showUploadForm flex flex-col items-center gap-4"
+							onSubmit={handleSubmit(handleUploadPhoto)}
+							noValidate
+						>
+							<Input
+								type="file"
+								label="Upload Profile Picture"
+								name="displayimage"
+								id="displayimage"
+								classes="file-input file-input-lg file-input-ghost w-full"
+								fileTypes={["image/jpeg", " image/jpg", " image/png"]}
+								register={register}
+								validationSchema={{
+									required: "Image required",
+								}}
+								errors={errors}
+							></Input>
+							<div className="button-group flex gap-4 justify-center">
+								<Button
+									type="submit"
+									label="Submit"
+									onClick={() => {
+										console.log(errors);
+									}}
+								/>
+								<Button
+									label="Cancel"
+									onClick={() => {
+										reset();
+										setShowUploadForm(false);
+									}}
+								/>
+							</div>
+						</form>
+					)}
+					{!showUploadForm && (
+						<button type="button" onClick={() => setShowUploadForm(true)}>
+							Update Photo
+						</button>
+					)}
 					<div className="text-center space-y-2 sm:text-left ">
-						<div className="space-y-0.5 flex flex-col gap-4">
+						<div className="space-y-0.5 flex flex-col gap-4 items-center">
 							<p className="text-xl text-black font-semibold">
 								{userData.username}
 							</p>
-							<p className="text-slate-500 font-medium  flex gap-2">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="size-6"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25"
-									/>
-								</svg>
-								{userData.email}
-							</p>
-							<p className="text-slate-500 font-medium flex gap-2">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="size-6"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
-									/>
-								</svg>
-								{userData.mobile}
-							</p>
+
+							<form
+								className="showEditDetailsForm flex flex-col gap-4 items-center"
+								onSubmit={handleSubmit(handleEditDetails)}
+								noValidate
+							>
+								<Input
+									label="Enter Email"
+									name="email"
+									id="email"
+									type="email"
+									register={register}
+									validationSchema={{
+										required: "Email required",
+										pattern: {
+											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+											message: "invalid email address",
+										},
+									}}
+									errors={errors}
+									disabled={!isEdittable}
+								/>
+								<Input
+									label="Enter Mobile"
+									name="mobile"
+									id="mobile"
+									type="number"
+									register={register}
+									validationSchema={{
+										required: "Mobile required",
+										minLength: {
+											value: 10,
+											message: "Please enter a minimum of 10 characters",
+										},
+										maxLength: {
+											value: 10,
+											message: "Please enter a maximum of 10 characters",
+										},
+									}}
+									errors={errors}
+									disabled={!isEdittable}
+								/>
+								{userData && userData.role === "User" && (
+									// <MoviePreferences
+									// 	preferenceData={userData.moviePreferences}
+									// />
+									<>
+										<Input
+											label="Genre"
+											name="moviePreferences.genre"
+											type="text"
+											id="genre"
+											register={register}
+											validationSchema={{
+												minLength: {
+													value: 5,
+													message: "Please enter a minimum of 5 characters",
+												},
+												maxLength: {
+													value: 15,
+													message: "Please enter a maximum of 15 characters",
+												},
+											}}
+											errors={errors}
+											disabled={!isEdittable}
+										/>
+										<SelectActors
+											name="moviePreferences.favactors"
+											register={register}
+											setValue={setValue}
+											getValues={getValues}
+											maxNumber={5}
+											errors={errors}
+											validationSchema={{
+												minLength: {
+													value: 5,
+													message: "At least 5 characters required.",
+												},
+												maxLength: {
+													value: 20,
+													message: "Maximum 20 characters allowed.",
+												},
+											}}
+											disabled={!isEdittable}
+										/>
+									</>
+								)}
+								{isEdittable && (
+									<div className="button-group flex gap-4 justify-center">
+										<Button
+											type="submit"
+											label="Submit"
+											onClick={() => {
+												console.log(errors);
+											}}
+										/>
+										<Button
+											label="Cancel"
+											onClick={() => {
+												reset();
+												setIsEdittable(false);
+											}}
+										/>
+									</div>
+								)}
+							</form>
+							{!isEdittable && (
+								<div className="flex justify-between w-full mt-8">
+									<button type="button" onClick={() => setIsEdittable(true)}>
+										Edit profile Details
+									</button>
+									<button
+										className="btn"
+										onClick={() =>
+											document.getElementById("my_modal_4").showModal()
+										}
+									>
+										Delete Your Account?
+									</button>
+
+									<dialog id="my_modal_4" className="modal">
+										<div className="modal-box w-11/12 max-w-5xl">
+											<h3 className="font-bold text-lg">Deleting Account</h3>
+											<p className="py-4">Are You Sure?</p>
+											<div className="modal-action">
+												<form method="dialog">
+													{/* if there is a button, it will close the modal */}
+													<div className="button-group flex gap-4 justify-center">
+														<Button
+															type="submit"
+															label="Delete"
+															colorClass="bg-red-600 text-white"
+															onClick={handleDeleteUser}
+														/>
+
+														<Button
+															type="submit"
+															label="Cancel"
+															colorClass="bg-green-500"
+														/>
+													</div>
+												</form>
+											</div>
+										</div>
+									</dialog>
+								</div>
+							)}
 						</div>
-						{userData && userData.role === "User" && (
-							<MoviePreferences preferenceData={userData.moviePreferences} />
-						)}
 					</div>
 				</div>
 			) : (

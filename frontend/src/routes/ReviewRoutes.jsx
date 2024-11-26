@@ -10,7 +10,11 @@ export const ManageReview = {
 };
 export const IndividualReview = {
 	path: ":reviewid",
-	element: <EditSingleReview />,
+	element: (
+		<ProtectRoute roles={["User", "Admin"]}>
+			<EditSingleReview />
+		</ProtectRoute>
+	),
 };
 
 export const AddReviewRoute = {

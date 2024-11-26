@@ -44,8 +44,8 @@ function EditSingleReview() {
 				) {
 					console.log("logged User Id", user.loggedUserObjectId, review.userId);
 					console.log("NOt owner");
-					throw new Error("Unable to show this review");
-					// navigate("/");
+					// throw new Error("Unable to show this review");
+					navigate("/movies");
 				} else console.log("Yes Ad...");
 				setEditReview(review);
 				reset({
@@ -55,6 +55,7 @@ function EditSingleReview() {
 				setLoading(false);
 			} catch (err) {
 				console.log(err);
+				navigate("/movies");
 				setLoading(false);
 			}
 		}

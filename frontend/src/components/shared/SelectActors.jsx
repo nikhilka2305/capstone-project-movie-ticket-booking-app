@@ -7,6 +7,7 @@ export default function SelectActors({
 	getValues,
 	errors,
 	maxNumber = 5,
+	disabled = false,
 	validationSchema = {},
 }) {
 	const [localActors, setLocalActors] = useState(getValues(name) || []);
@@ -66,16 +67,20 @@ export default function SelectActors({
 					onChange={(e) => setActor(e.target.value)}
 					className="py-2 pl-4 pr-2 grow w-full textarea textarea-bordered"
 					placeholder="Enter actor name"
+					disabled={disabled}
+					hidden={disabled}
 				/>
 				<button
 					type="button"
 					onClick={addActor}
 					className="bg-blue-500 text-white px-4 py-2 rounded"
+					disabled={disabled}
+					hidden={disabled}
 				>
 					Add
 				</button>
 			</div>
-			{error && <p className="text-red-600 text-sm">{error}</p>}
+			{error && !disabled && <p className="text-red-600 text-sm">{error}</p>}
 
 			{/* Display the list of actors */}
 			<ul className="flex gap-1 flex-wrap pl-4 pr-2">
@@ -99,6 +104,8 @@ export default function SelectActors({
 								className="size-4 hover:text-red-700 "
 								// onClick={handleDeleteTodo}
 								onClick={() => removeActor(a)}
+								disabled={disabled}
+								hidden={disabled}
 							>
 								<path
 									strokeLinecap="round"
@@ -112,7 +119,7 @@ export default function SelectActors({
 			</ul>
 
 			{/* Validation error from React Hook Form */}
-			{errors[name] && (
+			{errors[name] && !disabled && (
 				<p className="text-red-600 text-sm">{errors[name]?.message}</p>
 			)}
 		</div>

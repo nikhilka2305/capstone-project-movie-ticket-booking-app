@@ -91,6 +91,10 @@ export const AuthProvider = ({ children }) => {
 				},
 				loading: false,
 			});
+			console.log("Auth state after logout:", {
+				isAuthenticated: false,
+				user: null,
+			});
 		} catch (err) {
 			console.log(err);
 		}
@@ -99,6 +103,9 @@ export const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		checkAuth();
 	}, []);
+	useEffect(() => {
+		console.log("AuthProvider context state:", auth);
+	}, [auth]);
 
 	return (
 		<AuthContext.Provider

@@ -52,7 +52,7 @@ export function Pagination({ page, setPage, totalPages }) {
 				variant="text"
 				className="flex items-center gap-2"
 				onClick={next}
-				disabled={active === totalPages}
+				disabled={totalPages === 0 || active === totalPages}
 			>
 				Next
 				<ArrowRightIcon strokeWidth={2} className="h-4 w-4" />

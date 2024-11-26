@@ -4,6 +4,7 @@ import Movies from "../pages/shared/Movies";
 import SingleMovie from "../pages/shared/SingleMovie";
 import AddMovie from "../pages/shared/AddMovie";
 import ProtectRoute from "../hooks/ProtectRoute";
+import { ShowRoutes } from "./ShowRoutes";
 
 export const AddMovieRoute = {
 	path: "addmovie",
@@ -24,6 +25,7 @@ export const IndividualMovie = {
 		},
 		ReviewRoutes,
 		AddReviewRoute,
+		ShowRoutes,
 	],
 };
 
