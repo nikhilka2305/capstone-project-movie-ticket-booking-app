@@ -13,14 +13,20 @@ import {
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
-import { viewPersonalBookings } from "../controllers/bookingController.js";
+import {
+	getPersonalBookingStats,
+	viewPersonalBookings,
+} from "../controllers/bookingController.js";
 import {
 	validateUserPatch,
 	validateUserReg,
 } from "../middleware/userRegistrationValidation.js";
 import { validateUserLogin } from "../middleware/userLoginValidation.js";
 import { multerSingleFileHandler } from "../middleware/multer.js";
-import { viewIndividualUserReview } from "../controllers/reviewController.js";
+import {
+	getPersonalReviewStats,
+	viewIndividualUserReview,
+} from "../controllers/reviewController.js";
 
 router.get(
 	"/",
@@ -64,6 +70,20 @@ router.get(
 	authenticateToken,
 	authorization("Admin", "User"),
 	viewPersonalBookings
+);
+
+router.get(
+	"/:userid/getbookingstats",
+	authenticateToken,
+	authorization("Admin", "User"),
+	getPersonalBookingStats
+);
+
+router.get(
+	"/:userid/getreviewstats",
+	authenticateToken,
+	authorization("Admin", "User"),
+	getPersonalReviewStats
 );
 
 router.get(

@@ -14,8 +14,9 @@ function Reviews() {
 	const [page, setPage] = useState(1); // Current page
 	const [totalPages, setTotalPages] = useState(1);
 	const [reviews, setReviews] = useState([]);
-	const { movieid, theaterid } = useParams();
+	const { movieid, theaterid, userid } = useParams();
 	const urlid = movieid || theaterid;
+	const userurlid = userid;
 	let urlPath;
 	if (movieid) urlPath = "movie";
 	else if (theaterid) urlPath = "theater";
@@ -25,15 +26,27 @@ function Reviews() {
 		async function getReviews() {
 			try {
 				console.log(urlid);
+				console.log(userurlid);
+				let serverUrl;
+				if (userurlid) {
+					serverUrl = `${
+						import.meta.env.VITE_SERVER_BASE_URL
+					}/user/${userurlid}/reviews`;
+				} else {
+					serverUrl = `${
+						import.meta.env.VITE_SERVER_BASE_URL
+					}/${urlPath}/${urlid}/reviews`;
+				}
+
+				console.log("hello--");
+				console.log(serverUrl);
+				console.log("hello--");
 				// if (user.role === "Admin" && user.loggedUserId !== userid) {
 				// 	console.log("Checking by Admin");
 
 				//     const userData = await axios.get()
 				// }
 
-				const serverUrl = `${
-					import.meta.env.VITE_SERVER_BASE_URL
-				}/${urlPath}/${urlid}/reviews`;
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
 				});
@@ -43,8 +56,8 @@ function Reviews() {
 				const reviewsData = responseData.reviews;
 				console.log(responseData);
 				setReviews(reviewsData);
-				console.log(reviewsData.reviews);
-				setTotalPages(reviewsData.totalPages);
+				console.log(reviewsData);
+				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
 				console.log(err);
@@ -75,6 +88,7 @@ function Reviews() {
 						<p>UserReview: </p>
 						<p>{item.userReview}</p>
 						<p>Review by: {item.userId.username}</p>
+						<p>Review For: {item.reviewFor}</p>
 					</BookingCard>
 				</Link>
 			))}

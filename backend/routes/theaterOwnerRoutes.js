@@ -13,7 +13,10 @@ import { authenticateToken } from "../middleware/authentication.js";
 import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
-import { viewPersonalBookings } from "../controllers/bookingController.js";
+import {
+	getPersonalBookingStats,
+	viewPersonalBookings,
+} from "../controllers/bookingController.js";
 import {
 	validateUserPatch,
 	validateUserReg,
@@ -58,11 +61,16 @@ router.get(
 	authorization("Admin", "TheaterOwner"),
 	viewPersonalBookings
 ),
-	router.delete(
-		"/:ownerid",
+	router.get(
+		"/:ownerid/getbookingstats",
 		authenticateToken,
-		authorization("Admin", "TheaterOwner"),
-		deleteTheaterOwner
+		getPersonalBookingStats
 	);
+router.delete(
+	"/:ownerid",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	deleteTheaterOwner
+);
 
 export default router;

@@ -20,12 +20,18 @@ function Bookings() {
 		Admin: "admin",
 		TheaterOwner: "theaterowner",
 	};
-
-	const urlPath = userType[user.role];
+	let urlPath;
 
 	const { userid, adminid, ownerid } = useParams();
 	console.log(userid, adminid, ownerid);
 	const urlid = userid || adminid || ownerid;
+	if (user.role === "Admin") {
+		if (userid) urlPath = "user";
+		else if (adminid) urlPath = "admin";
+		else if (ownerid) urlPath = "theaterowner";
+	} else {
+		urlPath = userType[user.role];
+	}
 
 	useEffect(() => {
 		setLoading(true);
@@ -42,6 +48,7 @@ function Bookings() {
 				const serverUrl = `${
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/${urlPath}/${urlid}/bookings`;
+				console.log(serverUrl);
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
 				});

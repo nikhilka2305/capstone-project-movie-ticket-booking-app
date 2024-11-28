@@ -56,7 +56,7 @@ function AddShow() {
 			}
 		}
 		fetchData();
-	}, [theaterid, theaterData]);
+	}, [theaterid, navigate, user.loggedUserObjectId, user.role]);
 
 	const handleAddShow = async function (data, evt) {
 		evt.preventDefault();

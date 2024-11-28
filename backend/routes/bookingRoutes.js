@@ -3,6 +3,7 @@ const router = Router();
 import {
 	addBooking,
 	cancelBooking,
+	getPersonalBookingStats,
 	viewBookings,
 	viewIndividualBooking,
 } from "../controllers/bookingController.js";

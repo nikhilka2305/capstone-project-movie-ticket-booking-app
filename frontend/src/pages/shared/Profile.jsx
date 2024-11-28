@@ -277,7 +277,6 @@ function Profile({ type, idtype }) {
 							<p className="text-xl text-black font-semibold">
 								{userData.username}
 							</p>
-
 							<form
 								className="showEditDetailsForm flex flex-col gap-4 items-center"
 								onSubmit={handleSubmit(handleEditDetails)}
@@ -383,19 +382,25 @@ function Profile({ type, idtype }) {
 									</div>
 								)}
 							</form>
+							{(userData.deleted || userData.blocked) && (
+								<p>This account is deleted or blocked</p>
+							)}
+
 							{!isEdittable && (
-								<div className="flex justify-between w-full mt-8">
+								<div className="flex justify-between w-full mt-8 mx-auto">
 									<button type="button" onClick={() => setIsEdittable(true)}>
 										Edit profile Details
 									</button>
-									<button
-										className="btn"
-										onClick={() =>
-											document.getElementById("my_modal_4").showModal()
-										}
-									>
-										Delete Your Account?
-									</button>
+									{!userData.deleted && (
+										<button
+											className="btn"
+											onClick={() =>
+												document.getElementById("my_modal_4").showModal()
+											}
+										>
+											Delete Your Account?
+										</button>
+									)}
 
 									<dialog id="my_modal_4" className="modal">
 										<div className="modal-box w-11/12 max-w-5xl">

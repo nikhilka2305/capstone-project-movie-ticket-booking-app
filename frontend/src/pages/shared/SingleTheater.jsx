@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
 import Button from "../../components/shared/formcomponents/Button";
@@ -14,7 +14,7 @@ function SingleTheater() {
 	const [loading, setLoading] = useState(false);
 	const { theaterid } = useParams();
 	const tagsClasses =
-		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1 text-center";
+		"text-sm rounded text-gray-600 bg-blue-gray-50 inline pl-2 p-1 text-center";
 	console.log(theaterid);
 	useEffect(() => {
 		const serverUrl = `${
@@ -50,6 +50,8 @@ function SingleTheater() {
 					loading={loading}
 					title={theater.theaterName}
 					image={theater.images[0]}
+					onClick={() => navigate("/shows")}
+					btnLabel="Browse Shows"
 				>
 					<div>
 						<div className="tags flex justify-start gap-2">
@@ -58,23 +60,19 @@ function SingleTheater() {
 								Total Seats: {theater.seats.rows * theater.seats.seatsPerRow}
 							</p>
 						</div>
-						<p className="text-lg text-gray-600 mt-4 leading-relaxed">
-							<span className="text-black text-2xl">
-								Theater Details & Amenities
-							</span>
+						<p className="text-lg mt-4 leading-relaxed">
+							<span className=" text-2xl">Theater Details & Amenities</span>
 							<br />
-							<span className="text-gray-800 mr-8 text-sm">Seats: </span>
+							<span className=" mr-8 text-sm">Seats: </span>
 							{theater.seats.rows * theater.seats.seatsPerRow}
 							<br />
-							<span className="text-gray-800 mr-8 text-sm">Parking:</span>{" "}
+							<span className=" mr-8 text-sm">Parking:</span>{" "}
 							{theater.amenities && theater.amenities.parking}
 							<br />
-							<span className="text-gray-800 mr-8 text-sm">
-								Restrooms:
-							</span>{" "}
+							<span className=" mr-8 text-sm">Restrooms:</span>{" "}
 							{theater.amenities && theater.amenities.restroom}
 							<br />
-							<span className="text-gray-800 mr-8 text-sm">Food Counters:</span>
+							<span className=" mr-8 text-sm">Food Counters:</span>
 							{theater.amenities && theater.amenities.foodCounters}
 							<br />
 						</p>
@@ -89,20 +87,26 @@ function SingleTheater() {
 						</ul>
 					</div>
 					<div className="flex items-center">
-						<div className="text-gray-900 text-lg md:text-lg mt-1 flex gap-2">
+						<div className=" text-lg md:text-lg mt-1 flex gap-2">
 							<span>Rating:</span>
-							<span className="text-blue-gray-800">
+							<span>
 								{theaterRating.averageRating > 0
 									? `${theaterRating.averageRating} / 5`
 									: "No Rating"}
 							</span>
 						</div>
-						<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
+						<div className="ml-2 text-sm md:text-base mt-1">
 							{theaterRating.reviewCount > 0
 								? `${theaterRating.reviewCount} reviews`
 								: "No Reviews"}
 						</div>
 					</div>
+					<Link
+						to={"reviews/addreview"}
+						className="p-1 rounded-md border w-32 text-center"
+					>
+						Add review
+					</Link>
 				</Card>
 			)}
 		</>

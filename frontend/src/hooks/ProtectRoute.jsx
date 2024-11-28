@@ -21,10 +21,10 @@ const ProtectRoute = ({ children, roles = [] }) => {
 	} else console.log("Authenticated");
 
 	if (roles.length && !roles.includes(auth.user?.role)) {
-		console.log(auth.user.role, roles[0], !roles.includes(auth.user?.role));
+		console.log(auth.user?.role, roles[0], !roles.includes(auth.user?.role));
 		return (
 			<Navigate
-				to={`/${params[auth.user.role]}/${auth.user.loggedUserId}`}
+				to={`/${params[auth.user?.role]}/${auth.user.loggedUserId}`}
 				replace
 			/>
 		);

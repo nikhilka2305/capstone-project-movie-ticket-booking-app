@@ -20,18 +20,18 @@ export default function Login() {
 
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
-	const { isAuthenticated, login, checkAuth } = useContext(AuthContext);
+	const { isAuthenticated, login, checkAuth, user } = useContext(AuthContext);
 
 	useEffect(() => {
-		if (isAuthenticated) navigate("/");
-	}, []);
+		if (isAuthenticated && user) navigate(`/user/${user?.loggedUserId}`);
+	}, [isAuthenticated, user, navigate]);
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/user/login`;
 	const handleLoginFormSubmit = async (data, evt) => {
 		evt.preventDefault();
-		const user = { ...data };
-		console.log(user);
+		const userData = { ...data };
+		console.log(userData);
 		try {
-			const userSignup = await axios.post(serverUrl, user, {
+			const userSignup = await axios.post(serverUrl, userData, {
 				headers: {
 					"Content-Type": "application/json",
 				},
@@ -43,8 +43,6 @@ export default function Login() {
 			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
-
-			navigate("/user");
 		} catch (err) {
 			console.log(err);
 			setError("Unable to Log In");

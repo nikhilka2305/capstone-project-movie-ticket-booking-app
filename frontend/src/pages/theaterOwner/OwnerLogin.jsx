@@ -21,11 +21,12 @@ function OwnerLogin() {
 
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
-	const { isAuthenticated, login, checkAuth } = useContext(AuthContext);
+	const { isAuthenticated, login, checkAuth, user } = useContext(AuthContext);
 
 	useEffect(() => {
-		if (isAuthenticated) navigate("/");
-	}, []);
+		if (isAuthenticated && user)
+			navigate(`/theaterowner/${user?.loggedUserId}`);
+	}, [isAuthenticated, user, navigate]);
 
 	const serverUrl = `${
 		import.meta.env.VITE_SERVER_BASE_URL
@@ -46,8 +47,6 @@ function OwnerLogin() {
 			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
-
-			navigate("/theaterowner");
 		} catch (err) {
 			console.log(err);
 			setError("Unable to Log In");

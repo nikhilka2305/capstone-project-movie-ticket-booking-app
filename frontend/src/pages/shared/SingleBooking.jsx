@@ -5,6 +5,8 @@ import axios from "axios";
 import Card from "../../components/shared/Card";
 import { formatDate } from "../../utils/dateFormatter";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
+import toast from "react-hot-toast";
+import Button from "../../components/shared/formcomponents/Button";
 
 function SingleBooking() {
 	const [booking, setBooking] = useState();
@@ -33,6 +35,28 @@ function SingleBooking() {
 		setLoading(false);
 		getBooking();
 	}, [bookingid, navigate]);
+
+	const handleCancelBooking = async (evt) => {
+		setLoading(true);
+		let loadingToast = toast.loading("Cancelling Booking..");
+		const serverUrl = `${
+			import.meta.env.VITE_SERVER_BASE_URL
+		}/booking/${bookingid}`;
+		try {
+			const response = await axios.delete(`${serverUrl}`);
+			const responseData = response.data;
+			console.log(responseData);
+			toast.dismiss(loadingToast);
+			toast.success("Booking Cancelled");
+			navigate("/");
+		} catch (err) {
+			console.log(err);
+			toast.dismiss(loadingToast);
+			toast.error("Unable to Cancel Booking");
+		}
+		setLoading(false);
+	};
+
 	return (
 		<>
 			{loading && (
@@ -53,6 +77,7 @@ function SingleBooking() {
 						booking.status === "Cancelled" ||
 						new Date(booking.showInfo.showTimeIST) < Date.now()
 					}
+					onClick={() => document.getElementById("my_modal_3").showModal()}
 				>
 					<div>
 						<div className="tags flex flex justify-start gap-2">
@@ -92,6 +117,25 @@ function SingleBooking() {
 							</div>
 						</div>
 					</div>
+					<dialog id="my_modal_3" className="modal">
+						<div className="modal-box flex flex-col gap-4">
+							<form method="dialog">
+								<button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+									✕
+								</button>
+							</form>
+
+							<h3 className="text-center text-2xl font-bold mb-4">
+								Are you sure about cancelling this booking?
+							</h3>
+
+							<Button
+								colorClass="bg-red-500 text-white"
+								label="Cancel Booking"
+								onClick={handleCancelBooking}
+							/>
+						</div>
+					</dialog>
 				</Card>
 			)}
 		</>

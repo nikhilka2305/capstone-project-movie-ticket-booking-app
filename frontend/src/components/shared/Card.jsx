@@ -5,6 +5,7 @@ export default function Card({
 	title,
 	subtitle,
 	otherInfo,
+	onClick,
 	btnLabel = "Book Now",
 	children,
 	btndisabled = false,
@@ -23,7 +24,11 @@ export default function Card({
 				{subtitle && <h3>{subtitle}</h3>}
 				{children}
 				<div className="card-actions justify-end mt-4">
-					<Button label={btnLabel} disabled={btndisabled ? "disabled" : ""} />
+					<Button
+						label={btnLabel}
+						disabled={btndisabled ? "disabled" : ""}
+						onClick={onClick}
+					/>
 				</div>
 			</div>
 		</div>

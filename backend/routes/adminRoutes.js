@@ -14,7 +14,10 @@ import { authorization } from "../middleware/authorization.js";
 import { viewMovies } from "../controllers/movieController.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import { viewTheaters } from "../controllers/theaterController.js";
-import { viewPersonalBookings } from "../controllers/bookingController.js";
+import {
+	getPersonalBookingStats,
+	viewPersonalBookings,
+} from "../controllers/bookingController.js";
 import {
 	validateUserPatch,
 	validateUserReg,
@@ -64,11 +67,16 @@ router.get(
 	authorization("Admin"),
 	viewPersonalBookings
 ),
-	router.delete(
-		"/:adminid",
+	router.get(
+		"/:adminid/getbookingstats",
 		authenticateToken,
-		authorization("Admin"),
-		deleteAdmin
+		getPersonalBookingStats
 	);
+router.delete(
+	"/:adminid",
+	authenticateToken,
+	authorization("Admin"),
+	deleteAdmin
+);
 
 export default router;

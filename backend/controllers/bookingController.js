@@ -37,10 +37,13 @@ export const viewPersonalBookings = async (req, res, next) => {
 			}
 		}
 		console.log(filterOptions);
-
+		console.log(limit);
 		if (req.query.page && req.query.limit) {
 			const skip = (page - 1) * limit;
+			console.log(limit);
+			console.log(skip);
 			const bookings = await Booking.find(filterOptions)
+				.sort({ createdAt: -1 })
 				.skip(skip)
 				.limit(limit)
 				.populate({
@@ -53,7 +56,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 					populate: [
 						{
 							path: "movie",
-							select: "movieName posterImage",
+							select: "movieName posterImage movieId",
 						},
 						{
 							path: "theater",
@@ -405,5 +408,105 @@ export const cancelBooking = async (req, res, next) => {
 		}
 	} catch (err) {
 		return res.status(err.statusCode).json({ message: err.message });
+	}
+};
+
+export const getPersonalBookingStats = async (req, res, next) => {
+	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
+	console.log(userid);
+
+	try {
+		let userObjectId;
+		if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+			throw new HandleError("You are not authorized to see this page", 403);
+		else if (req.user.loggedUserId === userid) {
+			userObjectId = req.user.loggedUserObjectId;
+		} else if (req.user.role === "Admin") {
+			if (req.params.userid) {
+				const user = await User.findOne({ userId: userid })
+					.lean()
+					.select("_id");
+				console.log(user);
+				userObjectId = user._id.toString();
+			} else if (req.params.ownerid) {
+				const user = await TheaterOwner.findOne({ userId: userid })
+					.lean()
+					.select("_id");
+				console.log(user);
+				userObjectId = user._id.toString();
+			} else {
+				const user = await Admin.findOne({ userId: userid })
+					.lean()
+					.select("_id");
+				console.log(user);
+				userObjectId = user._id.toString();
+			}
+			console.log("Will try admin part later");
+		}
+		// console.log(filterOptions);
+		const bookingStats = await Booking.aggregate([
+			{
+				// Match based on user ID if provided
+				$match: {
+					...(userid ? { user: new ObjectId(userObjectId) } : {}), // Conditional match
+				},
+			},
+			{
+				// Group by status to calculate counts and total price per status
+				$group: {
+					_id: "$status",
+					totalCount: { $sum: 1 }, // Count of bookings for this status
+					totalPrice: {
+						$sum: {
+							$cond: [
+								{ $ne: ["$status", "Cancelled"] }, // Only include non-cancelled bookings in price
+								{ $sum: "$seats.seatClass.price" },
+								0,
+							],
+						},
+					},
+				},
+			},
+			{
+				// Reshape the data to include cancelled count and confirmed details
+				$group: {
+					_id: null,
+					totalConfirmedBookings: {
+						$sum: {
+							$cond: [
+								{ $eq: ["$_id", "Confirmed"] }, // Count only "Confirmed" status
+								"$totalCount",
+								0,
+							],
+						},
+					},
+					totalCancelledBookings: {
+						$sum: {
+							$cond: [
+								{ $eq: ["$_id", "Cancelled"] }, // Count only "Cancelled" status
+								"$totalCount",
+								0,
+							],
+						},
+					},
+					totalPrice: { $sum: "$totalPrice" }, // Sum of prices for confirmed bookings
+				},
+			},
+			{
+				// Optionally add back the user ID for clarity
+				$project: {
+					_id: 0,
+					user_Id: userid ? new ObjectId(userObjectId) : null,
+					totalConfirmedBookings: 1,
+					totalCancelledBookings: 1,
+					totalPrice: 1,
+				},
+			},
+		]);
+		res.status(200).json(bookingStats);
+	} catch (err) {
+		res
+			.status(err.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };

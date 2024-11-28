@@ -5,7 +5,7 @@ import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import Card from "../../components/shared/Card";
@@ -143,6 +143,8 @@ function AddBooking() {
 							new Date(show.showTimeIST)
 						)} Theater: ${show.theater.theaterName}`}
 						image={show.movie.posterImage}
+						onClick={() => navigate("/shows")}
+						btnLabel="Browse Other Shows"
 					>
 						<div>
 							<div className="tags flex justify-start gap-2">
@@ -155,10 +157,10 @@ function AddBooking() {
 									Rating: <span className="font-bold">{show.movie.rating}</span>
 								</p>
 							</div>
-							<p className="text-lg text-gray-400 mt-2 leading-relaxed">
+							<p className="text-lg  mt-2 leading-relaxed">
 								{show.movie.movieDescription}
 							</p>
-							<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
+							<ul className="text-gray-600 text-sm  mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
 								{" "}
 								{show.movie.movieCast.map((cast, i) => (
 									<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
@@ -166,22 +168,22 @@ function AddBooking() {
 									</li>
 								))}
 							</ul>
-							<div className="mt-4 text-lg text-gray-700">
-								<span className="text-gray-500 font-bold">Directed By: </span>{" "}
+							<div className="mt-4 text-lg ">
+								<span className=" font-bold">Directed By: </span>{" "}
 								{show.movie.director}
 							</div>
 						</div>
 						<h3>Movie Rating</h3>
 						<div className="flex items-center">
-							<div className="text-gray-900 text-lg md:text-lg mt-1 flex gap-2">
+							<div className=" text-lg md:text-lg mt-1 flex gap-2">
 								<span>Rating:</span>
-								<span className="text-blue-gray-800">
+								<span className="">
 									{movieRating.averageRating > 0
 										? `${movieRating.averageRating} / 5`
 										: "No Rating"}
 								</span>
 							</div>
-							<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
+							<div className=" ml-2 text-sm md:text-base mt-1">
 								{movieRating.reviewCount > 0
 									? `${movieRating.reviewCount} reviews`
 									: "No Reviews"}
@@ -189,15 +191,15 @@ function AddBooking() {
 						</div>
 						<h3>Theater Rating</h3>
 						<div className="flex items-center">
-							<div className="text-gray-900 text-lg md:text-lg mt-1 flex gap-2">
+							<div className=" text-lg md:text-lg mt-1 flex gap-2">
 								<span>Rating:</span>
-								<span className="text-blue-gray-800">
+								<span className="">
 									{theaterRating.averageRating > 0
 										? `${theaterRating.averageRating} / 5`
 										: "No Rating"}
 								</span>
 							</div>
-							<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
+							<div className=" ml-2 text-sm md:text-base mt-1">
 								{theaterRating.reviewCount > 0
 									? `${theaterRating.reviewCount} reviews`
 									: "No Reviews"}

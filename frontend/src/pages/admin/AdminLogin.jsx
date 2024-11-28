@@ -20,11 +20,11 @@ function AdminLogin() {
 
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
-	const { isAuthenticated, login, checkAuth } = useContext(AuthContext);
+	const { isAuthenticated, login, checkAuth, user } = useContext(AuthContext);
 
 	useEffect(() => {
-		if (isAuthenticated) navigate("/");
-	}, []);
+		if (isAuthenticated && user) navigate(`/admin/${user?.loggedUserId}`);
+	}, [isAuthenticated, user, navigate]);
 
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/admin/login`;
 	const handleLoginFormSubmit = async (data, evt) => {
@@ -43,8 +43,6 @@ function AdminLogin() {
 			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
-
-			navigate("/admin");
 		} catch (err) {
 			console.log(err);
 			setError("Unable to Log In");

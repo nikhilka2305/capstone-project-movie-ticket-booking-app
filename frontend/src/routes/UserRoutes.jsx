@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { ManageReview, ReviewRoutes } from "./ReviewRoutes";
 import { BookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
+import UserDashboardComponent from "../pages/user/UserDashboardComponent";
 
 export const UserDashboard = {
 	path: ":userid",
@@ -9,7 +10,7 @@ export const UserDashboard = {
 	children: [
 		{
 			index: true,
-			element: <h3>User Dashboard</h3>,
+			element: <UserDashboardComponent />,
 		},
 		ReviewRoutes,
 		ManageReview,

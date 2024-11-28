@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
 
@@ -14,7 +14,7 @@ function SingleMovie() {
 	const [loading, setLoading] = useState(false);
 	const { movieid } = useParams();
 	const tagsClasses =
-		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1";
+		"text-sm text-gray-600 rounded bg-blue-gray-50 inline pl-2 p-1";
 	console.log(movieid);
 
 	useEffect(() => {
@@ -57,6 +57,8 @@ function SingleMovie() {
 					loading={loading}
 					title={movie.movieName}
 					image={movie.posterImage}
+					onClick={() => navigate("/shows")}
+					btnLabel="Browse Shows"
 				>
 					<div>
 						<div className="tags flex justify-start gap-2">
@@ -69,7 +71,7 @@ function SingleMovie() {
 								Rating: <span className="font-bold">{movie.rating}</span>
 							</p>
 						</div>
-						<p className="text-lg text-gray-400 mt-2 leading-relaxed">
+						<p className="text-lg  mt-2 leading-relaxed">
 							{movie.movieDescription}
 						</p>
 						<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
@@ -80,26 +82,31 @@ function SingleMovie() {
 								</li>
 							))}
 						</ul>
-						<div className="mt-4 text-lg text-gray-700">
-							<span className="text-gray-500 font-bold">Directed By: </span>{" "}
-							{movie.director}
+						<div className="mt-4 text-lg">
+							<span className=" font-bold">Directed By: </span> {movie.director}
 						</div>
 					</div>
 					<div className="flex items-center">
-						<div className="text-gray-900 text-lg md:text-lg mt-1 flex gap-2">
+						<div className=" text-lg md:text-lg mt-1 flex gap-2">
 							<span>Rating:</span>
-							<span className="text-blue-gray-800">
+							<span>
 								{movieRating.averageRating > 0
 									? `${movieRating.averageRating} / 5`
 									: "No Rating"}
 							</span>
 						</div>
-						<div className="text-gray-600 ml-2 text-sm md:text-base mt-1">
+						<div className=" ml-2 text-sm md:text-base mt-1">
 							{movieRating.reviewCount > 0
 								? `${movieRating.reviewCount} reviews`
 								: "No Reviews"}
 						</div>
 					</div>
+					<Link
+						to={"reviews/addreview"}
+						className="p-1 rounded-md border w-32 text-center"
+					>
+						Add review
+					</Link>
 				</Card>
 			)}
 		</>

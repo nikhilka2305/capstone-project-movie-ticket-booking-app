@@ -76,6 +76,8 @@ export const viewIndividualReview = async (req, res, next) => {
 };
 
 export const viewIndividualUserReview = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
+	console.log(req.query);
 	const { userid } = req.params;
 	try {
 		const user = await User.findOne({ userId: userid });
@@ -86,10 +88,32 @@ export const viewIndividualUserReview = async (req, res, next) => {
 			!new ObjectId(req.user.loggedUserObjectId).equals(user._id)
 		)
 			throw new HandleError("You are not authorized to see these reviews", 403);
-		const reviews = await Review.find({ userId: user._id });
-		res.status(200).json(reviews);
+
+		if (req.query.page && req.query.limit) {
+			console.log(page, limit);
+			const skip = (page - 1) * limit;
+			const reviews = await Review.find({ userId: user._id, deleted: false })
+				.populate("movieId", "movieName")
+				.populate("theaterId", "theaterName")
+				.populate("userId", "username displayImage")
+				.skip(skip)
+				.limit(limit);
+			const totalReviews = await Review.countDocuments({
+				userId: user._id,
+				deleted: false,
+			});
+			res.status(200).json({
+				reviews,
+				totalReviews,
+				totalPages: Math.ceil(totalReviews / limit),
+				currentPage: page,
+			});
+		} else {
+			const reviews = await Review.find({ userId: user._id, deleted: false });
+			res.status(200).json(reviews);
+		}
 	} catch (err) {
-		res.status(err.statusCode).json({ message: err.message });
+		res.status(err.statusCode || 500).json({ message: err.message });
 	}
 };
 
@@ -283,5 +307,152 @@ export const averageRating = async (req, res, next) => {
 		});
 	} catch (err) {
 		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const getPersonalReviewStats = async (req, res, next) => {
+	const userid = req.params.userid;
+	console.log(userid);
+
+	try {
+		let userObjectId;
+		if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+			throw new HandleError("You are not authorized to see this page", 403);
+		else if (req.user.role === "Admin") {
+			const user = await User.findOne({ userId: userid }).lean().select("_id");
+			console.log(user);
+			userObjectId = user._id.toString();
+		} else if (req.user.loggedUserId === userid) {
+			userObjectId = req.user.loggedUserObjectId;
+		}
+		const aggregation = [
+			{
+				$match: {
+					deleted: false,
+					userId: new ObjectId(userObjectId), // Only include non-deleted reviews
+				},
+			},
+			{
+				$facet: {
+					reviewCounts: [
+						{
+							$group: {
+								_id: null,
+								totalReviews: {
+									$sum: 1,
+								},
+								movieReviews: {
+									$sum: {
+										$cond: [
+											{
+												$eq: ["$reviewFor", "movie"],
+											},
+											1,
+											0,
+										],
+									},
+								},
+								theaterReviews: {
+									$sum: {
+										$cond: [
+											{
+												$eq: ["$reviewFor", "theater"],
+											},
+											1,
+											0,
+										],
+									},
+								},
+							},
+						},
+					],
+					recentMovieReview: [
+						{
+							$match: {
+								reviewFor: "movie",
+							},
+						},
+						{
+							$sort: {
+								createdAt: -1,
+							},
+						},
+						{
+							$lookup: {
+								from: "movies",
+								localField: "movieId",
+								foreignField: "_id",
+								as: "movieDetails",
+							},
+						},
+						{
+							$project: {
+								_id: 0,
+								movieDetails: {
+									$arrayElemAt: ["$movieDetails.movieName", 0],
+								},
+								createdAt: 1,
+							},
+						},
+						{
+							$limit: 1,
+						},
+					],
+					recentTheaterReview: [
+						{
+							$match: {
+								reviewFor: "theater",
+							},
+						},
+						{
+							$sort: {
+								createdAt: -1,
+							},
+						},
+						{
+							$lookup: {
+								from: "theaters",
+								localField: "theaterId",
+								foreignField: "_id",
+								as: "theaterDetails",
+							},
+						},
+						{
+							$project: {
+								_id: 0,
+								theaterDetails: {
+									$arrayElemAt: ["$theaterDetails.theaterName", 0],
+								},
+								createdAt: 1,
+							},
+						},
+						{
+							$limit: 1,
+						},
+					],
+				},
+			},
+			{
+				$project: {
+					reviewCounts: {
+						$arrayElemAt: ["$reviewCounts", 0],
+					},
+					recentMovieReview: {
+						$arrayElemAt: ["$recentMovieReview", 0],
+					},
+					recentTheaterReview: {
+						$arrayElemAt: ["$recentTheaterReview", 0],
+					},
+				},
+			},
+		];
+
+		const reviewStats = await Review.aggregate(aggregation);
+		res.status(200).json(reviewStats);
+	} catch (err) {
+		console.log(err);
+		res
+			.status(statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
