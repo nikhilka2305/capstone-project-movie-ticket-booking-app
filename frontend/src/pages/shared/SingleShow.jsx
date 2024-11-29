@@ -93,6 +93,7 @@ function SingleShow() {
 							new Date(show.showTimeIST)
 						)} Theater: ${show.theater.theaterName}`}
 						image={show.movie.posterImage}
+						btndisabled={new Date(show.showTimeIST) < Date.now()}
 						onClick={() => navigate("addbooking")}
 					>
 						<div>

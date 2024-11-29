@@ -10,6 +10,7 @@ export const viewShows = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
 	console.log(req.query);
 	const { movieid, theaterid } = req.params;
+	console.log(req.params);
 	console.log(movieid, theaterid);
 	const now = new Date();
 	console.log(now);

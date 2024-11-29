@@ -15,5 +15,6 @@ module.exports = withMT({
 	daisyui: {
 		themes: ["light", "dark", "cupcake"],
 	},
-	darkMode: "selector",
+
+	darkMode: ["selector", '[data-theme="dark"]'],
 });

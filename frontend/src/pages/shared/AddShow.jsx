@@ -76,7 +76,7 @@ function AddShow() {
 			console.log(addShow);
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Show");
-			navigate("/login");
+			navigate("/shows");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Add Show");

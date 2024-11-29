@@ -50,7 +50,7 @@ export const TheaterBookingRoute = {
 export const AddBookingRoute = {
 	path: "addBooking",
 	element: (
-		<ProtectRoute roles={["User", "Admin"]}>
+		<ProtectRoute roles={["User", "Admin", "TheaterOwner"]}>
 			{" "}
 			<AddBooking />
 		</ProtectRoute>

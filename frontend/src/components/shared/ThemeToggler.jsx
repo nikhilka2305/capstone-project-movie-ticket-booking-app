@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 
 export default function ThemeToggler() {
-	const [theme, setTheme] = useState("light"); // Default to light mode
+	// const [theme, setTheme] = useState("light"); // Default to light mode
+	const [theme, setTheme] = useState(
+		() => localStorage.getItem("theme") || "light"
+	);
 
 	const toggleTheme = () => {
 		const newTheme = theme === "light" ? "dark" : "light";
 		setTheme(newTheme);
 		document.documentElement.setAttribute("data-theme", newTheme);
-		localStorage.setItem("theme", theme); // Update the data-theme attribute
+		localStorage.setItem("theme", newTheme); // Update the data-theme attribute
 	};
 
 	// Optional: Persist theme in localStorage
 	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme") || "light";
-		setTheme(storedTheme);
-		document.documentElement.setAttribute("data-theme", storedTheme);
-	}, []);
+		document.documentElement.setAttribute("data-theme", theme); // Sync theme on initial render
+
+		// const storedTheme = localStorage.getItem("theme") || "light";
+		// setTheme(storedTheme);
+		// document.documentElement.setAttribute("data-theme", storedTheme);
+	}, [theme]);
 
 	return (
 		<div>
@@ -38,6 +43,7 @@ export default function ThemeToggler() {
 					type="checkbox"
 					value="synthwave"
 					className="toggle theme-controller"
+					checked={theme === "dark"}
 					onChange={toggleTheme}
 				/>
 				<svg

@@ -2,9 +2,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
 import Button from "../../components/shared/formcomponents/Button";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function SingleTheater() {
+	const { user } = useContext(AuthContext);
 	const [theater, setTheater] = useState();
 	const [theaterRating, setTheaterRating] = useState({
 		averageRating: 0,
@@ -50,7 +52,7 @@ function SingleTheater() {
 					loading={loading}
 					title={theater.theaterName}
 					image={theater.images[0]}
-					onClick={() => navigate("/shows")}
+					onClick={() => navigate("shows")}
 					btnLabel="Browse Shows"
 				>
 					<div>
@@ -101,12 +103,22 @@ function SingleTheater() {
 								: "No Reviews"}
 						</div>
 					</div>
-					<Link
-						to={"reviews/addreview"}
-						className="p-1 rounded-md border w-32 text-center"
-					>
-						Add review
-					</Link>
+					<div className="flex gap-8">
+						{user.role === "User" && (
+							<Link
+								to={"reviews/addreview"}
+								className="p-1 rounded-md border w-32 text-center"
+							>
+								Add review
+							</Link>
+						)}
+						<Link
+							to={"reviews"}
+							className="p-1 rounded-md border w-32 text-center"
+						>
+							View reviews
+						</Link>
+					</div>
 				</Card>
 			)}
 		</>

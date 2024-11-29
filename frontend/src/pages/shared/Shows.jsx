@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import PosterSlider from "../../components/shared/PosterSlider";
 import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { formatDate } from "../../utils/dateFormatter";
 
 export default function Shows() {
@@ -11,9 +11,23 @@ export default function Shows() {
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(1); // Current page
 	const [totalPages, setTotalPages] = useState(1);
+	const { movieid, theaterid } = useParams();
+	console.log(movieid, theaterid);
 	useEffect(() => {
 		setLoading(true);
-		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/show`;
+		let serverUrl;
+		if (movieid) {
+			serverUrl = `${
+				import.meta.env.VITE_SERVER_BASE_URL
+			}/movie/${movieid}/shows`;
+		} else if (theaterid) {
+			serverUrl = `${
+				import.meta.env.VITE_SERVER_BASE_URL
+			}/theater/${theaterid}/shows`;
+		} else {
+			serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/show`;
+		}
+
 		async function getShows() {
 			try {
 				const response = await axios.get(`${serverUrl}`, {

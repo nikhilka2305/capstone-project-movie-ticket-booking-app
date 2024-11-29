@@ -5,6 +5,7 @@ import SingleMovie from "../pages/shared/SingleMovie";
 import AddMovie from "../pages/shared/AddMovie";
 import ProtectRoute from "../hooks/ProtectRoute";
 import { ShowRoutes } from "./ShowRoutes";
+import ManageMovies from "../pages/admin/ManageMovies";
 
 export const AddMovieRoute = {
 	path: "addmovie",
@@ -15,6 +16,26 @@ export const AddMovieRoute = {
 	),
 };
 
+export const IndividualMovieManagementRoute = {
+	path: ":movieid",
+	element: <h2>Manage Individual Movie Id</h2>,
+};
+
+export const MovieManagementRoute = {
+	path: "managemovies",
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: (
+				<ProtectRoute roles={["Admin"]}>
+					<ManageMovies />
+				</ProtectRoute>
+			),
+		},
+		IndividualMovieManagementRoute,
+	],
+};
 export const IndividualMovie = {
 	path: ":movieid",
 	element: <Outlet />,
@@ -29,22 +50,6 @@ export const IndividualMovie = {
 	],
 };
 
-export const IndividualMovieManagementRoute = {
-	path: ":movieid",
-	element: <h2>Manage Individual Movie Id</h2>,
-};
-
-export const MovieManagementRoute = {
-	path: "managemovies",
-	element: (
-		<h3>
-			Manage Movies
-			<Outlet />
-		</h3>
-	),
-	children: [IndividualMovieManagementRoute],
-};
-
 export const MovieRoutes = {
 	path: "movies",
 	element: <Outlet />,
@@ -53,6 +58,7 @@ export const MovieRoutes = {
 			index: true,
 			element: <Movies />,
 		},
+		MovieManagementRoute,
 		IndividualMovie,
 		AddMovieRoute,
 	],

@@ -60,16 +60,18 @@ function UserDashboardComponent() {
 			{!loading && (
 				<>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start">
-						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60 ">
 							<Link to="bookings">
 								<h2 className="text-xl">View User Bookings</h2>
 							</Link>
 							<h3>Booking Stats</h3>
-							<p>Total bookings: {bookingStats.totalConfirmedBookings}</p>
-							<p>Cancelled bookings: {bookingStats.totalCancelledBookings}</p>
-							<p>Total Spent: {bookingStats.totalPrice}</p>
+							<p>Total bookings: {bookingStats?.totalConfirmedBookings ?? 0}</p>
+							<p>
+								Cancelled bookings: {bookingStats?.totalCancelledBookings ?? 0}
+							</p>
+							<p>Total Spent: {bookingStats?.totalPrice ?? 0}</p>
 						</div>
-						<div className="userreviews border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center">
+						<div className="userreviews border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60 ">
 							<Link to="reviews">
 								<h2 className="text-xl">View User Reviews</h2>
 							</Link>

@@ -125,7 +125,15 @@ export const editIndividualTheater = async (req, res, next) => {
 			console.log("not true owner");
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
-		const { theaterName, location, seats, seatClasses, amenities } = req.body;
+		const {
+			theaterName,
+			location,
+			seats,
+			seatClasses,
+			amenities,
+			adminApprovalStatus,
+		} = req.body;
+
 		const images = req.files;
 		console.log("body");
 		console.log(req.body);
@@ -142,6 +150,8 @@ export const editIndividualTheater = async (req, res, next) => {
 			{
 				theaterName: theaterName,
 				location,
+				adminApprovalStatus:
+					req.user.role === "Admin" ? adminApprovalStatus : "Pending",
 				images: images && [...images, ...theaterimages],
 				seats: seats && { ...seats },
 				seatClasses: seatClasses && [...seatClasses],

@@ -33,7 +33,7 @@ function AddBooking() {
 		seatClasses: [], // Sample booked seats
 	});
 	const [selectedSeats, setSelectedSeats] = useState([]);
-
+	const [inValidShow, setInValidShow] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const { showid } = useParams();
 	const tagsClasses =
@@ -48,6 +48,10 @@ function AddBooking() {
 				const responseData = response.data;
 				console.log(responseData);
 				setShow(responseData);
+				console.log(responseData.showTimeIST);
+				if (new Date(responseData.showTimeIST) < Date.now()) {
+					setInValidShow(true);
+				}
 				const theaterData = responseData.theater;
 
 				setTheaterSeats({
@@ -212,9 +216,10 @@ function AddBooking() {
 							<h2 className="text-3xl font-semibold mx-auto">
 								Seat Availablity
 							</h2>
+							{inValidShow && <h3 className="text-red-500">Show Time Over</h3>}
 							<Button
 								label="Proceed to Booking"
-								disabled={selectedSeats.length === 0}
+								disabled={selectedSeats.length === 0 || inValidShow}
 								onClick={() =>
 									document.getElementById("my_modal_3").showModal()
 								}
@@ -261,7 +266,7 @@ function AddBooking() {
 						</dialog>
 						<SeatSelection
 							theaterSeats={theaterSeats}
-							displayOnly={false}
+							displayOnly={inValidShow}
 							selectedSeats={selectedSeats}
 							setSelectedSeats={setSelectedSeats}
 						/>

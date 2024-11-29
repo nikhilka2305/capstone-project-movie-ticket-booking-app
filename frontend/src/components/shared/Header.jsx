@@ -27,8 +27,8 @@ export default function Header() {
 		// 	className="flex justify-between items-center border-b border-slate-500 dark:border-slate-100 px-16 py-2 h-36
 		// "
 		// >
-		<header>
-			<div className="navbar bg-base-100">
+		<header className="px-4">
+			<div className="navbar bg-base- flex gap-4">
 				<div className="flex-none">
 					<div className="dropdown">
 						<div
@@ -93,39 +93,8 @@ export default function Header() {
 						</Link>
 					)}
 					<ThemeToggler />
-					<button
-						className="btn btn-square btn-ghost"
-						onClick={() => toast("Here is your toast.")}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							className="inline-block h-5 w-5 stroke-current"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-							></path>
-						</svg>
-					</button>
 				</div>
 			</div>
 		</header>
-		// 	<section className="logo">
-		// 		<h2 className="text-2xl">
-		// 			<Link to="/">MBS</Link>
-		// 		</h2>
-		// 	</section>
-		// 	<aside className="flex gap-8">
-
-		// 	</aside>
-		// 	<section className="loggedUser">
-		//
-
-		// 	</section>
-		// </header>
 	);
 }

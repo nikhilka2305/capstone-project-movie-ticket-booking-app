@@ -452,7 +452,7 @@ export const getPersonalReviewStats = async (req, res, next) => {
 	} catch (err) {
 		console.log(err);
 		res
-			.status(statusCode || 500)
+			.status(err.statusCode || 500)
 			.json({ message: "Error", error: err.message });
 	}
 };

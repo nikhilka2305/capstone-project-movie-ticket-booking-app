@@ -2,15 +2,18 @@ import { Outlet } from "react-router-dom";
 import { TheaterManagementRoute } from "./TheaterRoutes";
 import { BookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
+import { AdminDashboardComponent } from "../pages/admin/AdminDashboardComponent";
+import ManageUsers from "../pages/admin/ManageUsers";
+import ManageTheaterOwners from "../pages/admin/ManageTheaterOwners";
 
 export const IndividualTheaterOwnerManagementRoute = {
 	path: ":ownerid",
-	element: <h2>Manage Individual Theater Owner Id</h2>,
+	element: <Profile type="theaterowner" idtype="ownerid" />,
 };
 
 export const IndividualUserManagementRoute = {
 	path: ":userid",
-	element: <h2>Manage Individual User Id</h2>,
+	element: <Profile type="user" idtype="userid" />,
 };
 
 export const AdminDashboard = {
@@ -19,7 +22,7 @@ export const AdminDashboard = {
 	children: [
 		{
 			index: true,
-			element: <h2>Admin Dashboard</h2>,
+			element: <AdminDashboardComponent />,
 		},
 		TheaterManagementRoute,
 		BookingRoute,
@@ -37,21 +40,23 @@ export const AdminTheaterBookings = {
 
 export const UserManagementRoute = {
 	path: "manageusers",
-	element: (
-		<h3>
-			Manage Users
-			<Outlet />
-		</h3>
-	),
-	children: [IndividualUserManagementRoute],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <ManageUsers />,
+		},
+		IndividualUserManagementRoute,
+	],
 };
 export const TheaterOwnerManagementRoute = {
 	path: "managetheaterowners",
-	element: (
-		<h3>
-			Manage Theater Owners
-			<Outlet />
-		</h3>
-	),
-	children: [IndividualTheaterOwnerManagementRoute],
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <ManageTheaterOwners />,
+		},
+		IndividualTheaterOwnerManagementRoute,
+	],
 };
