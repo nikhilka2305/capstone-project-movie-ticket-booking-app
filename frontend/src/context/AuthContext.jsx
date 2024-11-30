@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 		try {
 			const response = await axios.get(`${serverBaseUrl}/check-user`);
 			console.log(response);
-			if (response.statusText === "OK" && response.data.user) {
+			if (response.status === 200 && response.data.user) {
 				const userData = response.data.user;
 				console.log(userData);
 				setAuth({ isAuthenticated: true, user: userData, loading: false });
