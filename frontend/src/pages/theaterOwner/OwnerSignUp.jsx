@@ -3,7 +3,7 @@ import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 function OwnerSignUp() {
@@ -123,6 +123,9 @@ function OwnerSignUp() {
 						}}
 					/>
 				</div>
+				<Link to="/toauth/tologin" className="text-center">
+					Existing User?
+				</Link>
 			</form>
 		</section>
 	);

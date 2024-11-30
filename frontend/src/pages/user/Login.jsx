@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import Input from "../../components/shared/formcomponents/Input";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -91,6 +91,9 @@ export default function Login() {
 						}}
 					/>
 				</div>
+				<Link to="/signup" className="text-center">
+					New User?
+				</Link>
 			</form>
 			{error && <p className="text-red-600 mx-auto my-4">{error}</p>}
 		</section>

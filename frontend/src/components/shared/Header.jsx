@@ -66,7 +66,10 @@ export default function Header() {
 								<Link to={"/shows"}>Shows</Link>
 							</li>
 							<li>
-								<a>About</a>
+								<Link to={"/login"}>User Login</Link>
+							</li>
+							<li>
+								<Link to={"/toauth/tologin"}>Theater Owner Login</Link>
 							</li>
 						</ul>
 					</div>

@@ -3,7 +3,7 @@ import Input from "../../components/shared/formcomponents/Input";
 
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SelectActors from "../../components/shared/SelectActors";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -164,6 +164,9 @@ export default function SignUp() {
 						}}
 					/>
 				</div>
+				<Link to="/login" className="text-center">
+					Existing User?
+				</Link>
 			</form>
 		</section>
 	);
