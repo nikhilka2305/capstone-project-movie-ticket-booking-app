@@ -18,7 +18,6 @@ export const handleBookingCancellation = async (bookingId) => {
 			row: seat.seatNumber.row,
 			col: seat.seatNumber.col,
 		}));
-		console.log(seatsToCancelNumbers);
 
 		for (const seat of seatsToCancelNumbers) {
 			const { row, col } = seat;
@@ -33,8 +32,6 @@ export const handleBookingCancellation = async (bookingId) => {
 				{ new: true }
 			);
 		}
-
-		console.log(show);
 	} catch (err) {
 		throw new HandleError(err.message, err.statusCode);
 	}
@@ -54,15 +51,12 @@ export const handleShowDeletion = async (showId) => {
 				{ status: "Cancelled" },
 				{ new: true }
 			);
-			console.log(`Booking ${booking._id} status set to Cancelled`);
 		}
 		const updatedShow = await Show.findOneAndUpdate(
 			{ showId: showId },
 			{ deleted: true },
 			{ runValidators: true, new: true }
 		);
-		console.log("show deleted");
-		console.log(updatedShow);
 	} catch (err) {
 		throw new HandleError(err.message, err.statusCode);
 	}
@@ -74,11 +68,9 @@ export const handleTheaterDeletion = async (theaterId) => {
 
 		const shows = await Show.find({ theater: theater._id });
 		if (!shows || shows.length === 0)
-			console.log("There is no show to delete for this theater");
-		for (let show of shows) {
-			await handleShowDeletion(show.showId);
-			console.log(`${show.showId} is deleted`);
-		}
+			for (let show of shows) {
+				await handleShowDeletion(show.showId);
+			}
 
 		const deletedTheater = await Theater.findOneAndUpdate(
 			{ theaterId: theaterId },
@@ -98,20 +90,15 @@ export const handleTheaterOwnerDeletion = async (ownerId) => {
 
 		const theaters = await Theater.find({ owner: theaterowner._id });
 		if (!theaters || theaters.length === 0)
-			console.log("There is no theater to delete for this theaterowner");
-
-		for (let theater of theaters) {
-			await handleTheaterDeletion(theater.theaterId);
-			console.log(`${theater.theaterId} is deleted`);
-		}
+			for (let theater of theaters) {
+				await handleTheaterDeletion(theater.theaterId);
+			}
 
 		await TheaterOwner.findOneAndUpdate(
 			{ userId: ownerId },
 			{ deleted: true },
 			{ new: true }
 		);
-		console.log(theaterowner);
-		console.log("Deleting Account");
 	} catch (err) {
 		throw new HandleError(err.message, err.statusCode);
 	}

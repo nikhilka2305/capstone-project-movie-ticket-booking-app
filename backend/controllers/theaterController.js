@@ -6,7 +6,6 @@ import { addMultipleImages } from "../utils/cloudinaryUpload.js";
 import { handleTheaterDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaters = async (req, res, next) => {
-	console.log("owner");
 	const { filter, page = 1, limit = 10 } = req.query;
 
 	try {
@@ -47,8 +46,6 @@ export const viewTheaters = async (req, res, next) => {
 			res.status(200).json(movies);
 		}
 	} catch (err) {
-		console.log("Unable to get Theaters");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -71,8 +68,6 @@ export const viewIndividualTheater = async (req, res, next) => {
 
 		return res.status(200).json(theater);
 	} catch (err) {
-		console.log("Unable to get that Theater");
-		console.log(err.message);
 		return res.status(404).json({ message: "Error", error: err.message });
 	}
 };
@@ -86,9 +81,7 @@ export const addTheater = async (req, res, next) => {
 		let theaterimages;
 
 		if (images) {
-			console.log(images);
 			theaterimages = await addMultipleImages(images);
-			console.log(theaterimages);
 		}
 
 		const theater = new Theater({
@@ -106,8 +99,6 @@ export const addTheater = async (req, res, next) => {
 		await theater.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save Theater");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -117,12 +108,11 @@ export const editIndividualTheater = async (req, res, next) => {
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid });
 		if (!theater) throw new HandleError("Such a theater doesn't exist", 404);
-		console.log(req.user.loggedUserObjectId, theater.owner);
+
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner)
 		) {
-			console.log("not true owner");
 			throw new HandleError("You are not authorized to edit this theater", 403);
 		}
 		const {
@@ -135,16 +125,13 @@ export const editIndividualTheater = async (req, res, next) => {
 		} = req.body;
 
 		const images = req.files;
-		console.log("body");
-		console.log(req.body);
+
 		let theaterimages = theater.images;
 
 		if (images && images.length > 0) {
-			console.log(images);
 			theaterimages = await addMultipleImages(images);
-			console.log(theaterimages);
 		}
-		console.log(req.body);
+
 		const updatedTheater = await Theater.findOneAndUpdate(
 			{ theaterId: theaterid },
 			{
@@ -159,10 +146,9 @@ export const editIndividualTheater = async (req, res, next) => {
 			},
 			{ new: true, upsert: true }
 		);
-		console.log(updatedTheater);
+
 		return res.json({ message: `Succesfully Updated ${theaterid}` });
 	} catch (err) {
-		console.log(err.statusCode ? err.statusCode : 500, err.message, err.stack);
 		return res
 			.status(err.statusCode ? err.statusCode : 500)
 			.json({ message: err.message });

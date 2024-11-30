@@ -76,12 +76,11 @@ bookingSchema.pre("save", async function (next) {
 			"seats"
 		);
 		if (!show) throw new Error("Show doesn't exist");
-		console.log(show.theater.seats);
+
 		// Check if entered seats are valid
 
 		// Loop through the requested seats and check against bookedSeats
 		for (let seat of this.seats) {
-			console.log("Before Booking");
 			if (
 				seat.seatNumber.row < 0 ||
 				seat.seatNumber.row > show.theater.seats.rows ||
@@ -111,7 +110,6 @@ bookingSchema.pre("save", async function (next) {
 		// Proceed if no conflicts
 		next();
 	} catch (err) {
-		console.log("Error checking booked seats:");
 		next(err); // Pass error to the next middleware
 	}
 });
@@ -127,7 +125,6 @@ bookingSchema.set("toJSON", { virtuals: true });
 bookingSchema.set("toObject", { virtuals: true });
 
 bookingSchema.post("save", async function (val, next) {
-	console.log("After Booking");
 	try {
 		const show = await Show.findOne({ _id: val.showInfo });
 		if (!show) throw new HandleError("Show doesn't exist", 403);
@@ -143,7 +140,6 @@ bookingSchema.post("save", async function (val, next) {
 		}
 		next();
 	} catch (err) {
-		console.log("Error updating Show...,", err);
 		next(err);
 	}
 });

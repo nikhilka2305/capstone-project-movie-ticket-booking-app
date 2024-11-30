@@ -5,15 +5,10 @@ import HandleError from "../middleware/errorHandling.js";
 import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 
 export const viewUsers = async (req, res, next) => {
-	console.log(req.user);
-
 	try {
-		console.log(req.user);
 		const users = await User.find().select("-passwordHash");
 		res.json(users);
 	} catch (err) {
-		console.log("Unable to get user Data");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -32,8 +27,6 @@ export const viewUserProfile = async (req, res, next) => {
 		if (!user) throw new HandleError("No such user exists", 404);
 		res.status(200).json(user);
 	} catch (err) {
-		console.log("Unable to get user Data");
-		console.log(err.message);
 		return res
 			.status(err.statusCode)
 			.json({ message: "Error", error: err.message });
@@ -53,9 +46,6 @@ export const updateUserProfile = async (req, res, next) => {
 		const image = req.file;
 		let displayImage;
 		if (image) {
-			console.log("><><>?<<<<>>");
-			console.log(image);
-
 			displayImage = await uploadDisplayImage(image);
 		}
 
@@ -69,8 +59,6 @@ export const updateUserProfile = async (req, res, next) => {
 			},
 			{ runValidators: true, new: true }
 		);
-		console.log(req.body);
-		console.log("Updating User Profile");
 
 		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
@@ -101,8 +89,6 @@ export const registerUser = async (req, res, next) => {
 		await user.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save User");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -120,7 +106,6 @@ export const loginUser = async (req, res) => {
 			if (!passwordMatch) {
 				throw new Error("Invalid User Credentials");
 			} else {
-				console.log(user);
 				const token = createToken({
 					userId: user.userId,
 					username: username,
@@ -128,7 +113,6 @@ export const loginUser = async (req, res) => {
 					id: user._id,
 				});
 
-				console.log(token);
 				res.cookie("token", token, {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 
@@ -158,15 +142,12 @@ export const resetUserPassword = async (req, res, next) => {
 		const { newPassword } = req.body;
 
 		const newPasswordHash = await bcrypt.hash(newPassword, 10);
-		console.log(newPasswordHash);
-		console.log(req.user.loggedUserObjectId);
+
 		const user = await User.findByIdAndUpdate(
 			req.user.loggedUserObjectId,
 			{ passwordHash: newPasswordHash },
 			{ new: true }
 		);
-		console.log(user);
-		console.log("Resetting password");
 
 		res.status(201).json("Password Reset");
 	} catch (err) {
@@ -178,7 +159,7 @@ export const resetUserPassword = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
 	const { userid } = req.params;
-	console.log(req.user.loggedUserId, userid);
+
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
 		return res.status(403).json({
 			error: "Authorization Error",
@@ -196,8 +177,7 @@ export const deleteUser = async (req, res, next) => {
 				{ deleted: true },
 				{ new: true }
 			);
-			console.log(user);
-			console.log("Deleting Account");
+
 			if (req.user.role !== "Admin")
 				return res.status(204).clearCookie("token").json("Account Deleted");
 			res.status(204).json("Account Deleted");

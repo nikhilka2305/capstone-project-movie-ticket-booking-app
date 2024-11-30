@@ -5,23 +5,20 @@ import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 import { handleTheaterOwnerDeletion } from "../utils/deleteCascadeManager.js";
 
 export const viewTheaterOwners = async (req, res, next) => {
-	console.log(req.user);
 	const { active } = req.query;
-	console.log(active);
+
 	let filterCondition = {};
 	if (active) {
 		filterCondition = { deleted: false, blocked: false };
 	}
 	// active ? {fi}
-	console.log(filterCondition);
+
 	try {
 		const owners = await TheaterOwner.find(filterCondition).select(
 			"-passwordHash"
 		);
 		res.json(owners);
 	} catch (err) {
-		console.log("Unable to get Theater Owner");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -42,8 +39,6 @@ export const viewTheaterOwnerProfile = async (req, res, next) => {
 		if (!owner) throw new Error("No such theater owner exists");
 		res.status(200).json(owner);
 	} catch (err) {
-		console.log("Unable to get theater owner Data");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -52,7 +47,6 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 	const { ownerid } = req.params;
 
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid) {
-		console.log(req.user.loggedUserId, ownerid);
 		return res.status(403).json({
 			error: "Authorization Error",
 			message: "You are not authorized to see this page",
@@ -60,13 +54,10 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 	}
 
 	try {
-		console.log("hello");
 		const { mobile, email } = req.body;
 		const image = req.file;
 		let displayImage;
 		if (image) {
-			console.log("><><>TO<<<<>>");
-			console.log(image);
 			displayImage = await uploadDisplayImage(image);
 		}
 
@@ -75,8 +66,6 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 			{ mobile, email, displayImage: displayImage },
 			{ runValidators: true, new: true }
 		);
-		console.log(user);
-		console.log("Updating Theater Owner Profile");
 
 		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
@@ -88,7 +77,7 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 
 export const registerTheaterOwner = async (req, res, next) => {
 	const { username, email, mobile, password } = req.body;
-	console.log(req.body);
+
 	const passwordHash = await bcrypt.hash(password, 10);
 	try {
 		const owner = new TheaterOwner({
@@ -102,8 +91,6 @@ export const registerTheaterOwner = async (req, res, next) => {
 		await owner.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save Theater Owner");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -125,14 +112,13 @@ export const loginTheaterOwner = async (req, res) => {
 			if (!passwordMatch) {
 				throw new Error("Invalid Theater Owner Credentials");
 			} else {
-				console.log(theaterowner);
 				const token = createToken({
 					userId: theaterowner.userId,
 					username: username,
 					role: theaterowner.role,
 					id: theaterowner._id,
 				});
-				console.log(token);
+
 				res.cookie("token", token, {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
@@ -159,15 +145,12 @@ export const resetTheaterOwnerPassword = async (req, res, next) => {
 		const { newPassword } = req.body;
 
 		const newPasswordHash = await bcrypt.hash(newPassword, 10);
-		console.log(newPasswordHash);
-		console.log(req.user.loggedUserObjectId);
+
 		const theaterowner = await TheaterOwner.findByIdAndUpdate(
 			req.user.loggedUserObjectId,
 			{ passwordHash: newPasswordHash },
 			{ new: true }
 		);
-		console.log(theater);
-		console.log("Resetting password");
 
 		res.status(201).json("Password Reset");
 	} catch (err) {

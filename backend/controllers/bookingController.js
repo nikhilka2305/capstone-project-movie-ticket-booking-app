@@ -9,7 +9,6 @@ import { handleBookingCancellation } from "../utils/deleteCascadeManager.js";
 export const viewPersonalBookings = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
-	console.log(userid);
 
 	let filterOptions = {};
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
@@ -19,9 +18,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 	}
 	try {
 		if (req.user.role === "Admin") {
-			console.log("chek user");
 			if (req.params.userid) {
-				console.log("user here");
 				filterOptions.user = await User.findOne({ userId: userid }).select(
 					"_id"
 				);
@@ -30,18 +27,15 @@ export const viewPersonalBookings = async (req, res, next) => {
 					userId: userid,
 				}).select("_id");
 			} else {
-				console.log("admin here");
 				filterOptions.user = await Admin.findOne({ userId: userid }).select(
 					"_id"
 				);
 			}
 		}
-		console.log(filterOptions);
-		console.log(limit);
+
 		if (req.query.page && req.query.limit) {
 			const skip = (page - 1) * limit;
-			console.log(limit);
-			console.log(skip);
+
 			const bookings = await Booking.find(filterOptions)
 				.sort({ createdAt: -1 })
 				.skip(skip)
@@ -100,8 +94,6 @@ export const viewPersonalBookings = async (req, res, next) => {
 			res.status(200).json(bookings);
 		}
 	} catch (err) {
-		console.log("Unable to get Bookings");
-		console.log(err.message);
 		return res
 			.status(err.statusCode)
 			.json({ message: "Error", error: err.message });
@@ -129,8 +121,7 @@ export const viewIndividualBooking = async (req, res, nex) => {
 		});
 
 		if (!booking) throw new HandleError("No bookings found", 404);
-		console.log(booking.user, req.user.loggedUserObjectId);
-		console.log(booking);
+
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user) &&
@@ -141,7 +132,6 @@ export const viewIndividualBooking = async (req, res, nex) => {
 			throw new HandleError("You are not Authorized to view this booking", 403);
 		return res.json(booking);
 	} catch (err) {
-		console.log(err);
 		return res.status(err.statusCode).json({ message: err.message });
 	}
 };
@@ -156,11 +146,6 @@ export const viewBookings = async (req, res, next) => {
 				$eq: new ObjectId(user.loggedUserObjectId),
 			},
 		};
-		console.log(filterConditions);
-		console.log(
-			"This is theater owner... Some filters needed",
-			user.loggedUserObjectId
-		);
 	}
 	try {
 		const bookings = await Booking.aggregate([
@@ -326,12 +311,9 @@ export const viewBookings = async (req, res, next) => {
 				$match: filterConditions,
 			},
 		]);
-		console.log(`Length of retrieved data is ${bookings.length}`);
 
 		res.json(bookings);
 	} catch (err) {
-		console.log("Unable to get Bookings");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -358,8 +340,6 @@ export const addBooking = async (req, res, next) => {
 		await booking.save();
 		return res.status(200).json({ message: "Success" });
 	} catch (err) {
-		console.log("Unable to save Booking");
-		console.log(err.message);
 		return res
 			.status(err.statusCode)
 			.json({ message: "Error", error: err.message });
@@ -376,7 +356,6 @@ export const cancelBooking = async (req, res, next) => {
 		});
 		if (!booking) throw new HandleError("No such booking found", 404);
 
-		console.log(booking.user, req.user.loggedUserObjectId);
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(booking.user)
@@ -388,20 +367,13 @@ export const cancelBooking = async (req, res, next) => {
 		if (booking.status === "Cancelled")
 			throw new HandleError("This Booking is already cancelled", 403);
 
-		console.log(booking);
 		if (booking.showInfo.showTime < Date.now()) {
-			console.log(booking.showInfo.showTime, new Date(Date.now()));
-			console.log(
-				"You cannot cancel this booking as the show time is already past.."
-			);
 			throw new HandleError(
 				"You cannot cancel this Booking as time period has already passed"
 			);
 		} else {
-			console.log(booking.showInfo.showTime, new Date(Date.now()));
-			console.log("deleting seats from show..");
 			await handleBookingCancellation(bookingid);
-			console.log("cancelling booking");
+
 			const cancelledBooking = await Booking.findOneAndUpdate(
 				{ bookingId: bookingid },
 				{
@@ -418,7 +390,6 @@ export const cancelBooking = async (req, res, next) => {
 
 export const getPersonalBookingStats = async (req, res, next) => {
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
-	console.log(userid);
 
 	try {
 		let userObjectId;
@@ -431,24 +402,23 @@ export const getPersonalBookingStats = async (req, res, next) => {
 				const user = await User.findOne({ userId: userid })
 					.lean()
 					.select("_id");
-				console.log(user);
+
 				userObjectId = user._id.toString();
 			} else if (req.params.ownerid) {
 				const user = await TheaterOwner.findOne({ userId: userid })
 					.lean()
 					.select("_id");
-				console.log(user);
+
 				userObjectId = user._id.toString();
 			} else {
 				const user = await Admin.findOne({ userId: userid })
 					.lean()
 					.select("_id");
-				console.log(user);
+
 				userObjectId = user._id.toString();
 			}
-			console.log("Will try admin part later");
 		}
-		// console.log(filterOptions);
+
 		const bookingStats = await Booking.aggregate([
 			{
 				// Match based on user ID if provided

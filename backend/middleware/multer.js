@@ -3,7 +3,6 @@ import path from "path";
 import HandleError from "./errorHandling.js";
 const storage = multer.diskStorage({
 	filename: function (req, file, cb) {
-		console.log(file, "file============================file");
 		cb(null, file.originalname);
 	},
 });

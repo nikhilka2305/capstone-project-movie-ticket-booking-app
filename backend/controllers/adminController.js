@@ -5,14 +5,10 @@ import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 import HandleError from "../middleware/errorHandling.js";
 
 export const viewAdmins = async (req, res, next) => {
-	console.log(req.user);
-
 	try {
 		const admins = await Admin.find().select("-passwordHash");
 		res.json(admins);
 	} catch (err) {
-		console.log("Unable to get user Data");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -27,8 +23,6 @@ export const viewAdminProfile = async (req, res, next) => {
 		if (!admin) throw new HandleError("No such admin exists", 404);
 		res.status(200).json(admin);
 	} catch (err) {
-		console.log("Unable to get Admin Data");
-		console.log(err.message);
 		return res
 			.status(err.statusCode)
 			.json({ message: "Error", error: err.message });
@@ -43,9 +37,6 @@ export const updateAdminProfile = async (req, res, next) => {
 		const image = req.file;
 		let displayImage;
 		if (image) {
-			console.log("><><>Admin<<<<>>");
-			console.log(image);
-
 			displayImage = await uploadDisplayImage(image);
 		}
 		const user = await Admin.findOneAndUpdate(
@@ -53,8 +44,6 @@ export const updateAdminProfile = async (req, res, next) => {
 			{ mobile, email, displayImage: displayImage },
 			{ runValidators: true, new: true }
 		);
-		console.log(user);
-		console.log("Updating Admin Profile");
 
 		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
@@ -79,8 +68,6 @@ export const registerAdmin = async (req, res, next) => {
 		await admin.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save Admin");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -105,7 +92,7 @@ export const loginAdmin = async (req, res) => {
 					role: admin.role,
 					id: admin._id,
 				});
-				console.log(token);
+
 				res.cookie("token", token, {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 					httpOnly: true,
@@ -133,15 +120,12 @@ export const resetAdminPassword = async (req, res, next) => {
 		const { newPassword } = req.body;
 
 		const newPasswordHash = await bcrypt.hash(newPassword, 10);
-		console.log(newPasswordHash);
-		console.log(req.user.loggedUserObjectId);
+
 		const admin = await Admin.findByIdAndUpdate(
 			req.user.loggedUserObjectId,
 			{ passwordHash: newPasswordHash },
 			{ new: true }
 		);
-		console.log(admin);
-		console.log("Resetting password");
 
 		res.status(201).json("Password Reset");
 	} catch (err) {
@@ -153,7 +137,6 @@ export const resetAdminPassword = async (req, res, next) => {
 
 export const deleteAdmin = async (req, res, next) => {
 	const { adminid } = req.params;
-	console.log(req.user);
 
 	if (req.user.role !== "Admin")
 		return res.status(403).json({
@@ -172,8 +155,7 @@ export const deleteAdmin = async (req, res, next) => {
 				{ deleted: true },
 				{ new: true }
 			);
-			console.log(admin);
-			console.log("Deleting Account");
+
 			if (req.user.loggedUserId === adminid)
 				return res.status(204).clearCookie("token").json("Account Deleted");
 			return res.status(204).json("Account Deleted");

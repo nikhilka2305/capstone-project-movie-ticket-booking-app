@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 export const viewMovies = async (req, res, next) => {
 	try {
 		const { filter, page = 1, limit = 10 } = req.query;
-		console.log(req.query);
+
 		const filterConditions =
 			req.user && req.user.role === "Admin"
 				? {}
@@ -52,8 +52,6 @@ export const viewMovies = async (req, res, next) => {
 			res.status(200).json(movies);
 		}
 	} catch (err) {
-		console.log("Unable to get Movies");
-		console.log(err.message);
 		return res.status(500).json({ message: "Error", error: err.message });
 	}
 };
@@ -73,8 +71,6 @@ export const viewIndividualMovie = async (req, res, next) => {
 		}
 		return res.json(movie);
 	} catch (err) {
-		console.log("Unable to get that Movie");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -104,9 +100,6 @@ export const editIndividualMovie = async (req, res, next) => {
 		const image = req.file;
 		let posterImage;
 		if (image) {
-			console.log("><><>Movie Poster<<<<>>");
-			console.log(image);
-
 			posterImage = await uploadMoviePoster(image);
 		}
 		const updatedMovie = await Movie.findOneAndUpdate(
@@ -147,8 +140,6 @@ export const deleteIndividualMovie = async (req, res, next) => {
 		);
 		return res.status(204).json({ message: " Movie Deleted" });
 	} catch (err) {
-		console.log("Unable to get that Movie");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -168,9 +159,6 @@ export const addMovie = async (req, res, next) => {
 	const image = req.file;
 	let posterImage;
 	if (image) {
-		console.log("><><>Movie Poster<<<<>>");
-		console.log(image);
-
 		posterImage = await uploadMoviePoster(image);
 	}
 	try {
@@ -191,8 +179,6 @@ export const addMovie = async (req, res, next) => {
 		await movie.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save Movie");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };

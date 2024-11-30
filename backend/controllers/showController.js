@@ -8,12 +8,11 @@ import { validateDateTime } from "../utils/validateDate.js";
 
 export const viewShows = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
-	console.log(req.query);
+
 	const { movieid, theaterid } = req.params;
-	console.log(req.params);
-	console.log(movieid, theaterid);
+
 	const now = new Date();
-	console.log(now);
+
 	const filterConditions = { showTime: { $gt: now } };
 	if (!req.user) filterConditions.deleted = false;
 
@@ -22,18 +21,15 @@ export const viewShows = async (req, res, next) => {
 			const movie = await Movie.findOne({ movieId: movieid });
 			if (!movie || movie.adminApprovalStatus !== "Approved")
 				throw new HandleError("Such a movie doesn't exist or might be deleted");
-			console.log("---");
-			console.log(movie._id);
+
 			filterConditions.movie = movie._id;
-			console.log(filterConditions);
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid });
 			if (!theater || theater.adminApprovalStatus !== "Approved")
 				throw new HandleError(
 					"Such a theater doesn't exist or might be deleted"
 				);
-			console.log("---");
-			console.log(theater._id);
+
 			filterConditions.theater = theater._id;
 		}
 		if (req.query.page && req.query.limit) {
@@ -59,8 +55,6 @@ export const viewShows = async (req, res, next) => {
 			res.status(200).json(shows);
 		}
 	} catch (err) {
-		console.log("Unable to get Shows");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -71,11 +65,9 @@ export const addShow = async (req, res, next) => {
 	// Verify Theater Owner
 
 	try {
-		console.log(theaterid);
 		const theater = await Theater.findOne({ theaterId: theaterid })
 			.populate("owner", "ownerId username _id")
 			.lean();
-		console.log(theater);
 
 		if (!theater || theater.adminApprovalStatus !== "Approved")
 			throw new HandleError(
@@ -95,8 +87,6 @@ export const addShow = async (req, res, next) => {
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(theater.owner._id)
 		) {
-			console.log(req.user.role !== "Admin");
-			console.log;
 			throw new HandleError("You are not authorized to do this", 403);
 		}
 		const validShowTime = validateDateTime(showTime);
@@ -118,9 +108,6 @@ export const individualShow = async (req, res, next) => {
 	const { showId, theaterId } = req.params;
 
 	try {
-		console.log("ind show");
-		console.log(showId);
-
 		const show = await Show.findOne({ showId: showId })
 			.populate("movie")
 			.populate("theater", "theaterName theaterId seats seatClasses owner");
@@ -137,7 +124,7 @@ export const editShow = async (req, res, next) => {
 		const show = await Show.findOne({ showId: showid })
 			.populate("movie", "movieName")
 			.populate("theater", "theaterName seats seatClasses owner");
-		console.log(show);
+
 		if (!show || show.deleted)
 			return res.status(404).json({
 				error: "Show Cannot Be Accessed",
@@ -148,8 +135,6 @@ export const editShow = async (req, res, next) => {
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(show.theater.owner)
 		) {
-			console.log(req.user.role !== "Admin");
-			console.log;
 			throw new Error("You are not authorized to do this");
 		}
 		const { showTime, movie } = req.body;
@@ -158,11 +143,9 @@ export const editShow = async (req, res, next) => {
 			{ showTime, movie },
 			{ runValidators: true, new: true }
 		);
-		console.log(updatedShow);
+
 		return res.json({ message: `Succesfully Updated ${showid}` });
 	} catch (err) {
-		console.log("Unable to save Show");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };
@@ -173,22 +156,17 @@ export const deleteShow = async (req, res, next) => {
 		const show = await Show.findOne({ showId: showid })
 			.populate("movie", "movieName")
 			.populate("theater", "theaterName seats seatClasses owner");
-		console.log(show);
 
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(show.theater.owner)
 		) {
-			console.log(req.user.role !== "Admin");
-			console.log;
 			throw new Error("You are not authorized to do this");
 		}
 		handleShowDeletion(showid);
 
 		return res.json({ message: `Succesfully Deleted ${showid}` });
 	} catch (err) {
-		console.log("Unable to save Show");
-		console.log(err.message);
 		return res.json({ message: "Error", error: err.message });
 	}
 };

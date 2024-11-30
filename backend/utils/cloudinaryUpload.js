@@ -5,7 +5,7 @@ export const uploadDisplayImage = async (displayImage) => {
 		displayImage.path,
 		{ folder: "Movie Ticket Booking Application/displayimages" }
 	);
-	console.log(displayImageUrl.secure_url);
+
 	const roundImage = cloudinaryInstance.url(displayImageUrl.public_id, {
 		transformation: [
 			{ aspect_ratio: "1:1", gravity: "auto", width: 300, crop: "auto" },
@@ -14,7 +14,7 @@ export const uploadDisplayImage = async (displayImage) => {
 		secure: true, // Ensures the URL is secure
 		resource_type: "image", // Explicitly specify the resource type
 	});
-	console.log(roundImage);
+
 	return roundImage;
 };
 
@@ -23,7 +23,7 @@ export const uploadMoviePoster = async (posterImage) => {
 		posterImage.path,
 		{ folder: "Movie Ticket Booking Application/posterimages" }
 	);
-	console.log(posterImageUrl.secure_url);
+
 	const posterCorrectedImage = cloudinaryInstance.url(
 		posterImageUrl.public_id,
 		{
@@ -32,12 +32,11 @@ export const uploadMoviePoster = async (posterImage) => {
 			resource_type: "image", // Explicitly specify the resource type
 		}
 	);
-	console.log(posterCorrectedImage);
+
 	return posterCorrectedImage;
 };
 
 export const addMultipleImages = async (images) => {
-	console.log(images);
 	const theaterimages = [];
 	for (let image of images) {
 		const img = await cloudinaryInstance.uploader.upload(image.path, {
@@ -52,6 +51,6 @@ export const addMultipleImages = async (images) => {
 
 		theaterimages.push(theaterimage);
 	}
-	console.log(theaterimages);
+
 	return theaterimages;
 };

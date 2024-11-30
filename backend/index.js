@@ -36,6 +36,4 @@ app.all("*", (req, res, next) => {
 	}
 });
 
-app.listen(port, () => {
-	console.log(`Listening at ${port}`);
-});
+app.listen(port, () => {});

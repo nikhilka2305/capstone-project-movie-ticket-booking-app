@@ -7,9 +7,9 @@ import { ObjectId } from "mongodb";
 import { User } from "../models/User.js";
 export const viewReviews = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
-	console.log(req.query);
+
 	const { movieid, theaterid } = req.params;
-	console.log(movieid, theaterid);
+
 	const filterConditions = { deleted: false };
 
 	try {
@@ -19,7 +19,6 @@ export const viewReviews = async (req, res, next) => {
 				throw new HandleError("Movie doesn't exist", 404);
 			}
 			filterConditions.movieId = movie._id;
-			console.log(filterConditions);
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid });
 			if (!theater) {
@@ -29,7 +28,6 @@ export const viewReviews = async (req, res, next) => {
 		}
 
 		if (req.query.page && req.query.limit) {
-			console.log(page, limit);
 			const skip = (page - 1) * limit;
 			const reviews = await Review.find(filterConditions)
 				.populate("movieId", "movieName")
@@ -77,7 +75,7 @@ export const viewIndividualReview = async (req, res, next) => {
 
 export const viewIndividualUserReview = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
-	console.log(req.query);
+
 	const { userid } = req.params;
 	try {
 		const user = await User.findOne({ userId: userid });
@@ -90,7 +88,6 @@ export const viewIndividualUserReview = async (req, res, next) => {
 			throw new HandleError("You are not authorized to see these reviews", 403);
 
 		if (req.query.page && req.query.limit) {
-			console.log(page, limit);
 			const skip = (page - 1) * limit;
 			const reviews = await Review.find({ userId: user._id, deleted: false })
 				.populate("movieId", "movieName")
@@ -166,10 +163,8 @@ export const deleteReview = async (req, res, next) => {
 };
 
 export const addReview = async (req, res, next) => {
-	console.log(req.user);
-
 	const { movieid, theaterid } = req.params;
-	console.log(req.user);
+
 	const userBookings = await Booking.find({
 		// _id: new ObjectId(req.user.loggedUserObjectId),
 		user: req.user.loggedUserObjectId,
@@ -188,7 +183,7 @@ export const addReview = async (req, res, next) => {
 
 		select: "-bookedSeats",
 	});
-	console.log(userBookings);
+
 	const reviewData = { userId: req.user.loggedUserObjectId };
 
 	try {
@@ -202,8 +197,7 @@ export const addReview = async (req, res, next) => {
 					booking.showInfo.movie.movieId == movieid &&
 					booking.status === "Confirmed"
 			);
-			console.log("Checking Movie");
-			console.log(watchedMovie);
+
 			if (!watchedMovie)
 				throw new HandleError(
 					"You need to have booked for this movie to review this.",
@@ -221,8 +215,7 @@ export const addReview = async (req, res, next) => {
 					booking.showInfo.theater.theaterId == theaterid &&
 					booking.status === "Confirmed"
 			);
-			console.log("Checking Theater");
-			console.log(watchedTheater);
+
 			if (!watchedTheater)
 				throw new HandleError(
 					"You need to have booked for this theater to review this.",
@@ -234,26 +227,20 @@ export const addReview = async (req, res, next) => {
 
 		// Need to Verify if the user has booked the movie
 
-		console.log(req.user.loggedUserObjectId);
 		const reviewsAdded = await Review.find({
 			userId: req.user.loggedUserObjectId,
 		})
 			.populate("movieId", "movieId _id movieName")
 			.populate("theaterId", "theaterId _id theaterName");
-		console.log("My reviews");
-		console.log(reviewsAdded);
 
 		// Now check if User already added review for this movie/theater
-		console.log("check if User already added review for this movie/theater");
+
 		const reviewEligible = reviewsAdded.find((review) => {
-			console.log(review);
 			if (theaterid && review.theaterId)
 				return review.theaterId.theaterId === theaterid;
 			if (movieid && review.movieId) return review.movieId.movieId === movieid;
 		});
-		console.log("review elligible");
-		console.log(reviewEligible);
-		console.log("review elligible2");
+
 		if (reviewEligible) {
 			throw new HandleError(
 				"You have already added a review for this movie/theater "
@@ -262,13 +249,11 @@ export const addReview = async (req, res, next) => {
 		const { userRating, userReview } = req.body;
 		reviewData.userRating = userRating;
 		reviewData.userReview = userReview;
-		console.log(reviewData);
+
 		const review = new Review(reviewData);
 		await review.save();
 		return res.send("Success");
 	} catch (err) {
-		console.log("Unable to save Review");
-		console.log(err.message);
 		return res
 			.status(err.statusCode)
 			.json({ message: "Error", error: err.message });
@@ -276,9 +261,8 @@ export const addReview = async (req, res, next) => {
 };
 
 export const averageRating = async (req, res, next) => {
-	console.log("Average rating Calculation");
 	const { movieid, theaterid } = req.params;
-	console.log(movieid, theaterid);
+
 	const filterConditions = { deleted: false };
 	let reviews;
 	try {
@@ -294,12 +278,12 @@ export const averageRating = async (req, res, next) => {
 		if (!reviews || reviews.length === 0)
 			return res.status(200).json({ message: "No Reviews are added" });
 		// Average rating logic to be added
-		console.log(reviews);
+
 		const totalRating = reviews.reduce((total, review) => {
 			return (total += review.userRating);
 		}, 0);
 		const averageRating = totalRating / reviews.length;
-		console.log(totalRating, averageRating);
+
 		return res.json({
 			message: "The Average rating is",
 			averageRating: averageRating,
@@ -312,7 +296,6 @@ export const averageRating = async (req, res, next) => {
 
 export const getPersonalReviewStats = async (req, res, next) => {
 	const userid = req.params.userid;
-	console.log(userid);
 
 	try {
 		let userObjectId;
@@ -320,7 +303,7 @@ export const getPersonalReviewStats = async (req, res, next) => {
 			throw new HandleError("You are not authorized to see this page", 403);
 		else if (req.user.role === "Admin") {
 			const user = await User.findOne({ userId: userid }).lean().select("_id");
-			console.log(user);
+
 			userObjectId = user._id.toString();
 		} else if (req.user.loggedUserId === userid) {
 			userObjectId = req.user.loggedUserObjectId;
@@ -450,7 +433,6 @@ export const getPersonalReviewStats = async (req, res, next) => {
 		const reviewStats = await Review.aggregate(aggregation);
 		res.status(200).json(reviewStats);
 	} catch (err) {
-		console.log(err);
 		res
 			.status(err.statusCode || 500)
 			.json({ message: "Error", error: err.message });
