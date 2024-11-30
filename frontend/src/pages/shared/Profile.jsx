@@ -183,7 +183,7 @@ function Profile({ type, idtype }) {
 			await checkAuth();
 			toast.success("Succesfully deleted ", idValue);
 			// await logOut();
-			navigate("/login");
+			navigate("/");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete ", idValue);

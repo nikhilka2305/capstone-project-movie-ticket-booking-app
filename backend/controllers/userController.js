@@ -94,7 +94,7 @@ export const registerUser = async (req, res, next) => {
 		const passwordHash = await bcrypt.hash(password, 10);
 		let user = await User.findOne({ username });
 		if (user) {
-			throw new Error("Username already exists. Try again");
+			throw new HandleError("Username already exists. Try again", 401);
 		}
 		user = new User({
 			username,
