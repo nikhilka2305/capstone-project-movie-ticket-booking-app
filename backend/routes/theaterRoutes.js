@@ -5,6 +5,7 @@ import {
 	viewIndividualTheater,
 	editIndividualTheater,
 	deleteIndividualTheater,
+	viewTheatersAdmin,
 } from "../controllers/theaterController.js";
 import {
 	addReview,
@@ -28,6 +29,12 @@ import { validateShow } from "../middleware/showValidation.js";
 const router = Router();
 
 router.get("/", viewTheaters);
+router.get(
+	"/manage",
+	authenticateToken,
+	authorization("Admin"),
+	viewTheatersAdmin
+);
 router.post(
 	"/addtheater",
 	authenticateToken,

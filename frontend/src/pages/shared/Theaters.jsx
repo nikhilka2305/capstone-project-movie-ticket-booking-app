@@ -7,7 +7,6 @@ import Poster from "../../components/shared/Poster";
 import toast from "react-hot-toast";
 
 function Theaters() {
-	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theater`;
 	const [theaters, setTheaters] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(1); // Current page
@@ -17,8 +16,9 @@ function Theaters() {
 		setLoading(true);
 		async function getTheaters() {
 			try {
+				const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theater`;
 				const response = await axios.get(`${serverUrl}`, {
-					params: { page, limit: 4 },
+					params: { page, limit: 8 },
 				});
 				const responseData = response.data;
 
@@ -36,7 +36,7 @@ function Theaters() {
 			<h1 className="text-2xl ">Theaters</h1>
 			{loading && <div>Loading...</div>}
 			<PosterSlider posters={theaters} classes="h-full">
-				{theaters.map((item, i) => (
+				{theaters?.map((item, i) => (
 					<Link to={`/theaters/${item.theaterId}`} key={i}>
 						<Poster url={item.images[0]} title={item.theaterName} />
 					</Link>

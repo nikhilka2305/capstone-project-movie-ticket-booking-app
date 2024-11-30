@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import { buildFormData } from "../../utils/manageFormData";
 import { AuthContext } from "../../context/AuthContext";
@@ -47,7 +47,7 @@ function AddTheater() {
 		theaterimages: "",
 	});
 	const [feedback, setFeedback] = useState("");
-
+	const { ownerid } = useParams();
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "seatClasses",
@@ -63,6 +63,9 @@ function AddTheater() {
 	};
 
 	useEffect(() => {
+		if (ownerid !== user.loggedUserId) {
+			navigate(`./theaterowner/${user.loggedUserId}`);
+		}
 		async function getOwners() {
 			setLoading(true);
 			const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theaterowner`;

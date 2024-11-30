@@ -25,6 +25,7 @@ export const viewTheaters = async (req, res, next) => {
 		} else if (!adminid) {
 			filterConditions.adminApprovalStatus = "Approved";
 		}
+
 		if (req.query.page && req.query.limit) {
 			const skip = (page - 1) * limit;
 			const theaters = await Theater.find(filterConditions)
@@ -43,7 +44,40 @@ export const viewTheaters = async (req, res, next) => {
 			const theaters = await Theater.find(filterConditions).select(
 				"theaterName _id theaterId"
 			);
-			res.status(200).json(movies);
+			res.status(200).json(theaters);
+		}
+	} catch (err) {
+		return res.json({ message: "Error", error: err.message });
+	}
+};
+
+export const viewTheatersAdmin = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
+
+	try {
+		if (req.user.role !== "Admin")
+			return res.status(403).json({
+				error: "Authorization Error",
+				message: "You are not authorized to see this page",
+			});
+
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const theaters = await Theater.find()
+				.skip(skip)
+				.limit(limit)
+				.populate("owner", "username");
+			const totalTheaters = await Theater.countDocuments();
+
+			res.status(200).json({
+				theaters,
+				totalTheaters,
+				totalPages: Math.ceil(totalTheaters / limit),
+				currentPage: page,
+			});
+		} else {
+			const theaters = await Theater.find().select("theaterName _id theaterId");
+			res.status(200).json(theaters);
 		}
 	} catch (err) {
 		return res.json({ message: "Error", error: err.message });
