@@ -118,6 +118,7 @@ export const loginUser = async (req, res) => {
 
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "none",
+					secure: true,
 					httpOnly: true,
 				});
 				res.status(200).json({ message: "Succesfully Logged In" });
