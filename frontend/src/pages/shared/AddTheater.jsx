@@ -88,7 +88,7 @@ function AddTheater() {
 		evt.preventDefault();
 		console.log("Hello");
 		console.log(user);
-		let loadingToast = toast.loading("Adding Movie....");
+		let loadingToast = toast.loading("Adding Theater....");
 		const addtheater = { ...data };
 		if (user.role === "TheaterOwner") {
 			addtheater.owner = user.loggedUserObjectId;
@@ -122,18 +122,18 @@ function AddTheater() {
 				},
 			});
 			toast.dismiss(loadingToast);
-			toast.success("Successfully Added Movie");
+			toast.success("Successfully Added Theater");
 			console.log(theaterAdded);
 			navigate("/theaters");
 		} catch (err) {
 			console.log(err);
-			toast.error("Unable to Add Movie");
+			toast.error("Unable to Add Theater");
 			toast.dismiss(loadingToast);
 		}
 	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<h2 className="text-center">Add New Theater</h2>
+			<h1 className="text-center text-2xl font-semibold">Add New Theater</h1>
 			{loading && <p>Loading</p>}
 			<form
 				action=""
@@ -236,8 +236,8 @@ function AddTheater() {
 							rules={{
 								required: "Class Name required",
 								minLength: {
-									value: 5,
-									message: "Minimum 5 characters required",
+									value: 3,
+									message: "Minimum 3 characters required",
 								},
 							}}
 							render={({ field }) => (
@@ -298,7 +298,7 @@ function AddTheater() {
 					colorClass="bg-blue-500 text-white hover:bg-white hover:text-blue-500 my-4"
 				/>
 
-				<h2 className="px-12 text-2xl font-bold text-center my-4">
+				<h2 className="px-12 text-lg font-semibold text-center my-4">
 					Add Amenities Details
 				</h2>
 

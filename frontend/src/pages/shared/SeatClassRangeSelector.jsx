@@ -39,6 +39,10 @@ export default function SeatClassRangeSelector({
 		!selectedClass ||
 		!startRow ||
 		!endRow ||
+		startRow < 1 ||
+		startRow > maxRows ||
+		endRow < 1 ||
+		endRow > maxRows ||
 		Number(startRow) > Number(endRow) ||
 		assignedRows.some(
 			(row) =>
