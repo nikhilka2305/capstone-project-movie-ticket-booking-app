@@ -5,11 +5,32 @@ import HandleError from "../middleware/errorHandling.js";
 import { uploadDisplayImage } from "../utils/cloudinaryUpload.js";
 
 export const viewUsers = async (req, res, next) => {
+	const { filter, page = 1, limit = 10 } = req.query;
+
 	try {
-		const users = await User.find().select("-passwordHash");
-		res.json(users);
+		if (req.query.page && req.query.limit) {
+			const skip = (page - 1) * limit;
+			const users = await User.find()
+				.select("userId username displayImage")
+				.sort({ createdAt: -1 })
+				.skip(skip)
+				.limit(limit);
+			const totalUsers = await User.countDocuments();
+
+			res.status(200).json({
+				users,
+				totalUsers,
+				totalPages: Math.ceil(totalUsers / limit),
+				currentPage: page,
+			});
+		} else {
+			const users = await User.find().lean().select("userId username");
+			res.status(200).json(users);
+		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -28,7 +49,7 @@ export const viewUserProfile = async (req, res, next) => {
 		res.status(200).json(user);
 	} catch (err) {
 		return res
-			.status(err.statusCode)
+			.status(err.statusCode || 500)
 			.json({ message: "Error", error: err.message });
 	}
 };
@@ -37,10 +58,8 @@ export const updateUserProfile = async (req, res, next) => {
 	const { userid } = req.params;
 
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
-		return res.status(403).json({
-			error: "Authorization Error",
-			message: "You are not authorized to update this profile",
-		});
+		throw new HandleError("You are not authorized to update this profile", 403);
+
 	try {
 		const { mobile, email, moviePreferences } = req.body;
 		const image = req.file;
@@ -63,7 +82,7 @@ export const updateUserProfile = async (req, res, next) => {
 		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
 		res
-			.status(500)
+			.status(err.statusCode || 500)
 			.json({ error: "Unable to update profile", message: err.message });
 	}
 };
@@ -87,9 +106,11 @@ export const registerUser = async (req, res, next) => {
 				"https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
 		});
 		await user.save();
-		return res.send("Success");
+		return res.status(200).send("Success");
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -100,11 +121,11 @@ export const loginUser = async (req, res) => {
 		const user = await User.findOne({ username: username });
 
 		if (!user || user.deleted || user.blocked) {
-			throw new Error("Invalid User Credentials");
+			throw new HandleError("Invalid User Credentials", 403);
 		} else {
 			const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 			if (!passwordMatch) {
-				throw new Error("Invalid User Credentials");
+				throw new HandleError("Invalid User Credentials", 403);
 			} else {
 				const token = createToken({
 					userId: user.userId,
@@ -125,7 +146,7 @@ export const loginUser = async (req, res) => {
 			}
 		}
 	} catch (err) {
-		res.status(403).json({
+		res.status(err.statusCode || 500).json({
 			error: "Login Failed",
 			message: err.message,
 		});
@@ -136,10 +157,8 @@ export const resetUserPassword = async (req, res, next) => {
 	const { userid } = req.params;
 
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
-		return res.status(403).json({
-			error: "Authorization Error",
-			message: "You are not authorized to reset Password",
-		});
+		throw new HandleError("You are not authorized to reset Password", 403);
+
 	try {
 		const { newPassword } = req.body;
 
@@ -154,7 +173,7 @@ export const resetUserPassword = async (req, res, next) => {
 		res.status(201).json("Password Reset");
 	} catch (err) {
 		res
-			.status(500)
+			.status(err.statusCode || 500)
 			.json({ error: "Unable to Reset Password", message: err.message });
 	}
 };
@@ -163,16 +182,15 @@ export const deleteUser = async (req, res, next) => {
 	const { userid } = req.params;
 
 	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
-		return res.status(403).json({
-			error: "Authorization Error",
-			message: "You are not authorized to delete this account",
-		});
+		throw new HandleError("You are not authorized to delete this account", 403);
+
 	try {
 		const user = await User.findOne({ userId: userid });
 		if (!user || user.deleted)
-			return res
-				.status(404)
-				.json("This account doesn't exist or is already deleted");
+			throw new HandleError(
+				"This account doesn't exist or is already deleted",
+				404
+			);
 		else {
 			await User.findOneAndUpdate(
 				{ userId: userid },
@@ -181,12 +199,20 @@ export const deleteUser = async (req, res, next) => {
 			);
 
 			if (req.user.role !== "Admin")
-				return res.status(204).clearCookie("token").json("Account Deleted");
+				return res
+					.status(204)
+					.clearCookie("token", {
+						expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+						sameSite: "none",
+						secure: true,
+						httpOnly: true,
+					})
+					.json("Account Deleted");
 			res.status(204).json("Account Deleted");
 		}
 	} catch (err) {
 		res
-			.status(500)
+			.status(err.statusCode || 500)
 			.json({ error: "Unable to delete account", message: err.message });
 	}
 };

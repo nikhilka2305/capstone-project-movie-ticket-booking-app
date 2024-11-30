@@ -36,7 +36,7 @@ export function Pagination({ page, setPage, totalPages }) {
 	}
 
 	return (
-		<div className="flex items-center gap-4 my-auto">
+		<div className="flex items-center gap-4 my-auto ">
 			<Button
 				variant="text"
 				className="flex items-center gap-2"
