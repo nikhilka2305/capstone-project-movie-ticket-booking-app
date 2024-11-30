@@ -121,6 +121,7 @@ export const loginTheaterOwner = async (req, res) => {
 
 				res.cookie("token", token, {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+					sameSite: "none",
 					httpOnly: true,
 				});
 				res.status(200).json({ message: "Succesfully Logged In" });

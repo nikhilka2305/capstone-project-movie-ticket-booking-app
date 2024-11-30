@@ -117,6 +117,7 @@ export const loginUser = async (req, res) => {
 					expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
 
 					secure: process.env.NODE_ENV === "production",
+					sameSite: "none",
 					httpOnly: true,
 				});
 				res.status(200).json({ message: "Succesfully Logged In" });
