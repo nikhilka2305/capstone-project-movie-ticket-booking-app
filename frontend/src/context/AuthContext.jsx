@@ -39,7 +39,9 @@ export const AuthProvider = ({ children }) => {
 				const userData = response.data.user;
 				console.log(userData);
 				setAuth({ isAuthenticated: true, user: userData, loading: false });
+				console.log("checkAuth response data:", response.data);
 			} else {
+				console.log("Auth Failed??");
 				setAuth({
 					isAuthenticated: false,
 					user: {
@@ -52,6 +54,7 @@ export const AuthProvider = ({ children }) => {
 				});
 			}
 		} catch (err) {
+			console.log("Some other issue");
 			console.log(err);
 			setAuth({
 				isAuthenticated: false,
