@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-
+import toast from "react-hot-toast";
 axios.defaults.withCredentials = true;
 export const AuthContext = createContext({
 	auth: {
@@ -34,14 +34,12 @@ export const AuthProvider = ({ children }) => {
 	const checkAuth = async () => {
 		try {
 			const response = await axios.get(`${serverBaseUrl}/check-user`);
-			console.log(response);
+
 			if (response.status === 200 && response.data.user) {
 				const userData = response.data.user;
-				console.log(userData);
+
 				setAuth({ isAuthenticated: true, user: userData, loading: false });
-				console.log("checkAuth response data:", response.data);
 			} else {
-				console.log("Auth Failed??");
 				setAuth({
 					isAuthenticated: false,
 					user: {
@@ -54,8 +52,7 @@ export const AuthProvider = ({ children }) => {
 				});
 			}
 		} catch (err) {
-			console.log("Some other issue");
-			console.log(err);
+			toast.error("Unable to authenticate");
 			setAuth({
 				isAuthenticated: false,
 				user: {
@@ -94,26 +91,21 @@ export const AuthProvider = ({ children }) => {
 				},
 				loading: false,
 			});
-			console.log("Auth state after logout:", {
-				isAuthenticated: false,
-				user: null,
-			});
 		} catch (err) {
-			console.log(err);
+			toast.error("Unable to logout");
 		}
 	};
 
 	useEffect(() => {
 		checkAuth();
 	}, []);
-	useEffect(() => {
-		console.log("AuthProvider context state:", auth);
-	}, [auth]);
+	useEffect(() => {}, [auth]);
 
 	return (
 		<AuthContext.Provider
 			value={{ ...auth, setAuth, login, logOut, checkAuth }}
 		>
+			{auth.loading && <div>Loading...</div>}
 			{!auth.loading && children}
 		</AuthContext.Provider>
 	);
