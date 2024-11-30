@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { Pagination } from "../../components/shared/Pagination";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import axios from "axios";
