@@ -29,7 +29,7 @@ export default function Login() {
 	const handleLoginFormSubmit = async (data, evt) => {
 		evt.preventDefault();
 		const userData = { ...data };
-		console.log(userData);
+
 		try {
 			const userSignup = await axios.post(serverUrl, userData, {
 				headers: {
@@ -37,14 +37,12 @@ export default function Login() {
 				},
 				withCredentials: true,
 			});
-			console.log("Login Success");
+
 			toast.success("Successfully LoggedIn");
 
-			console.log(userSignup);
 			login(userSignup.data.user);
 			await checkAuth();
 		} catch (err) {
-			console.log(err);
 			setError("Unable to Log In");
 			toast.error("Unable to Login");
 		}
@@ -85,13 +83,7 @@ export default function Login() {
 					errors={errors}
 				/>
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						type="submit"
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-					/>
+					<Button type="submit" label="Submit" />
 					<Button
 						label="Reset"
 						onClick={() => {

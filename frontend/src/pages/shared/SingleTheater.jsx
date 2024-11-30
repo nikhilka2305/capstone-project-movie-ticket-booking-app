@@ -17,7 +17,7 @@ function SingleTheater() {
 	const { theaterid } = useParams();
 	const tagsClasses =
 		"text-sm rounded text-gray-600 bg-blue-gray-50 inline pl-2 p-1 text-center";
-	console.log(theaterid);
+
 	useEffect(() => {
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
@@ -27,16 +27,15 @@ function SingleTheater() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				const reviewResponse = await axios.get(`${serverUrl}/avgrating`);
-				console.log(reviewResponse.data);
+
 				setTheater(responseData);
 				setTheaterRating({
 					averageRating: reviewResponse.data.averageRating,
 					reviewCount: reviewResponse.data.reviewCount,
 				});
 			} catch (err) {
-				console.log(err);
 				navigate("/theaters");
 			}
 		}

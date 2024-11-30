@@ -4,6 +4,8 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
+import StatsComponent from "../../components/shared/StatsComponent";
+import toast from "react-hot-toast";
 
 export function AdminDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -23,14 +25,13 @@ export function AdminDashboardComponent() {
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/admin/${adminid}`;
 				const response = await axios.get(`${serverUrl}/getbookingstats`);
-				console.log(response);
-				console.log(response.data[0]);
+
 				setBookingStats(response.data[0]);
 				const recentResponse = await axios.get(`${serverUrl}/bookings`, {
 					params: { page: 1, limit: 4 },
 				});
 			} catch (err) {
-				console.log(err);
+				toast.error("Couldn't fetch data");
 			}
 		}
 
@@ -53,52 +54,68 @@ export function AdminDashboardComponent() {
 						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
 							<h2>Bookings Graph</h2>
 						</div>
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"../../theaters/managetheaters"}>
-								<h2>Manage Theaters</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Manage Theaters
+								</button>
 							</Link>
 							<Link to={"../../theaters/managetheaters/addtheater"}>
-								Add Theater
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Add Theater
+								</button>
 							</Link>
 						</div>
 					</section>
 					<h2>Movie Management </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"../../movies/managemovies"}>
-								<h2>Manage Movies</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Manage Movies
+								</button>
 							</Link>
 							<Link to={"../../movies/addmovie"}>
-								<h2>Add Movie</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Add Movie
+								</button>
 							</Link>
 						</div>
 					</section>
 					<h2>User & Theater Owner Management </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"../manageusers"}>
-								<h2>Manage Users</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Manage Users
+								</button>
 							</Link>
 						</div>
 
 						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
 							<Link to={"../managetheaterowners"}>
-								<h2>Manage Theater Owners</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Manage Theater Owners
+								</button>
 							</Link>
 						</div>
 					</section>
 					<h2>Personal Dashboard</h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start">
-						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60 ">
+						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60 ">
 							<Link to="bookings">
-								<h2 className="text-xl">View Personal Bookings</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									View Personal Bookings
+								</button>
 							</Link>
-							<h3>Booking Stats</h3>
-							<p>Total bookings: {bookingStats?.totalConfirmedBookings ?? 0}</p>
-							<p>
-								Cancelled bookings: {bookingStats?.totalCancelledBookings ?? 0}
-							</p>
-							<p>Total Spent: {bookingStats?.totalPrice ?? 0}</p>
+							<StatsComponent
+								label1="Total Bookings"
+								label2="Cancelled Bookings"
+								label3="Total Spent"
+								value1={bookingStats?.totalConfirmedBookings ?? 0}
+								value2={bookingStats?.totalCancelledBookings ?? 0}
+								value3={bookingStats?.totalPrice ?? 0}
+							/>
 						</div>
 					</section>
 				</>

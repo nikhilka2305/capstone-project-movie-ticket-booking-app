@@ -17,7 +17,6 @@ function SingleMovie() {
 	const { movieid } = useParams();
 	const tagsClasses =
 		"text-sm text-gray-600 rounded bg-blue-gray-50 inline pl-2 p-1";
-	console.log(movieid);
 
 	useEffect(() => {
 		const serverUrl = `${
@@ -28,16 +27,15 @@ function SingleMovie() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				const reviewResponse = await axios.get(`${serverUrl}/avgrating`);
-				console.log(reviewResponse.data);
+
 				setMovie(responseData);
 				setMovieRating({
 					averageRating: reviewResponse.data.averageRating,
 					reviewCount: reviewResponse.data.reviewCount,
 				});
 			} catch (err) {
-				console.log(err);
 				navigate("/movies");
 			}
 		}

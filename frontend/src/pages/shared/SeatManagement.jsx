@@ -5,6 +5,7 @@ import axios from "axios";
 import Button from "../../components/shared/formcomponents/Button";
 import { SeatSelection } from "./SeatGrid";
 import { AuthContext } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function SeatManagement() {
 	const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function SeatManagement() {
 		{ className: "Regular", price: 300, rows: [] },
 	]);
 	const { isAuthenticated, user } = useContext(AuthContext);
-	console.log(user);
+
 	const [theaterSeats, setTheaterSeats] = useState({
 		rows: 5,
 		columns: 6,
@@ -26,7 +27,7 @@ export default function SeatManagement() {
 	const [loading, setLoading] = useState(false);
 	const [maxRows, setMaxRows] = useState(10);
 	const { theaterid } = useParams();
-	console.log(theaterid);
+
 	useEffect(() => {
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
@@ -34,22 +35,20 @@ export default function SeatManagement() {
 		async function getTheaterDetails() {
 			try {
 				setLoading(true);
-				console.log("Use effect ran");
+
 				const theaterData = await axios.get(serverUrl);
-				console.log(theaterData);
+
 				const theater = theaterData.data;
 				if (
 					user.role !== "Admin" &&
 					user.loggedUserObjectId !== theater.owner.toString()
 				) {
-					console.log("logged User Id", user.loggedObjectIdm, theater.owner);
-					console.log("NOt owner");
 					navigate("/theaters");
-				} else console.log("Yes Owner");
+				}
 				setSeatClasses(theater.seatClasses || []);
 				setMaxRows(theater.seats.rows);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch theater data");
 			}
 		}
 		setLoading(false);
@@ -61,10 +60,8 @@ export default function SeatManagement() {
 				import.meta.env.VITE_SERVER_BASE_URL
 			}/theater/${theaterid}`;
 			try {
-				console.log("Use effect ran");
-
 				const theaterData = await axios.get(serverUrl);
-				console.log(theaterData);
+
 				const theater = theaterData.data;
 
 				setTheaterSeats({
@@ -74,7 +71,7 @@ export default function SeatManagement() {
 					seatClasses: seatClasses,
 				});
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch theater data");
 			}
 		}
 		getTheaterData();
@@ -109,12 +106,11 @@ export default function SeatManagement() {
 	};
 
 	const handleSeatUpdate = async () => {
-		console.log(`updating ${theaterid}`);
 		const updatedClasses = seatClasses.map((seatClass) => {
 			delete seatClass._id;
 			return seatClass;
 		});
-		console.log(updatedClasses);
+
 		const updateSeatClasses = { seatClasses: updatedClasses };
 
 		const serverUrl = `${
@@ -122,9 +118,9 @@ export default function SeatManagement() {
 		}/theater/${theaterid}`;
 		try {
 			const seatsUpdated = await axios.patch(`${serverUrl}`, updateSeatClasses);
-			console.log(seatsUpdated);
+			toast.success("Successfully updated seats");
 		} catch (err) {
-			console.log(err);
+			toast.error("Unable to update seats");
 		}
 	};
 	const assignedRows = seatClasses.flatMap((sc) => sc.rows);

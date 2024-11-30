@@ -4,6 +4,7 @@ import axios from "axios";
 import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Home() {
 	const [nowRunningMovies, setNowRunningMovies] = useState([]);
@@ -23,14 +24,12 @@ export default function Home() {
 					params: { page: pageNowRunning, limit: 5 },
 				});
 				const responseData = response.data;
-				// console.log(response);
-				console.log(responseData.movies);
 
 				setNowRunningMovies(responseData.movies);
 				setTotalPagesNowRunning(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch now running movies");
 			}
 		}
 		async function getNewReleaseMovies() {
@@ -40,12 +39,12 @@ export default function Home() {
 					params: { page: pageNewRelease, limit: 5 },
 				});
 				const responseData = response.data;
-				console.log(responseData.movies);
+
 				setNewReleaseMovies(responseData.movies);
 				setTotalPagesNewRelease(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch new release movies");
 			}
 		}
 

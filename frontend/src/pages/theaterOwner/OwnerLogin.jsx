@@ -34,7 +34,7 @@ function OwnerLogin() {
 	const handleLoginFormSubmit = async (data, evt) => {
 		evt.preventDefault();
 		const user = { ...data };
-		console.log(user);
+
 		try {
 			const userSignup = await axios.post(serverUrl, user, {
 				headers: {
@@ -42,13 +42,12 @@ function OwnerLogin() {
 				},
 				withCredentials: true,
 			});
-			console.log("Login Success");
+
 			toast.success("Successfully LoggedIn");
-			console.log(userSignup);
+
 			login(userSignup.data.user);
 			await checkAuth();
 		} catch (err) {
-			console.log(err);
 			setError("Unable to Log In");
 			toast.error("Unable to Login");
 		}
@@ -85,13 +84,7 @@ function OwnerLogin() {
 					errors={errors}
 				/>
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						type="submit"
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-					/>
+					<Button type="submit" label="Submit" />
 					<Button
 						label="Reset"
 						onClick={() => {

@@ -4,9 +4,7 @@ import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 export function Pagination({ page, setPage, totalPages }) {
 	const [active, setActive] = useState(page);
-	console.log(active);
-	console.log(page);
-	console.log(totalPages);
+
 	const getItemProps = (index) => ({
 		variant: active === index ? "filled" : "text",
 		color: "gray",

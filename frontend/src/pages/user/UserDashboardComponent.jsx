@@ -4,6 +4,9 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
+import StatsComponent from "../../components/shared/StatsComponent";
+import StatSingleComponent from "../../components/shared/StatSingleComponent";
+import toast from "react-hot-toast";
 
 function UserDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -24,16 +27,15 @@ function UserDashboardComponent() {
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/user/${userid}`;
 				const response = await axios.get(`${serverUrl}/getbookingstats`);
-				console.log(response.data[0]);
+
 				setBookingStats(response.data[0]);
 				const recentResponse = await axios.get(`${serverUrl}/bookings`, {
 					params: { page: 1, limit: 4 },
 				});
-				console.log("Recent");
-				console.log(recentResponse);
+
 				setRecentMovies(recentResponse.data.bookings);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch user booking data");
 			}
 		}
 		async function getReviewData() {
@@ -42,10 +44,10 @@ function UserDashboardComponent() {
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/user/${userid}`;
 				const response = await axios.get(`${serverUrl}/getreviewstats`);
-				console.log(response.data[0]);
+
 				setReviewStats(response.data[0]);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch user review data");
 			}
 		}
 		getBookingData();
@@ -59,45 +61,44 @@ function UserDashboardComponent() {
 			{loading && <p>Loading...</p>}
 			{!loading && (
 				<>
-					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start">
-						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60 ">
+					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4  md:mx-auto ">
+						<div className="userbookings border w-full  rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60 ">
 							<Link to="bookings">
-								<h2 className="text-xl">View User Bookings</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									View User Bookings
+								</button>
 							</Link>
-							<h3>Booking Stats</h3>
-							<p>Total bookings: {bookingStats?.totalConfirmedBookings ?? 0}</p>
-							<p>
-								Cancelled bookings: {bookingStats?.totalCancelledBookings ?? 0}
-							</p>
-							<p>Total Spent: {bookingStats?.totalPrice ?? 0}</p>
+							<StatsComponent
+								label1="Total Bookings"
+								label2="Cancelled Bookings"
+								label3="Total Spent"
+								value1={bookingStats?.totalConfirmedBookings ?? 0}
+								value2={bookingStats?.totalCancelledBookings ?? 0}
+								value3={bookingStats?.totalPrice ?? 0}
+							/>
 						</div>
-						<div className="userreviews border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60 ">
+						<div className="userreviews border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60 ">
 							<Link to="reviews">
-								<h2 className="text-xl">View User Reviews</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									View User Reviews
+								</button>
 							</Link>
-							<h3>Review Stats</h3>
-							<p>Total Reviews: {reviewStats?.reviewCounts?.totalReviews}</p>
-							<p>
-								Total Movie Reviews: {reviewStats?.reviewCounts?.movieReviews}
-							</p>
-							<p>
-								Total Theater Reviews:{" "}
-								{reviewStats?.reviewCounts?.theaterReviews}
-							</p>
-							{reviewStats?.recentMovieReview && (
-								<p>
-									{" "}
-									Recent Movie Reviewed:{" "}
-									{reviewStats?.recentMovieReview.movieDetails}
-								</p>
-							)}
-							{reviewStats?.recentTheaterReview && (
-								<p>
-									{" "}
-									Recent Theater Reviewed:{" "}
-									{reviewStats?.recentTheaterReview.theaterDetails}
-								</p>
-							)}
+							<StatsComponent
+								label1="Total Reviews"
+								label2="Total Movie Reviews"
+								label3="Total Theater Reviews:"
+								value1={reviewStats?.reviewCounts?.totalReviews ?? 0}
+								value2={reviewStats?.reviewCounts?.movieReviews ?? 0}
+								value3={reviewStats?.reviewCounts?.theaterReviews ?? 0}
+							/>
+							<StatSingleComponent
+								label="Recent Movie Reviewed"
+								value={reviewStats?.recentMovieReview?.movieDetails}
+							/>
+							<StatSingleComponent
+								label="Recent Theater Reviewed"
+								value={reviewStats?.recentTheaterReview?.theaterDetails}
+							/>
 						</div>
 					</section>
 					<aside className="mt-8">

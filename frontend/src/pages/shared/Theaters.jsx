@@ -4,6 +4,7 @@ import PosterSlider from "../../components/shared/PosterSlider";
 import { Pagination } from "../../components/shared/Pagination";
 import { Link } from "react-router-dom";
 import Poster from "../../components/shared/Poster";
+import toast from "react-hot-toast";
 
 function Theaters() {
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theater`;
@@ -20,13 +21,12 @@ function Theaters() {
 					params: { page, limit: 4 },
 				});
 				const responseData = response.data;
-				console.log(responseData);
-				console.log("hellooo", page);
+
 				setTheaters(responseData.theaters);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch theater data");
 			}
 		}
 		getTheaters();

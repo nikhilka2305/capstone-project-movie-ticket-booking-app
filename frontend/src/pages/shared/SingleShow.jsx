@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { formatDate } from "../../utils/dateFormatter";
 import { SeatSelection } from "./SeatGrid";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
+import toast from "react-hot-toast";
 
 function SingleShow() {
 	const [show, setShow] = useState();
@@ -29,7 +30,6 @@ function SingleShow() {
 	const { showid } = useParams();
 	const tagsClasses =
 		"text-sm text-gray-600 rounded bg-blue-gray-50 inline pl-2 p-1 text-center";
-	console.log(showid);
 
 	useEffect(() => {
 		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/show/${showid}`;
@@ -38,10 +38,10 @@ function SingleShow() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				setShow(responseData);
 				const theaterData = responseData.theater;
-				console.log;
+
 				setTheaterSeats({
 					rows: theaterData.seats.rows,
 					columns: theaterData.seats.seatsPerRow,
@@ -51,7 +51,6 @@ function SingleShow() {
 					seatClasses: theaterData.seatClasses,
 				});
 
-				console.log(theaterData);
 				const movieReviewResponse = await axios.get(
 					`${import.meta.env.VITE_SERVER_BASE_URL}/movie/${
 						responseData.movie.movieId
@@ -62,8 +61,7 @@ function SingleShow() {
 						responseData.theater.theaterId
 					}/avgrating`
 				);
-				console.log(movieReviewResponse.data);
-				console.log(theaterReviewResponse.data);
+
 				setMovieRating({
 					averageRating: movieReviewResponse.data.averageRating,
 					reviewCount: movieReviewResponse.data.reviewCount,
@@ -73,7 +71,7 @@ function SingleShow() {
 					reviewCount: theaterReviewResponse.data.reviewCount,
 				});
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch show data");
 				// navigate("/theaters");
 			}
 		}

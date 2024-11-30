@@ -8,6 +8,7 @@ import { formatDate } from "../../utils/dateFormatter";
 import { AuthContext } from "../../context/AuthContext";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
+import toast from "react-hot-toast";
 
 function Bookings() {
 	const [bookings, setBookings] = useState([]);
@@ -23,7 +24,7 @@ function Bookings() {
 	let urlPath;
 
 	const { userid, adminid, ownerid } = useParams();
-	console.log(userid, adminid, ownerid);
+
 	const urlid = userid || adminid || ownerid;
 	if (user.role === "Admin") {
 		if (userid) urlPath = "user";
@@ -37,29 +38,22 @@ function Bookings() {
 		setLoading(true);
 
 		async function getBookings() {
-			console.log(urlid);
 			try {
-				// if (user.role === "Admin" && user.loggedUserId !== userid) {
-				// 	console.log("Checking by Admin");
-
-				//     const userData = await axios.get()
-				// }
-
 				const serverUrl = `${
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/${urlPath}/${urlid}/bookings`;
-				console.log(serverUrl);
+
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
 				});
 				const responseData = response.data;
-				console.log(responseData);
+
 				const bookingsData = responseData.bookings;
 				setBookings(bookingsData);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch data");
 			}
 		}
 		getBookings();

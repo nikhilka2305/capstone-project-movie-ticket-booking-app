@@ -26,7 +26,7 @@ function OwnerSignUp() {
 	const handleSignUpFormSubmit = async (data, evt) => {
 		evt.preventDefault();
 		const user = { ...data };
-		console.log(user);
+
 		try {
 			const userSignup = await axios.post(serverUrl, user, {
 				headers: {
@@ -34,11 +34,9 @@ function OwnerSignUp() {
 				},
 			});
 
-			console.log(userSignup);
 			toast.success("Successfully Signed up");
 			navigate("/login");
 		} catch (err) {
-			console.log(err);
 			toast.error("Unable to Signup");
 		}
 	};
@@ -117,12 +115,7 @@ function OwnerSignUp() {
 					errors={errors}
 				/>
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-					/>
+					<Button label="Submit" />
 					<Button
 						label="Reset"
 						onClick={() => {

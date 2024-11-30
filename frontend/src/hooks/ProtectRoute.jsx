@@ -7,8 +7,6 @@ import PropTypes from "prop-types";
 const ProtectRoute = ({ children, roles = [] }) => {
 	const auth = useContext(AuthContext);
 
-	console.log(auth.isAuthenticated);
-	console.log(auth.user);
 	const params = {
 		User: "user",
 		TheaterOwner: "theaterowner",
@@ -16,12 +14,10 @@ const ProtectRoute = ({ children, roles = [] }) => {
 	};
 
 	if (!auth.isAuthenticated) {
-		console.log("Need to Login");
 		return <Navigate to="/login" replace />;
-	} else console.log("Authenticated");
+	}
 
 	if (roles.length && !roles.includes(auth.user?.role)) {
-		console.log(auth.user?.role, roles[0], !roles.includes(auth.user?.role));
 		return (
 			<Navigate
 				to={`/${params[auth.user?.role]}/${auth.user.loggedUserId}`}

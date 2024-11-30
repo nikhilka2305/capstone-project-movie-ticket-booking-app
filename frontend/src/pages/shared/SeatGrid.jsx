@@ -61,7 +61,6 @@ function SeatLegend({ classColors }) {
 }
 
 function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
-	console.log(classColors);
 	return (
 		<section className="grid grid-rows gap-2 mt-8">
 			{seatGrid.map((row, rowIndex) => (
@@ -81,9 +80,6 @@ function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
 							}`}
 							disabled={seat.isBooked || displayOnly}
 							onClick={() => onSeatSelect(seat.seatNumber)}
-							// onClick={() => {
-							// 	console.log(seat.seatNumber);
-							// }}
 						>
 							{formatSeatNumber(seat.seatNumber)}
 						</button>
@@ -101,7 +97,7 @@ export function SeatSelection({
 	setSelectedSeats,
 }) {
 	const classColors = generateClassColors(theaterSeats.seatClasses);
-	console.log(selectedSeats);
+
 	const [seatGrid, setSeatGrid] = useState(() =>
 		generateGrid(
 			theaterSeats.rows,
@@ -127,21 +123,14 @@ export function SeatSelection({
 	// const [selectedSeats, setSelectedSeats] = useState([]);
 
 	const handleSeatSelect = (seatNumber) => {
-		console.log(seatNumber);
 		const row = parseInt(seatNumber.split("-")[0]);
 		const seatClass = theaterSeats.seatClasses.find((seatClass) =>
 			seatClass.rows.includes(row)
 		);
 		if (!seatClass) {
-			console.error("Seat class not found for row:", row);
 			return;
 		}
-		// console.log(...selectedSeats);
-		// setSelectedSeats((prev) =>
-		// 	prev.includes(seatNumber)
-		// 		? prev.filter((seat) => seat !== seatNumber)
-		// 		: [...prev, seatNumber]
-		// );
+
 		const isSelected = selectedSeats.find(
 			(seat) => seat.seatNumber === seatNumber
 		);

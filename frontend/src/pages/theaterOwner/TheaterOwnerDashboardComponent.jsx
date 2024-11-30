@@ -4,6 +4,8 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
+import StatsComponent from "../../components/shared/StatsComponent";
+import toast from "react-hot-toast";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -23,14 +25,13 @@ export function TheaterOwnerDashboardComponent() {
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/theaterowner/${ownerid}`;
 				const response = await axios.get(`${serverUrl}/getbookingstats`);
-				console.log(response);
-				console.log(response.data[0]);
+
 				setBookingStats(response.data[0]);
 				const recentResponse = await axios.get(`${serverUrl}/bookings`, {
 					params: { page: 1, limit: 4 },
 				});
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch owner booking data");
 			}
 		}
 
@@ -53,24 +54,34 @@ export function TheaterOwnerDashboardComponent() {
 						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
 							<h2>TheaterOwner Bookings Graph</h2>
 						</div>
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"managetheaters"}>
-								<h2>Manage Own Theaters</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Manage Own Theaters
+								</button>
 							</Link>
-							<Link to={"managetheaters/addtheater"}>Add Theater</Link>
+							<Link to={"managetheaters/addtheater"}>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Add Theater
+								</button>
+							</Link>
 						</div>
 					</section>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center min-h-60">
+						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60">
 							<Link to="bookings">
-								<h2 className="text-xl">View Personal Bookings</h2>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									View Personal Bookings
+								</button>
 							</Link>
-							<h3>Booking Stats</h3>
-							<p>Total bookings: {bookingStats?.totalConfirmedBookings ?? 0}</p>
-							<p>
-								Cancelled bookings: {bookingStats?.totalCancelledBookings ?? 0}
-							</p>
-							<p>Total Spent: {bookingStats?.totalPrice ?? 0}</p>
+							<StatsComponent
+								label1="Total Bookings"
+								label2="Cancelled Bookings"
+								label3="Total Spent"
+								value1={bookingStats?.totalConfirmedBookings ?? 0}
+								value2={bookingStats?.totalCancelledBookings ?? 0}
+								value3={bookingStats?.totalPrice ?? 0}
+							/>
 						</div>
 					</section>
 				</>

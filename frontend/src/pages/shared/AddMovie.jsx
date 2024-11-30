@@ -26,38 +26,27 @@ export default function AddMovie() {
 		evt.preventDefault();
 		let loadingToast = toast.loading("Adding Movie....");
 		const addmovie = { ...data };
-		console.log(addmovie);
-		console.log(addmovie.posterImage);
+
 		if (!addmovie.posterImage) throw new Error("You must include movie poster");
 
 		const formData = buildFormData(addmovie);
-		console.log(data.FileList);
-		console.log("Form Data");
-		console.log(formData);
+
 		let files = addmovie.posterImage;
 		for (let i = 0; i < files.length; i++) {
 			formData.append("posterImage", files[i]);
 		}
 
-		for (let pair of formData.entries()) {
-			console.log(pair[0] + ": " + pair[1]); // Logs "name: John Doe", "age: 30"
-		}
-
 		try {
-			console.log("Data");
-			console.log(data);
-
 			let movieAdded = await axios.post(serverUrl, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
 			});
-			console.log(movieAdded);
+
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Movie");
 			navigate("/movies");
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Add Movie");
 		}
@@ -227,13 +216,7 @@ export default function AddMovie() {
 				/>
 
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						type="submit"
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-					/>
+					<Button type="submit" label="Submit" />
 					<Button
 						label="Reset"
 						onClick={() => {

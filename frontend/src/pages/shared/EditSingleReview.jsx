@@ -27,26 +27,22 @@ function EditSingleReview() {
 
 	const [loading, setLoading] = useState(true);
 	const { reviewid } = useParams();
-	console.log(reviewid);
 
 	useEffect(() => {
 		setLoading(true);
-		console.log("use effect");
+
 		async function fetchData() {
 			const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 			try {
 				const reviewData = await axios.get(`${serverUrl}/review/${reviewid}`);
 				const review = reviewData.data;
-				console.log(review);
+
 				if (
 					user.role !== "Admin" &&
 					user.loggedUserObjectId !== review.userId.toString()
 				) {
-					console.log("logged User Id", user.loggedUserObjectId, review.userId);
-					console.log("NOt owner");
-					// throw new Error("Unable to show this review");
 					navigate("/movies");
-				} else console.log("Yes Ad...");
+				}
 				setEditReview(review);
 				reset({
 					userRating: review.userRating || "",
@@ -54,7 +50,6 @@ function EditSingleReview() {
 				});
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
 				navigate("/movies");
 				setLoading(false);
 			}
@@ -70,18 +65,17 @@ function EditSingleReview() {
 				import.meta.env.VITE_SERVER_BASE_URL
 			}/review/${reviewid}`;
 			const updatedReview = { ...data };
-			console.log(updatedReview);
+
 			const reviewUpdated = await axios.patch(serverUrl, updatedReview, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(reviewUpdated);
+
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Updated Review");
 			navigate(`/movies/`);
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to update review");
 		}
@@ -126,13 +120,7 @@ function EditSingleReview() {
 						errors={errors}
 					/>
 					<div className="button-group flex gap-4 justify-center">
-						<Button
-							type="submit"
-							label="Submit"
-							onClick={() => {
-								console.log(errors);
-							}}
-						/>
+						<Button type="submit" label="Submit" />
 						<Button
 							label="Reset"
 							onClick={() => {

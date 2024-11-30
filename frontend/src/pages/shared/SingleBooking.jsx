@@ -13,7 +13,7 @@ function SingleBooking() {
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const { bookingid } = useParams();
-	console.log(bookingid);
+
 	const tagsClasses =
 		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1 text-center";
 	useEffect(() => {
@@ -25,10 +25,9 @@ function SingleBooking() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				setBooking(responseData);
 			} catch (err) {
-				console.log(err);
 				navigate("/theaters");
 			}
 		}
@@ -45,12 +44,11 @@ function SingleBooking() {
 		try {
 			const response = await axios.delete(`${serverUrl}`);
 			const responseData = response.data;
-			console.log(responseData);
+
 			toast.dismiss(loadingToast);
 			toast.success("Booking Cancelled");
 			navigate("/");
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Cancel Booking");
 		}

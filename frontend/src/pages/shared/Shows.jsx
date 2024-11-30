@@ -5,6 +5,7 @@ import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
 import { Link, useParams } from "react-router-dom";
 import { formatDate } from "../../utils/dateFormatter";
+import toast from "react-hot-toast";
 
 export default function Shows() {
 	const [shows, setShows] = useState([]);
@@ -12,7 +13,7 @@ export default function Shows() {
 	const [page, setPage] = useState(1); // Current page
 	const [totalPages, setTotalPages] = useState(1);
 	const { movieid, theaterid } = useParams();
-	console.log(movieid, theaterid);
+
 	useEffect(() => {
 		setLoading(true);
 		let serverUrl;
@@ -34,13 +35,13 @@ export default function Shows() {
 					params: { page, limit: 8 },
 				});
 				const responseData = response.data;
-				console.log(responseData);
+
 				const shows = responseData.shows;
 				setShows(shows);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch show data");
 			}
 		}
 		getShows();

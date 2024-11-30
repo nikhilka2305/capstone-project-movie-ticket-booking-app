@@ -38,7 +38,7 @@ function AddBooking() {
 	const { showid } = useParams();
 	const tagsClasses =
 		"text-sm text-gray-500 rounded bg-blue-gray-50 inline pl-2 p-1 text-center";
-	console.log(showid);
+
 	useEffect(() => {
 		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/show/${showid}`;
 		setLoading(true);
@@ -46,9 +46,9 @@ function AddBooking() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				setShow(responseData);
-				console.log(responseData.showTimeIST);
+
 				if (new Date(responseData.showTimeIST) < Date.now()) {
 					setInValidShow(true);
 				}
@@ -64,7 +64,6 @@ function AddBooking() {
 					seatClasses: theaterData.seatClasses,
 				});
 
-				console.log(theaterData);
 				const movieReviewResponse = await axios.get(
 					`${import.meta.env.VITE_SERVER_BASE_URL}/movie/${
 						responseData.movie.movieId
@@ -75,8 +74,7 @@ function AddBooking() {
 						responseData.theater.theaterId
 					}/avgrating`
 				);
-				console.log(movieReviewResponse.data);
-				console.log(theaterReviewResponse.data);
+
 				setMovieRating({
 					averageRating: movieReviewResponse.data.averageRating,
 					reviewCount: movieReviewResponse.data.reviewCount,
@@ -86,7 +84,6 @@ function AddBooking() {
 					reviewCount: theaterReviewResponse.data.reviewCount,
 				});
 			} catch (err) {
-				console.log(err);
 				navigate("/theaters");
 			}
 		}
@@ -117,21 +114,20 @@ function AddBooking() {
 		}/booking/newBooking`;
 		evt.preventDefault();
 		let loadingToast = toast.loading("Confirming Booking..");
-		console.log(bookingInfo);
+
 		try {
 			let bookingData = await axios.post(serverUrl, bookingInfo, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(bookingData);
+
 			toast.dismiss(loadingToast);
 			toast.success("Booking Completed");
 			navigate(`/shows/${show.showId}`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Complete Booking");
-			console.log(err);
 		}
 	};
 
@@ -239,7 +235,6 @@ function AddBooking() {
 								<p className="text-xl mb-4">Seats: </p>
 								<ul className="">
 									{selectedSeats.map((seat) => {
-										console.log(seat);
 										return (
 											<li key={seat.seatNumber} className="text-center mb-2">
 												{`${formatSeatNumber(seat.seatNumber)} - ${

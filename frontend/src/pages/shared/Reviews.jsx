@@ -8,6 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function Reviews() {
 	const [loading, setLoading] = useState(true);
@@ -25,8 +26,6 @@ function Reviews() {
 		setLoading(true);
 		async function getReviews() {
 			try {
-				console.log(urlid);
-				console.log(userurlid);
 				let serverUrl;
 				if (userurlid) {
 					serverUrl = `${
@@ -38,29 +37,20 @@ function Reviews() {
 					}/${urlPath}/${urlid}/reviews`;
 				}
 
-				console.log("hello--");
-				console.log(serverUrl);
-				console.log("hello--");
-				// if (user.role === "Admin" && user.loggedUserId !== userid) {
-				// 	console.log("Checking by Admin");
-
-				//     const userData = await axios.get()
-				// }
-
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
 				});
-				console.log(response);
+
 				const responseData = response.data;
-				console.log(responseData);
+
 				const reviewsData = responseData.reviews;
-				console.log(responseData);
+
 				setReviews(reviewsData);
-				console.log(reviewsData);
+
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch reviews");
 			}
 		}
 		getReviews();

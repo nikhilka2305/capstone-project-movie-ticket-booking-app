@@ -42,7 +42,7 @@ function AddReview() {
 				}/${urlPath}/${urlid}`;
 
 				const reviewForData = await axios.get(`${serverUrl}`);
-				console.log(reviewForData.data);
+
 				const reviewFor = {
 					image: reviewForData.data.posterImage
 						? reviewForData.data.posterImage
@@ -54,7 +54,7 @@ function AddReview() {
 
 				setReviewFor(reviewFor);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch data");
 			}
 		}
 		getReviewForData();
@@ -63,20 +63,20 @@ function AddReview() {
 
 	const handleAddReview = async (data, evt) => {
 		evt.preventDefault();
-		console.log(data);
+
 		let loadingToast = toast.loading("Adding Review....");
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
 		}/${urlPath}/${urlid}/addreview`;
 		const review = { ...data };
-		console.log(review);
+
 		try {
 			const addReview = await axios.post(serverUrl, review, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(addReview);
+
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Review");
 			navigate("/login");
@@ -87,8 +87,6 @@ function AddReview() {
 					? err.response.data.error
 					: "Unable to Add Review"
 			);
-			console.log(err);
-			console.log(err.response.data.error);
 		}
 	};
 
@@ -144,13 +142,7 @@ function AddReview() {
 							errors={errors}
 						/>
 						<div className="button-group flex gap-4 justify-center">
-							<Button
-								type="submit"
-								label="Submit"
-								onClick={() => {
-									console.log(errors);
-								}}
-							/>
+							<Button type="submit" label="Submit" />
 							<Button
 								label="Reset"
 								onClick={() => {

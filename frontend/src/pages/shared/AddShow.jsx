@@ -23,11 +23,10 @@ function AddShow() {
 	const [show, setShow] = useState({});
 	const [loading, setLoading] = useState(true);
 	const { theaterid } = useParams();
-	console.log(theaterid);
 
 	useEffect(() => {
 		setLoading(true);
-		console.log("use effect");
+
 		async function fetchData() {
 			const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 			try {
@@ -35,23 +34,20 @@ function AddShow() {
 					`${serverUrl}/theater/${theaterid}`
 				);
 				const theater = theaterData.data;
-				console.log(theater);
+
 				if (
 					user.role !== "Admin" &&
 					user.loggedUserObjectId !== theater.owner.toString()
 				) {
-					console.log("logged User Id", user.loggedUserObjectId, theater.owner);
-					console.log("NOt owner");
 					navigate("/theaters");
-				} else console.log("Yes Ad...");
+				}
 				setTheater(theater);
 				const movieData = await axios.get(`${serverUrl}/movie`);
 				const movies = movieData.data;
-				console.log(movies);
+
 				setMovies(movies);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
 				setLoading(false);
 			}
 		}
@@ -61,26 +57,25 @@ function AddShow() {
 	const handleAddShow = async function (data, evt) {
 		evt.preventDefault();
 		let loadingToast = toast.loading("Adding Show....");
-		console.log("Handle Show.");
+
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
 		}/theater/${theaterid}/newShow`;
 		const show = { ...data };
-		console.log(show);
+
 		try {
 			const addShow = await axios.post(serverUrl, show, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(addShow);
+
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Show");
 			navigate("/shows");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Add Show");
-			console.log(err);
 		}
 	};
 
@@ -127,13 +122,7 @@ function AddShow() {
 						errors={errors}
 					/>
 					<div className="button-group flex gap-4 justify-center">
-						<Button
-							type="submit"
-							label="Submit"
-							onClick={() => {
-								console.log(errors);
-							}}
-						/>
+						<Button type="submit" label="Submit" />
 						<Button
 							label="Reset"
 							onClick={() => {

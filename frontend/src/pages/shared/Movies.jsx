@@ -4,6 +4,7 @@ import PosterSlider from "../../components/shared/PosterSlider";
 import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Movies() {
 	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
@@ -19,13 +20,12 @@ export default function Movies() {
 					params: { page, limit: 8 },
 				});
 				const responseData = response.data;
-				console.log(responseData);
 
 				setMovies(responseData.movies);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch movies");
 			}
 		}
 

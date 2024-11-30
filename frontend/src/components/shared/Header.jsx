@@ -6,10 +6,8 @@ import toast from "react-hot-toast";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
-	console.log("Header received context:", { isAuthenticated, user });
-	useEffect(() => {
-		console.log("Header updated:", { isAuthenticated, user });
-	}, [isAuthenticated, user]);
+
+	useEffect(() => {}, [isAuthenticated, user]);
 	const navigate = useNavigate();
 	const handleLogOut = () => {
 		logOut();

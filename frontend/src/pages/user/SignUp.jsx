@@ -25,19 +25,18 @@ export default function SignUp() {
 		evt.preventDefault();
 
 		const user = { ...data };
-		console.log(user);
+
 		try {
 			const userSignup = await axios.post(serverUrl, user, {
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(userSignup);
+
 			toast.success("Successfully Signed up");
 			navigate("/login");
 		} catch (err) {
 			toast.error("Unable to Signup");
-			console.log(err);
 		}
 	};
 
@@ -157,12 +156,7 @@ export default function SignUp() {
 					/>
 				</Accordion>
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-					/>
+					<Button label="Submit" />
 					<Button
 						label="Reset"
 						onClick={() => {

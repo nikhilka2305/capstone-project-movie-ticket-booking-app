@@ -46,13 +46,12 @@ function Profile({ type, idtype }) {
 
 	const [isEdittable, setIsEdittable] = useState(false);
 	const navigate = useNavigate();
-	console.log(type);
+
 	const [loading, setLoading] = useState(false);
-	console.log(user);
+
 	const params = useParams();
 	const [showUploadForm, setShowUploadForm] = useState(false);
 	const idValue = params[idtype];
-	console.log(idValue);
 
 	useEffect(() => {
 		const serverUrl = `${
@@ -63,14 +62,13 @@ function Profile({ type, idtype }) {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
-				console.log(responseData);
+
 				setUserData(responseData);
 				reset({
 					email: responseData.email || "",
 					mobile: responseData.mobile || "",
 				});
 			} catch (err) {
-				console.log(err);
 				if (!isAuthenticated) navigate("/");
 				else if (isAuthenticated && user.role === "User")
 					navigate(`/user/${user.loggedUserId}/profile`);
@@ -89,25 +87,16 @@ function Profile({ type, idtype }) {
 	const handleUploadPhoto = async function (data, evt) {
 		evt.preventDefault();
 		let loadingToast = toast.loading("Adding Display image....");
-		console.log(data);
+
 		const userInfo = { ...data };
-		console.log(userInfo.displayimage);
+
 		const userFormData = buildFormData(userInfo);
 		let files = userInfo.displayimage;
 		for (let i = 0; i < files.length; i++) {
 			userFormData.append("displayimage", files[i]);
 		}
 
-		for (let pair of userFormData.entries()) {
-			console.log(pair[0] + ": " + pair[1]); // Logs "name: John Doe", "age: 30"
-		}
-
 		try {
-			console.log("Data");
-			console.log(userFormData);
-			// const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/user/${
-			// 	userData.userId
-			// }/profile`;
 			const serverUrl = `${
 				import.meta.env.VITE_SERVER_BASE_URL
 			}/${type}/${idValue}/profile`;
@@ -116,7 +105,6 @@ function Profile({ type, idtype }) {
 					"Content-Type": "multipart/form-data",
 				},
 			});
-			console.log(userInfoData);
 
 			setUserData((prev) => ({
 				...prev,
@@ -127,7 +115,6 @@ function Profile({ type, idtype }) {
 			setShowUploadForm(false);
 			toast.success("Successfully Updated IMage");
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to update Image");
 		}
@@ -154,10 +141,9 @@ function Profile({ type, idtype }) {
 	const handleEditDetails = async function (data, evt) {
 		evt.preventDefault();
 		let loadingToast = toast.loading("Updating....");
-		console.log(data);
+
 		const updatedInfo = filterUserData(data, user.role);
 
-		console.log(updatedInfo);
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
 		}/${type}/${idValue}/profile`;
@@ -167,7 +153,7 @@ function Profile({ type, idtype }) {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(updatedUserInfo);
+
 			setUserData((prev) => ({
 				...prev,
 				...updatedUserInfo.data.user,
@@ -177,7 +163,6 @@ function Profile({ type, idtype }) {
 			setIsEdittable(false);
 			toast.success("Succesfully updated details");
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to update details");
 		}
@@ -185,32 +170,21 @@ function Profile({ type, idtype }) {
 
 	const handleDeleteUser = async function (evt) {
 		evt.preventDefault();
-		console.log("Deleting ", idValue);
+
 		let loadingToast = toast.loading("Deleting ", idValue);
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
 		}/${type}/${idValue}/`;
 		try {
 			const deletedUserInfo = await axios.delete(serverUrl);
-			console.log(deletedUserInfo);
 
 			toast.dismiss(loadingToast);
-			// setAuth({
-			// 	isAuthenticated: false,
-			// 	user: {
-			// 		loggedUserId: "",
-			// 		loggedUserName: "",
-			// 		loggedUserObjectId: "",
-			// 		role: "",
-			// 	},
-			// 	loading: false,
-			// });
+
 			await checkAuth();
 			toast.success("Succesfully deleted ", idValue);
 			// await logOut();
 			navigate("/login");
 		} catch (err) {
-			console.log(err);
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete ", idValue);
 		}
@@ -250,13 +224,7 @@ function Profile({ type, idtype }) {
 								errors={errors}
 							></Input>
 							<div className="button-group flex gap-4 justify-center">
-								<Button
-									type="submit"
-									label="Submit"
-									onClick={() => {
-										console.log(errors);
-									}}
-								/>
+								<Button type="submit" label="Submit" />
 								<Button
 									label="Cancel"
 									onClick={() => {
@@ -365,13 +333,7 @@ function Profile({ type, idtype }) {
 								)}
 								{isEdittable && (
 									<div className="button-group flex gap-4 justify-center">
-										<Button
-											type="submit"
-											label="Submit"
-											onClick={() => {
-												console.log(errors);
-											}}
-										/>
+										<Button type="submit" label="Submit" />
 										<Button
 											label="Cancel"
 											onClick={() => {

@@ -72,10 +72,9 @@ function AddTheater() {
 					params: { active: true },
 				});
 
-				console.log(theaterOwners.data);
 				setOwners(theaterOwners.data);
 			} catch (err) {
-				console.log(err);
+				toast.error("Unable to fetch owner data");
 			}
 		}
 		setLoading(false);
@@ -86,26 +85,21 @@ function AddTheater() {
 
 	const handleAddTheater = async (data, evt) => {
 		evt.preventDefault();
-		console.log("Hello");
-		console.log(user);
+
 		let loadingToast = toast.loading("Adding Theater....");
 		const addtheater = { ...data };
 		if (user.role === "TheaterOwner") {
 			addtheater.owner = user.loggedUserObjectId;
 		}
-		console.log(addtheater);
-		console.log(addtheater.theaterimages);
+
 		if (!addtheater.theaterimages)
 			throw new Error("You must include movie poster");
 
 		const theaterFD = buildFormData(addtheater);
-		console.log(theaterFD);
+
 		let files = addtheater.theaterimages;
 		for (let i = 0; i < files.length; i++) {
 			theaterFD.append("theaterimages", files[i]);
-		}
-		for (var pair of theaterFD.entries()) {
-			console.log(pair[0] + ", " + pair[1]);
 		}
 
 		const serverUrl = `${
@@ -113,9 +107,6 @@ function AddTheater() {
 		}/theater/addtheater`;
 
 		try {
-			console.log("Data");
-			console.log(data);
-
 			const theaterAdded = await axios.post(serverUrl, theaterFD, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -123,10 +114,9 @@ function AddTheater() {
 			});
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Theater");
-			console.log(theaterAdded);
+
 			navigate("/theaters");
 		} catch (err) {
-			console.log(err);
 			toast.error("Unable to Add Theater");
 			toast.dismiss(loadingToast);
 		}
@@ -361,13 +351,7 @@ function AddTheater() {
 				/>
 
 				<div className="button-group flex gap-4 justify-center">
-					<Button
-						label="Submit"
-						onClick={() => {
-							console.log(errors);
-						}}
-						type="submit"
-					/>
+					<Button label="Submit" type="submit" />
 					<Button
 						label="Reset"
 						onClick={() => {
