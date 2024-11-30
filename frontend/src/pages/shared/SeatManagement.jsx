@@ -31,7 +31,7 @@ export default function SeatManagement() {
 	useEffect(() => {
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
-		}/theater/${theaterid}`;
+		}/theater/${theaterid}/viewmanage`;
 		async function getTheaterDetails() {
 			try {
 				setLoading(true);
@@ -58,7 +58,7 @@ export default function SeatManagement() {
 		async function getTheaterData() {
 			const serverUrl = `${
 				import.meta.env.VITE_SERVER_BASE_URL
-			}/theater/${theaterid}`;
+			}/theater/${theaterid}/viewmanage`;
 			try {
 				const theaterData = await axios.get(serverUrl);
 

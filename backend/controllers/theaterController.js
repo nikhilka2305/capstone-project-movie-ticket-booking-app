@@ -91,7 +91,6 @@ export const viewIndividualTheater = async (req, res, next) => {
 		const theater = await Theater.findOne({ theaterId: theaterid });
 		if (!theater || theater.adminApprovalStatus !== "Approved")
 			throw new HandleError("Such a Theater doesn't exist", 404);
-
 		if (
 			(req.user && req.user.role === "Admin") ||
 			(req.user &&
@@ -102,7 +101,34 @@ export const viewIndividualTheater = async (req, res, next) => {
 
 		return res.status(200).json(theater);
 	} catch (err) {
-		return res.status(404).json({ message: "Error", error: err.message });
+		return res
+			.status(err.statusCode || 500)
+			.json({ message: "Error", error: err.message });
+	}
+};
+
+export const viewManageIndividualTheater = async (req, res, next) => {
+	const { theaterid } = req.params;
+
+	try {
+		const theater = await Theater.findOne({ theaterId: theaterid });
+		if (!theater) throw new HandleError("Such a Theater doesn't exist", 404);
+		if (
+			(req.user && req.user.role === "Admin") ||
+			(req.user &&
+				new ObjectId(req.user.loggedUserObjectId).equals(theater.owner))
+		) {
+			return res.status(200).json(theater);
+		} else {
+			throw new HandleError(
+				"You are not authorized to manage this theater",
+				403
+			);
+		}
+	} catch (err) {
+		return res
+			.status(err.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
