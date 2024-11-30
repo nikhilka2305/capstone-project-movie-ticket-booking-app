@@ -1,7 +1,12 @@
 export const logout = (req, res, next) => {
 	return res
 		.status(204)
-		.clearCookie("token")
+		.clearCookie("token", {
+			expires: new Date(Date.now() + 6 * 60 * 60 * 1000),
+			sameSite: "none",
+			secure: true,
+			httpOnly: true,
+		})
 		.json({ message: "Succesfully Logged Out" });
 };
 
