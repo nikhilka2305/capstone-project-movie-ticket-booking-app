@@ -4,7 +4,10 @@ import { Pagination } from "../../components/shared/Pagination";
 
 import { Link, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import BookingCard from "../../components/shared/formcomponents/BookingCard";
+import toast from "react-hot-toast";
+import axios from "axios";
+import PosterSlider from "../../components/shared/PosterSlider";
+import Poster from "../../components/shared/Poster";
 
 function ManageMovies() {
 	const [loading, setLoading] = useState(true);
@@ -12,19 +15,42 @@ function ManageMovies() {
 	const [totalPages, setTotalPages] = useState(1);
 	const { user } = useContext(AuthContext);
 	const [movies, setMovies] = useState([]);
+	const navigate = useNavigate();
+	useEffect(() => {
+		setLoading(true);
+		async function getMovies() {
+			if (user.role !== "Admin") navigate("/movies");
+			try {
+				const serverUrl = `${
+					import.meta.env.VITE_SERVER_BASE_URL
+				}/admin/movies`;
+				const response = await axios.get(`${serverUrl}`, {
+					params: { page, limit: 8 },
+				});
+				const responseData = response.data;
+
+				setMovies(responseData.movies);
+				setTotalPages(responseData.totalPages);
+				setLoading(false);
+			} catch (err) {
+				toast.error("Unable to fetch movies");
+			}
+		}
+
+		getMovies();
+		setLoading(false);
+	}, [page]);
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<h1 className="text-2xl mb-lg-2 my-4">Manage Movies</h1>
+			<h1 className="text-2xl mb-lg-2 my-4">Movies Available</h1>
 			{loading && <div>Loading...</div>}
-			{movies.map((item, i) => (
-				<Link key={i} to={`./${item?.movieId}`}>
-					<BookingCard
-						// image={item?.images[0]}
-						title={item?.movieName}
-					></BookingCard>
-				</Link>
-			))}
-
+			<PosterSlider posters={movies} classes="">
+				{movies.map((item, i) => (
+					<Link to={`${item.movieId}/`} key={i}>
+						<Poster url={item.posterImage} title={item.movieName} />
+					</Link>
+				))}
+			</PosterSlider>
 			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);

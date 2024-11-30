@@ -171,8 +171,7 @@ export const editIndividualTheater = async (req, res, next) => {
 			{
 				theaterName: theaterName,
 				location,
-				adminApprovalStatus:
-					req.user.role === "Admin" ? adminApprovalStatus : "Pending",
+				adminApprovalStatus: req.user.role === "Admin" ? "Approved" : "Pending",
 				images: images && [...images, ...theaterimages],
 				seats: seats && { ...seats },
 				seatClasses: seatClasses && [...seatClasses],

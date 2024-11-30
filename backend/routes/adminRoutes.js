@@ -34,12 +34,7 @@ router.get(
 	authorization("Admin"),
 	viewAdminProfile
 );
-router.get(
-	"/:adminid/movies",
-	authenticateToken,
-	authorization("Admin"),
-	viewMovies
-);
+router.get("/movies", authenticateToken, authorization("Admin"), viewMovies);
 router.get(
 	"/:adminid/theaters",
 	authenticateToken,

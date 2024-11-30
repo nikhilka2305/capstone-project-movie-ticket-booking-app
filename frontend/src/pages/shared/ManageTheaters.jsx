@@ -4,7 +4,7 @@ import { Pagination } from "../../components/shared/Pagination";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import BookingCard from "../../components/shared/formcomponents/BookingCard";
+
 import toast from "react-hot-toast";
 import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";

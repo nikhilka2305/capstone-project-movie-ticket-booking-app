@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function Movies() {
-	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 	const [movies, setMovies] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(1); // Current page
@@ -16,6 +15,7 @@ export default function Movies() {
 		setLoading(true);
 		async function getMovies() {
 			try {
+				const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie`;
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
 				});
