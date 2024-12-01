@@ -192,7 +192,14 @@ function Profile({ type, idtype }) {
 
 	return (
 		<>
-			{loading && <div>Loading..</div>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			{userData ? (
 				<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
 					<img

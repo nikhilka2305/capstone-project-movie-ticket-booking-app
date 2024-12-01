@@ -57,7 +57,14 @@ export default function Home() {
 			<h1 className="text-center text-4xl mt- 4">
 				Welcome to Movie Booking System App
 			</h1>
-			{loading && <div>Loading...</div>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			<h2 className="text-center my-4">Now Running</h2>
 
 			<PosterSlider posters={nowRunningMovies} classes="">

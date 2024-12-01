@@ -41,7 +41,14 @@ export default function ManageUsers() {
 		<main className="py-8 px-8 min-h-svh w-full flex flex-col justify-center items-center">
 			<h1 className="text-2xl mb-lg-2 my-4 text-center">Manage Users</h1>
 			<div className="flex flex-col gap-4 md:flex-row md:flex-wrap items-center justify-between">
-				{loading && <div>Loading...</div>}
+				{loading && (
+					<div className="flex w-52 flex-col gap-4">
+						<div className="skeleton h-32 w-full"></div>
+						<div className="skeleton h-4 w-28"></div>
+						<div className="skeleton h-4 w-full"></div>
+						<div className="skeleton h-4 w-full"></div>
+					</div>
+				)}
 				{users.map((item, i) => (
 					<Link
 						key={i}

@@ -34,7 +34,14 @@ function Theaters() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
 			<h1 className="text-2xl ">Theaters</h1>
-			{loading && <div>Loading...</div>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			<PosterSlider posters={theaters} classes="h-full">
 				{theaters?.map((item, i) => (
 					<Link to={`/theaters/${item.theaterId}`} key={i}>

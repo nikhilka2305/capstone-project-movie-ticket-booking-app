@@ -31,12 +31,10 @@ function ManageTheaters() {
 				} else if (ownerid !== user.loggedUserId && user.role !== "Admin") {
 					navigate(`./theaterowner/${user.loggedUserId}`);
 				} else if (ownerid) {
-					console.log("Theater Owner Manage Theater");
 					serverUrl = `${
 						import.meta.env.VITE_SERVER_BASE_URL
 					}/theaterowner/${ownerid}/theaters`;
 				} else {
-					console.log("Admin Manage Theater");
 					serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/theater/manage`;
 				}
 				const response = await axios.get(serverUrl, {
@@ -57,7 +55,14 @@ function ManageTheaters() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
 			<h1 className="text-2xl ">Theaters</h1>
-			{loading && <div>Loading...</div>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			<PosterSlider classes="h-full">
 				{theaters.map((item, i) => (
 					<Link to={`/theaters/${item.theaterId}/manage`} key={i}>
