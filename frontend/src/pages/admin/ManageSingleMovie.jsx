@@ -80,9 +80,6 @@ export default function ManageSingleMovie() {
 			for (let i = 0; i < files.length; i++) {
 				formData.append("posterImage", files[i]);
 			}
-			for (var pair of formData.entries()) {
-				console.log(pair[0] + ", " + pair[1]);
-			}
 		}
 
 		try {
