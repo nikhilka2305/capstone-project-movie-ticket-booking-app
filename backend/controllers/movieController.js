@@ -34,7 +34,7 @@ export const viewMovies = async (req, res, next) => {
 		if (req.query.page && req.query.limit) {
 			const skip = (page - 1) * limit;
 			const movies = await Movie.find(filterConditions)
-				.select("movieName movieId posterImage")
+				.select("movieName movieId posterImage adminApprovalStatus")
 				.skip(skip)
 				.limit(limit);
 			const totalMovies = await Movie.countDocuments(filterConditions);
@@ -47,7 +47,7 @@ export const viewMovies = async (req, res, next) => {
 			});
 		} else {
 			const movies = await Movie.find(filterConditions).select(
-				"movieName _id movieId"
+				"movieName _id movieId adminApprovalStatus"
 			);
 			res.status(200).json(movies);
 		}

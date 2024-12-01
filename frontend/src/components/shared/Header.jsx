@@ -129,9 +129,7 @@ export default function Header() {
 									</Link>
 								</li>
 							)}
-							<li>
-								<a>Settings</a>
-							</li>
+
 							<li>{!isAuthenticated && <Link to="/login">Login</Link>}</li>
 
 							{isAuthenticated && (

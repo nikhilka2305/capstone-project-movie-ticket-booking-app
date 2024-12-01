@@ -65,8 +65,12 @@ function ManageTheaters() {
 			)}
 			<PosterSlider classes="h-full">
 				{theaters.map((item, i) => (
-					<Link to={`/theaters/${item.theaterId}/manage`} key={i}>
-						<Poster url={item.images[0]} title={item.theaterName} />
+					<Link to={`./${item.theaterId}/manage`} key={i}>
+						<Poster
+							url={item.images[0]}
+							title={item.theaterName}
+							otherInfo={`Status: ${item.adminApprovalStatus}`}
+						/>
 					</Link>
 				))}
 			</PosterSlider>

@@ -59,7 +59,6 @@ export default function ManageSingleMovie() {
 				const responseData = response.data;
 				setMovie(responseData);
 			} catch (err) {
-				toast.dismiss(loadingToast);
 				toast.error("Unable to Fetch Movie");
 			}
 		}

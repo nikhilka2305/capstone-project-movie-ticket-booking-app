@@ -190,6 +190,7 @@ export const editIndividualTheater = async (req, res, next) => {
 
 		if (images && images.length > 0) {
 			theaterimages = await addMultipleImages(images);
+			console.log(theaterimages);
 		}
 
 		const updatedTheater = await Theater.findOneAndUpdate(
@@ -198,7 +199,7 @@ export const editIndividualTheater = async (req, res, next) => {
 				theaterName: theaterName,
 				location,
 				adminApprovalStatus: req.user.role === "Admin" ? "Approved" : "Pending",
-				images: images && [...images, ...theaterimages],
+				images: images && [...theaterimages],
 				seats: seats && { ...seats },
 				seatClasses: seatClasses && [...seatClasses],
 				amenities,

@@ -12,6 +12,7 @@ import SeatManagement from "../pages/shared/SeatManagement";
 import AddTheater from "../pages/shared/AddTheater";
 import ProtectRoute from "../hooks/ProtectRoute";
 import ManageTheaters from "../pages/shared/ManageTheaters";
+import ManageSingleTheater from "../pages/shared/ManageSingleTheater";
 
 export const SeatManagementRoute = {
 	path: "seatmanagement",
@@ -26,7 +27,7 @@ export const IndividualTheaterManagementRoute = {
 		</ProtectRoute>
 	),
 	children: [
-		{ index: true, element: <h2>Theater Management - Individual</h2> },
+		{ index: true, element: <ManageSingleTheater /> },
 		SeatManagementRoute,
 	],
 };
@@ -35,10 +36,25 @@ export const AddTheaterRoute = {
 	path: "addtheater",
 	element: <AddTheater />,
 };
+
+export const ManageSingleTheaterRoute = {
+	path: ":theaterid",
+	element: (
+		<ProtectRoute roles={["TheaterOwner", "Admin"]}>
+			<Outlet />
+		</ProtectRoute>
+	),
+	children: [IndividualTheaterManagementRoute],
+};
+
 export const TheaterManagementRoute = {
 	path: "managetheaters",
 	element: <Outlet />,
-	children: [{ index: true, element: <ManageTheaters /> }, AddTheaterRoute],
+	children: [
+		{ index: true, element: <ManageTheaters /> },
+		ManageSingleTheaterRoute,
+		AddTheaterRoute,
+	],
 };
 
 export const IndividualTheater = {
