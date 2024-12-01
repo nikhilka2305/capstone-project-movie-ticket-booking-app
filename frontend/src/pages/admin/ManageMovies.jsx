@@ -54,7 +54,11 @@ function ManageMovies() {
 			<PosterSlider posters={movies} classes="">
 				{movies.map((item, i) => (
 					<Link to={`${item.movieId}/`} key={i}>
-						<Poster url={item.posterImage} title={item.movieName} />
+						<Poster
+							url={item.posterImage}
+							title={item.movieName}
+							otherInfo={`Status: ${item.adminApprovalStatus}`}
+						/>
 					</Link>
 				))}
 			</PosterSlider>

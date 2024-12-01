@@ -59,7 +59,7 @@ export default function SelectActors({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<h2 className="text-lg font-semibold text-center">Favorite Actors</h2>
+			<h2 className="text-lg font-semibold text-center">Actors</h2>
 			<div className="flex flex-col items-center gap-2 px-8">
 				<input
 					type="text"

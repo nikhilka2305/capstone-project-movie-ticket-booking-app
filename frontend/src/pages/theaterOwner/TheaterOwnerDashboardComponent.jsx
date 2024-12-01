@@ -67,6 +67,16 @@ export function TheaterOwnerDashboardComponent() {
 							</Link>
 						</div>
 					</section>
+					<h2>Movie Management </h2>
+					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
+						<div className="border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
+							<Link to={"../../movies/addmovie"}>
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									Add Movie
+								</button>
+							</Link>
+						</div>
+					</section>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
 						<div className="userbookings border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60">
 							<Link to="bookings">

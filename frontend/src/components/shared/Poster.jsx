@@ -9,7 +9,7 @@ export default function Poster({ url, title, description = "", ...props }) {
 				<div>
 					{description}
 					<br />
-					{props.otherInfo}
+					<p>{props.otherInfo}</p>
 				</div>
 			</div>
 		</div>
