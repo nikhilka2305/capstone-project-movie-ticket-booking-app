@@ -106,7 +106,7 @@ export default function ManageSingleTheater() {
 			try {
 				const apiUrl = `${serverUrl}/theater/${theaterid}/viewmanage`;
 				const response = await axios.get(apiUrl);
-				console.log(response);
+
 				const theaterData = response.data;
 				setTheater(theaterData);
 			} catch (err) {
@@ -122,7 +122,7 @@ export default function ManageSingleTheater() {
 
 	const handleUpdateTheater = async (data, evt) => {
 		evt.preventDefault();
-		console.log(data);
+
 		let loadingToast = toast.loading("Updating Theater....");
 		const addtheater = { ...data };
 		if (user.role === "TheaterOwner") {
