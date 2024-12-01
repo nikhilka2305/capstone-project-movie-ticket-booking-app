@@ -1,13 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import toast from "react-hot-toast";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
 
-	useEffect(() => {}, [isAuthenticated, user]);
+	const [displayImage, setDisplayImage] = useState("");
+
+	useEffect(() => {
+		if (!isAuthenticated)
+			setDisplayImage(
+				"https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+			);
+		else
+			setDisplayImage(
+				"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png"
+			);
+	}, [isAuthenticated, user]);
 	const navigate = useNavigate();
 	const handleLogOut = () => {
 		logOut();
@@ -78,22 +89,57 @@ export default function Header() {
 					<Link to={"/"} className="btn btn-ghost text-xl">
 						MBS
 					</Link>
-
-					{!isAuthenticated && <Link to="/login">Login</Link>}
-					{isAuthenticated && <button onClick={handleLogOut}>LogOut</button>}
 				</div>
 				<div className="flex gap-4 before:first:">
-					{isAuthenticated && user && (
-						<Link to={`/${params[user.role]}/${user.loggedUserId}/`}>
-							<p>{user.role}</p>
-						</Link>
-					)}
-					{isAuthenticated && user && (
-						<Link to={`/${params[user.role]}/${user.loggedUserId}/profile`}>
-							<p>{user.loggedUserName}</p>
-						</Link>
-					)}
+					{isAuthenticated && user && <p>{user.loggedUserName}</p>}
 					<ThemeToggler />
+					<div className="dropdown dropdown-end">
+						<div
+							tabIndex={0}
+							role="button"
+							className="btn btn-ghost btn-circle avatar"
+						>
+							<div className="w-10 rounded-full">
+								<img alt="Tailwind CSS Navbar component" src={displayImage} />
+							</div>
+						</div>
+						<ul
+							tabIndex={0}
+							className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+						>
+							{isAuthenticated && user && (
+								<li>
+									<Link
+										to={`/${params[user.role]}/${user.loggedUserId}/profile`}
+										className="justify-between"
+									>
+										{user.loggedUserName} Profile
+									</Link>
+								</li>
+							)}
+
+							{isAuthenticated && user && (
+								<li>
+									<Link
+										to={`/${params[user.role]}/${user.loggedUserId}/`}
+										className="justify-between"
+									>
+										{user.role} Dashboard
+									</Link>
+								</li>
+							)}
+							<li>
+								<a>Settings</a>
+							</li>
+							<li>{!isAuthenticated && <Link to="/login">Login</Link>}</li>
+
+							{isAuthenticated && (
+								<li>
+									<button onClick={handleLogOut}>LogOut</button>
+								</li>
+							)}
+						</ul>
+					</div>
 				</div>
 			</div>
 		</header>
