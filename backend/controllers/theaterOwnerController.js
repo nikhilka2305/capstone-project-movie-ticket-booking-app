@@ -133,6 +133,7 @@ export const loginTheaterOwner = async (req, res) => {
 				const token = createToken({
 					userId: theaterowner.userId,
 					username: username,
+					displayImage: theaterowner.displayImage,
 					role: theaterowner.role,
 					id: theaterowner._id,
 				});

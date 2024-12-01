@@ -19,6 +19,7 @@ export const authenticateToken = (req, res, next) => {
 				loggedUserObjectId: user.id,
 				loggedUserName: user.username,
 				role: user.role,
+				loggedUserDisplayImage: user.displayImage,
 			};
 			next();
 		});

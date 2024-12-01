@@ -10,6 +10,7 @@ export const AuthContext = createContext({
 			loggedUserName: "",
 			loggedUserObjectId: "",
 			role: "",
+			loggedUserDisplayImage: "",
 		},
 		loading: true,
 	},
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
 			loggedUserName: "",
 			loggedUserObjectId: "",
 			role: "",
+			loggedUserDisplayImage: "",
 		},
 		loading: true,
 	});
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 						loggedUserName: "",
 						loggedUserObjectId: "",
 						role: "",
+						loggedUserDisplayImage: "",
 					},
 					loading: false,
 				});
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }) => {
 					loggedUserName: "",
 					loggedUserObjectId: "",
 					role: "",
+					loggedUserDisplayImage: "",
 				},
 				loading: false,
 			});
@@ -88,6 +92,7 @@ export const AuthProvider = ({ children }) => {
 					loggedUserName: "",
 					loggedUserObjectId: "",
 					role: "",
+					loggedUserDisplayImage: "",
 				},
 				loading: false,
 			});

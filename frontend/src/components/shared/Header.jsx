@@ -16,7 +16,8 @@ export default function Header() {
 			);
 		else
 			setDisplayImage(
-				"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png"
+				user?.loggedUserDisplayImage ||
+					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png"
 			);
 	}, [isAuthenticated, user]);
 	const navigate = useNavigate();

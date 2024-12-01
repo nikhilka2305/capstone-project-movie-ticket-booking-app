@@ -89,6 +89,7 @@ export const loginAdmin = async (req, res) => {
 				const token = createToken({
 					userId: admin.userId,
 					username: username,
+					displayImage: admin.displayImage,
 					role: admin.role,
 					id: admin._id,
 				});

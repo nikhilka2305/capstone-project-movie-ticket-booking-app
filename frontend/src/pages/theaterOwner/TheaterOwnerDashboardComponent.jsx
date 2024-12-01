@@ -68,7 +68,7 @@ export function TheaterOwnerDashboardComponent() {
 						</div>
 					</section>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="userbookings border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60">
+						<div className="userbookings border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60">
 							<Link to="bookings">
 								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
 									View Personal Bookings

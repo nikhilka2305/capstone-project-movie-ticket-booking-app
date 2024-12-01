@@ -130,6 +130,7 @@ export const loginUser = async (req, res) => {
 				const token = createToken({
 					userId: user.userId,
 					username: username,
+					displayImage: user.displayImage,
 					role: user.role,
 					id: user._id,
 				});
