@@ -9,6 +9,7 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { DisplayRating } from "../../components/shared/formcomponents/Rating";
 
 function Reviews() {
 	const [loading, setLoading] = useState(true);
@@ -73,7 +74,10 @@ function Reviews() {
 					>
 						{/* <p>{item.showInfo.movie.movieName}</p> */}
 						<p>{formatDate(new Date(item.createdAt))}</p>
-						<p>Rating: {item.userRating} / 5</p>
+						<p className="flex items-center">
+							Rating:{" "}
+							<DisplayRating rating={item.userRating} ratingSize="rating-sm" />{" "}
+						</p>
 
 						<p>UserReview: </p>
 						<p>{item.userReview}</p>

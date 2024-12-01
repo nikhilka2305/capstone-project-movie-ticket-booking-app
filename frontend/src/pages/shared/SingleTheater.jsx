@@ -4,6 +4,7 @@ import Card from "../../components/shared/Card";
 import Button from "../../components/shared/formcomponents/Button";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
 function SingleTheater() {
 	const { user } = useContext(AuthContext);
@@ -91,9 +92,11 @@ function SingleTheater() {
 						<div className=" text-lg md:text-lg mt-1 flex gap-2">
 							<span>Rating:</span>
 							<span>
-								{theaterRating.averageRating > 0
-									? `${theaterRating.averageRating} / 5`
-									: "No Rating"}
+								{theaterRating.averageRating > 0 ? (
+									<AverageRating rating={theaterRating.averageRating} />
+								) : (
+									"No Rating"
+								)}
 							</span>
 						</div>
 						<div className="ml-2 text-sm md:text-base mt-1">

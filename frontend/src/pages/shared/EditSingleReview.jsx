@@ -7,12 +7,15 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
+import Rating from "../../components/shared/formcomponents/Rating";
 
 function EditSingleReview() {
 	const [editReview, setEditReview] = useState({});
 	const {
 		control,
 		register,
+		watch,
+		setValue,
 		handleSubmit,
 		reset,
 		formState: { errors },
@@ -22,6 +25,11 @@ function EditSingleReview() {
 			userReview: editReview.userReview || "",
 		},
 	});
+	const userRating = watch("userRating", 0);
+	useEffect(() => {
+		setValue("userRating", editReview?.userRating || 0);
+	}, [setValue, editReview?.userRating]);
+
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 
@@ -59,6 +67,7 @@ function EditSingleReview() {
 
 	const handleUpdateReview = async function (data, evt) {
 		evt.preventDefault();
+
 		let loadingToast = toast.loading("Updating Review....");
 		try {
 			const serverUrl = `${
@@ -91,22 +100,12 @@ function EditSingleReview() {
 					onSubmit={handleSubmit(handleUpdateReview)}
 					noValidate
 				>
-					<Controller
+					<Rating
+						label="Choose Rating"
 						name="userRating"
-						control={control}
-						defaultValue={""}
-						rules={{
-							required: "Please select a rating",
-						}}
-						render={({ field }) => (
-							<Select
-								label="Choose a Rating"
-								{...field}
-								options={[1, 2, 3, 4, 5]}
-								onChange={field.onChange}
-								errors={errors}
-							/>
-						)}
+						value={userRating}
+						onChange={(value) => setValue("userRating", value)}
+						ref={register("userRating").ref}
 					/>
 					<Input
 						label="Update User review"

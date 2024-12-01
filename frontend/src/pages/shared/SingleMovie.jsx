@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
 import { AuthContext } from "../../context/AuthContext";
+import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
 function SingleMovie() {
 	const { user } = useContext(AuthContext);
@@ -90,9 +91,11 @@ function SingleMovie() {
 						<div className=" text-lg md:text-lg mt-1 flex gap-2">
 							<span>Rating:</span>
 							<span>
-								{movieRating.averageRating > 0
-									? `${movieRating.averageRating} / 5`
-									: "No Rating"}
+								{movieRating.averageRating > 0 ? (
+									<AverageRating rating={movieRating.averageRating} />
+								) : (
+									"No Rating"
+								)}
 							</span>
 						</div>
 						<div className=" ml-2 text-sm md:text-base mt-1">

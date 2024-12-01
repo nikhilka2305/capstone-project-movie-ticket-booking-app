@@ -9,19 +9,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import Card from "../../components/shared/Card";
 import Poster from "../../components/shared/Poster";
+import Rating from "../../components/shared/formcomponents/Rating";
 
 function AddReview() {
 	const [review, setReview] = useState({});
 	const {
-		control,
+		watch,
+		setValue,
 		register,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm({});
+	} = useForm();
+	const userRating = watch("userRating", 0);
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-
+	useEffect(() => {
+		setValue("userRating", 3);
+	}, [setValue]);
 	const [reviewFor, setReviewFor] = useState({
 		image: "",
 		name: "",
@@ -113,22 +118,12 @@ function AddReview() {
 						onSubmit={handleSubmit(handleAddReview)}
 						noValidate
 					>
-						<Controller
+						<Rating
+							label="Choose Rating"
 							name="userRating"
-							control={control}
-							defaultValue={""}
-							rules={{
-								required: "Please select a rating",
-							}}
-							render={({ field }) => (
-								<Select
-									label="Choose a Rating"
-									{...field}
-									options={[1, 2, 3, 4, 5]}
-									onChange={field.onChange}
-									errors={errors}
-								/>
-							)}
+							value={userRating}
+							onChange={(value) => setValue("userRating", value)}
+							ref={register("userRating").ref}
 						/>
 						<Input
 							label="Add User review"
@@ -141,6 +136,7 @@ function AddReview() {
 							}}
 							errors={errors}
 						/>
+
 						<div className="button-group flex gap-4 justify-center">
 							<Button type="submit" label="Submit" />
 							<Button

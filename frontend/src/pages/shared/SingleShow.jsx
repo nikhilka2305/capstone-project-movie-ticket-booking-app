@@ -7,6 +7,7 @@ import { formatDate } from "../../utils/dateFormatter";
 import { SeatSelection } from "./SeatGrid";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import toast from "react-hot-toast";
+import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
 function SingleShow() {
 	const [show, setShow] = useState();
@@ -126,9 +127,11 @@ function SingleShow() {
 							<div className=" text-lg md:text-lg mt-1 flex gap-2">
 								<span>Rating:</span>
 								<span className="">
-									{movieRating.averageRating > 0
-										? `${movieRating.averageRating} / 5`
-										: "No Rating"}
+									{movieRating.averageRating > 0 ? (
+										<AverageRating rating={movieRating.averageRating} />
+									) : (
+										"No Rating"
+									)}
 								</span>
 							</div>
 							<div className=" ml-2 text-sm md:text-base mt-1">
@@ -142,9 +145,11 @@ function SingleShow() {
 							<div className=" text-lg md:text-lg mt-1 flex gap-2">
 								<span>Rating:</span>
 								<span>
-									{theaterRating.averageRating > 0
-										? `${theaterRating.averageRating} / 5`
-										: "No Rating"}
+									{theaterRating.averageRating > 0 ? (
+										<AverageRating rating={theaterRating.averageRating} />
+									) : (
+										"No Rating"
+									)}
 								</span>
 							</div>
 							<div className=" ml-2 text-sm md:text-base mt-1">
