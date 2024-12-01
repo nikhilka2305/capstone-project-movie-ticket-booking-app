@@ -35,7 +35,7 @@ router.patch(
 	"/:movieid",
 	authenticateToken,
 	authorization("Admin"),
-	multerSingleFileHandler("movieposter"),
+	multerSingleFileHandler("posterImage"),
 	validateMovie("Patch"),
 	editIndividualMovie
 );

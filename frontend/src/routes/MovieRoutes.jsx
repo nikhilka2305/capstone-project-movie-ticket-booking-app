@@ -6,6 +6,7 @@ import AddMovie from "../pages/shared/AddMovie";
 import ProtectRoute from "../hooks/ProtectRoute";
 import { ShowRoutes } from "./ShowRoutes";
 import ManageMovies from "../pages/admin/ManageMovies";
+import ManageSingleMovie from "../pages/admin/ManageSingleMovie";
 
 export const AddMovieRoute = {
 	path: "addmovie",
@@ -18,7 +19,7 @@ export const AddMovieRoute = {
 
 export const IndividualMovieManagementRoute = {
 	path: ":movieid",
-	element: <h2>Manage Individual Movie Id</h2>,
+	element: <ManageSingleMovie />,
 };
 
 export const MovieManagementRoute = {

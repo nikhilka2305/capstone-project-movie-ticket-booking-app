@@ -62,7 +62,7 @@ export const viewIndividualMovie = async (req, res, next) => {
 	try {
 		const movie = await Movie.findOne({ movieId: movieid })
 			.lean()
-			.select("-adminApprovalStatus -updatedAt ");
+			.select("-updatedAt ");
 
 		if (!movie) {
 			return res
@@ -106,7 +106,7 @@ export const editIndividualMovie = async (req, res, next) => {
 			{ movieId: movieid },
 			{
 				movieName,
-				adminApprovalStatus,
+				adminApprovalStatus: "Approved",
 				releaseDate,
 				movieduration,
 				language,

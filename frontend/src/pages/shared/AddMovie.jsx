@@ -21,9 +21,10 @@ export default function AddMovie() {
 	} = useForm();
 
 	const navigate = useNavigate();
-	const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie/addmovie`;
+
 	const handleAddMovie = async (data, evt) => {
 		evt.preventDefault();
+		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie/addmovie`;
 		let loadingToast = toast.loading("Adding Movie....");
 		const addmovie = { ...data };
 

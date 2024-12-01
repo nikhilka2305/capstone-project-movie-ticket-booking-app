@@ -5,6 +5,7 @@ import axios from "axios";
 import Card from "../../components/shared/Card";
 import { AuthContext } from "../../context/AuthContext";
 import AverageRating from "../../components/shared/formcomponents/AverageRating";
+import toast from "react-hot-toast";
 
 function SingleMovie() {
 	const { user } = useContext(AuthContext);
@@ -37,6 +38,7 @@ function SingleMovie() {
 					reviewCount: reviewResponse.data.reviewCount,
 				});
 			} catch (err) {
+				toast.error("Unable to fetch movie details");
 				navigate("/movies");
 			}
 		}
