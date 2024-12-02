@@ -208,15 +208,35 @@ export default function ManageSingleTheater() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<h1 className="text-center text-2xl font-semibold">Update Theater</h1>
+			<h1 className="text-center text-2xl font-semibold">
+				Update Theater: {theater.theaterName}
+			</h1>
 			{loading && <p>Loading</p>}
-			<Link
-				to="seatmanagement"
-				className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100"
-			>
-				{" "}
-				Seat Management{" "}
-			</Link>
+
+			<div className="flex gap-4 mx-auto">
+				{theater.adminApprovalStatus !== "Deleted" && (
+					<Link
+						to="seatmanagement"
+						className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100 p-2"
+					>
+						Seat Management
+					</Link>
+				)}
+				{theater.adminApprovalStatus === "Approved" && (
+					<Link
+						to="addshow"
+						className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100 p-2"
+					>
+						Add Show
+					</Link>
+				)}
+			</div>
+
+			{theater.adminApprovalStatus !== "Approved" && (
+				<p className="text-red-500 text-center">
+					The status of this theater is {theater.adminApprovalStatus}
+				</p>
+			)}
 			<form
 				action=""
 				className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
@@ -465,7 +485,7 @@ export default function ManageSingleTheater() {
 			</form>
 			{theater.adminApprovalStatus !== "Approved" && (
 				<p className="text-red-500 text-center">
-					The status of this movie is {theater.adminApprovalStatus}
+					The status of this theater is {theater.adminApprovalStatus}
 				</p>
 			)}
 			<dialog id="delete_theater" className="modal">

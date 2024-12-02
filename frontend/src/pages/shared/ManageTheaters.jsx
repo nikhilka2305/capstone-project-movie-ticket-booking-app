@@ -27,13 +27,10 @@ function ManageTheaters() {
 			try {
 				let serverUrl;
 				if (!ownerid && user.role !== "Admin") {
-					console.log("no admin Admin only");
 					navigate(`./theaterowner/${user.loggedUserId}`);
 				} else if (ownerid !== user.loggedUserId && user.role !== "Admin") {
-					console.log("no admin no owner");
 					navigate(`./theaterowner/${user.loggedUserId}`);
 				} else if (ownerid) {
-					console.log("Admin or right owner");
 					serverUrl = `${
 						import.meta.env.VITE_SERVER_BASE_URL
 					}/theaterowner/${ownerid}/theaters`;

@@ -29,6 +29,7 @@ export const IndividualTheaterManagementRoute = {
 	children: [
 		{ index: true, element: <ManageSingleTheater /> },
 		SeatManagementRoute,
+		AddTheaterShow,
 	],
 };
 
@@ -68,7 +69,7 @@ export const IndividualTheater = {
 			index: true,
 			element: <SingleTheater />,
 		},
-		AddTheaterShow,
+
 		ManageShow,
 		ShowRoutes,
 		IndividualShow,

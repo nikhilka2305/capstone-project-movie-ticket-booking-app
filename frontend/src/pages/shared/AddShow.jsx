@@ -19,7 +19,7 @@ function AddShow() {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 	const [theater, setTheater] = useState({});
-	const [movies, setMovies] = useState({});
+	const [movies, setMovies] = useState([]);
 	const [show, setShow] = useState({});
 	const [loading, setLoading] = useState(true);
 	const { theaterid } = useParams();
