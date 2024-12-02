@@ -3,6 +3,7 @@ import {
 	AddTheaterShow,
 	IndividualShow,
 	ManageShow,
+	ManageShowRoutes,
 	ShowRoutes,
 } from "./ShowRoutes";
 import { AddReviewRoute, ReviewRoutes } from "./ReviewRoutes";
@@ -30,6 +31,7 @@ export const IndividualTheaterManagementRoute = {
 		{ index: true, element: <ManageSingleTheater /> },
 		SeatManagementRoute,
 		AddTheaterShow,
+		ManageShowRoutes,
 	],
 };
 

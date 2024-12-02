@@ -3,6 +3,7 @@ import Shows from "../pages/shared/Shows";
 import SingleShow from "../pages/shared/SingleShow";
 import AddShow from "../pages/shared/AddShow";
 import { AddBookingRoute } from "./BookingRoutes";
+import ManageShows from "../pages/shared/ManageShows";
 
 export const IndividualShow = {
 	path: ":showid",
@@ -27,25 +28,23 @@ export const ShowRoutes = {
 		IndividualShow,
 	],
 };
-
+export const ManageShow = {
+	path: ":showid/manage",
+	element: <h2>Edit Show</h2>,
+};
 export const ManageShowRoutes = {
 	path: "manageshows",
 	element: <Outlet />,
 	children: [
 		{
 			index: true,
-			element: <h1>Manage Shows</h1>,
+			element: <ManageShows />,
 		},
-		IndividualShow,
+		ManageShow,
 	],
 };
 
 export const AddTheaterShow = {
 	path: "addshow",
 	element: <AddShow />,
-};
-
-export const ManageShow = {
-	path: "shows/:showid/manage",
-	element: <h2>Edit Show</h2>,
 };

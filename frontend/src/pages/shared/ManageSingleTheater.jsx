@@ -223,12 +223,20 @@ export default function ManageSingleTheater() {
 					</Link>
 				)}
 				{theater.adminApprovalStatus === "Approved" && (
-					<Link
-						to="addshow"
-						className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100 p-2"
-					>
-						Add Show
-					</Link>
+					<>
+						<Link
+							to="addshow"
+							className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100 p-2"
+						>
+							Add Show
+						</Link>
+						<Link
+							to="manageshows"
+							className="text-center border rounded-md hover:bg-blue-gray-400 hover:text-gray-100 p-2"
+						>
+							Manage Theater Shows
+						</Link>
+					</>
 				)}
 			</div>
 
