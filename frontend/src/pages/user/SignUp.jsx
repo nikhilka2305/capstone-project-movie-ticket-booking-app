@@ -156,7 +156,7 @@ export default function SignUp() {
 					/>
 				</Accordion>
 				<div className="button-group flex gap-4 justify-center">
-					<Button label="Submit" />
+					<Button label="Submit" type="submit" />
 					<Button
 						label="Reset"
 						onClick={() => {
