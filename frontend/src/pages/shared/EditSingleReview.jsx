@@ -89,45 +89,93 @@ function EditSingleReview() {
 			toast.error("Unable to update review");
 		}
 	};
+	const handleDeleteReview = async function () {
+		let loadingToast = toast.loading("Deleting Review....");
+		try {
+			const serverUrl = `${
+				import.meta.env.VITE_SERVER_BASE_URL
+			}/review/${reviewid}`;
+
+			const reviewDeleted = await axios.delete(serverUrl);
+
+			toast.dismiss(loadingToast);
+			toast.success("Successfully Deleted Review");
+			navigate(`/movies/`);
+		} catch (err) {
+			toast.dismiss(loadingToast);
+			toast.error("Unable to delete review");
+		}
+	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
 			<h2 className="text-center">Add New Show</h2>
 			{loading && <p>Loading</p>}
 			{!loading && (
-				<form
-					action=""
-					className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
-					onSubmit={handleSubmit(handleUpdateReview)}
-					noValidate
-				>
-					<Rating
-						label="Choose Rating"
-						name="userRating"
-						value={userRating}
-						onChange={(value) => setValue("userRating", value)}
-						ref={register("userRating").ref}
-					/>
-					<Input
-						label="Update User review"
-						name="userReview"
-						id="userReview"
-						type="text-area"
-						register={register}
-						validationSchema={{
-							required: "Review required",
-						}}
-						errors={errors}
-					/>
-					<div className="button-group flex gap-4 justify-center">
-						<Button type="submit" label="Submit" />
-						<Button
-							label="Reset"
-							onClick={() => {
-								reset();
+				<>
+					<form
+						action=""
+						className="border rounded-md border-slate-900 py-8 bg-slate-200 dark:bg-slate-700 flex flex-col gap-4"
+						onSubmit={handleSubmit(handleUpdateReview)}
+						noValidate
+					>
+						<Rating
+							label="Choose Rating"
+							name="userRating"
+							value={userRating}
+							onChange={(value) => setValue("userRating", value)}
+							ref={register("userRating").ref}
+						/>
+						<Input
+							label="Update User review"
+							name="userReview"
+							id="userReview"
+							type="text-area"
+							register={register}
+							validationSchema={{
+								required: "Review required",
 							}}
+							errors={errors}
+						/>
+						<div className="button-group flex gap-4 justify-center">
+							<Button type="submit" label="Submit" />
+							<Button
+								label="Reset"
+								onClick={() => {
+									reset();
+								}}
+							/>
+						</div>
+					</form>
+					<dialog id="delete_review" className="modal">
+						<div className="modal-box flex flex-col gap-4">
+							<form method="dialog">
+								<button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+									✕
+								</button>
+							</form>
+
+							<h3 className="text-center text-2xl font-bold mb-4">
+								Are you sure about Deleting this review?
+							</h3>
+
+							<Button
+								colorClass="bg-red-500 text-white"
+								label="Delete Movie"
+								onClick={handleDeleteReview}
+							/>
+						</div>
+					</dialog>
+					<div className="button-group flex gap-4 justify-center">
+						<Button
+							label="Delete This Movie"
+							colorClass="bg-red-500 text-white"
+							disabled={editReview.deleted}
+							onClick={() =>
+								document.getElementById("delete_review").showModal()
+							}
 						/>
 					</div>
-				</form>
+				</>
 			)}
 		</section>
 	);

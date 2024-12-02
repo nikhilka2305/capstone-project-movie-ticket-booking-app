@@ -17,7 +17,6 @@ const Select = forwardRef(
 		},
 		ref
 	) => {
-		console.log(options);
 		return (
 			<>
 				<div className="flex justify-between px-8">

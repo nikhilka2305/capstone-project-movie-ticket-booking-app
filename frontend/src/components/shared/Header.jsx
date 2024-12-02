@@ -77,12 +77,16 @@ export default function Header() {
 							<li>
 								<Link to={"/shows"}>Shows</Link>
 							</li>
-							<li>
-								<Link to={"/login"}>User Login</Link>
-							</li>
-							<li>
-								<Link to={"/toauth/tologin"}>Theater Owner Login</Link>
-							</li>
+							{!isAuthenticated && (
+								<>
+									<li>
+										<Link to={"/login"}>User Login</Link>
+									</li>
+									<li>
+										<Link to={"/toauth/tologin"}>Theater Owner Login</Link>
+									</li>
+								</>
+							)}
 						</ul>
 					</div>
 				</div>

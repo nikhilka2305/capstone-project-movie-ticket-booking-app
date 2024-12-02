@@ -148,7 +148,7 @@ export const addTheater = async (req, res, next) => {
 			theaterName,
 			location,
 			owner: req.user.role === "Admin" ? owner : req.user.loggedUserObjectId,
-			adminApprovalStatus: req.user.role === "Admin" ? "Approved" : "Pending",
+			adminApprovalStatus: "Pending",
 			images: theaterimages,
 			seats,
 			seatClasses,
