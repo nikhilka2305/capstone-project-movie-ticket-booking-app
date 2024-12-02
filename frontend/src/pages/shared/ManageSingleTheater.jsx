@@ -294,6 +294,7 @@ export default function ManageSingleTheater() {
 								label="Select an Owner"
 								field="owner"
 								options={owners}
+								value={field.value}
 								displayKey="username"
 								valueKey="_id"
 								defaultValue={""}
@@ -482,12 +483,17 @@ export default function ManageSingleTheater() {
 					/>
 				</div>
 				<div className="button-group flex gap-4 justify-center">
-					<Button label="Submit" type="submit" />
+					<Button
+						label="Submit"
+						type="submit"
+						disabled={theater.adminApprovalStatus === "Deleted"}
+					/>
 					<Button
 						label="Reset"
 						onClick={() => {
 							reset();
 						}}
+						disabled={theater.adminApprovalStatus === "Deleted"}
 					/>
 				</div>
 			</form>

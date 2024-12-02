@@ -48,6 +48,7 @@ function AddShow() {
 				setMovies(movies);
 				setLoading(false);
 			} catch (err) {
+				toast.error("Unable to fetch details");
 				setLoading(false);
 			}
 		}

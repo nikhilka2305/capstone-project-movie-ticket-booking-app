@@ -4,6 +4,7 @@ import SingleShow from "../pages/shared/SingleShow";
 import AddShow from "../pages/shared/AddShow";
 import { AddBookingRoute } from "./BookingRoutes";
 import ManageShows from "../pages/shared/ManageShows";
+import ManageSingleShow from "../pages/shared/ManageSingleShow";
 
 export const IndividualShow = {
 	path: ":showid",
@@ -30,7 +31,7 @@ export const ShowRoutes = {
 };
 export const ManageShow = {
 	path: ":showid/manage",
-	element: <h2>Edit Show</h2>,
+	element: <ManageSingleShow />,
 };
 export const ManageShowRoutes = {
 	path: "manageshows",

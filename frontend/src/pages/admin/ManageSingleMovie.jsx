@@ -331,12 +331,17 @@ export default function ManageSingleMovie() {
 						</div>
 
 						<div className="button-group flex gap-4 justify-center">
-							<Button type="submit" label="Submit" />
+							<Button
+								type="submit"
+								label="Submit"
+								disabled={movie.adminApprovalStatus === "Deleted"}
+							/>
 							<Button
 								label="Reset"
 								onClick={() => {
 									reset();
 								}}
+								disabled={movie.adminApprovalStatus === "Deleted"}
 							/>
 						</div>
 					</form>
