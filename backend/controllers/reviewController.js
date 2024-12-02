@@ -148,7 +148,7 @@ export const deleteReview = async (req, res, next) => {
 			!new ObjectId(req.user.loggedUserObjectId).equals(review.userId)
 		)
 			throw new HandleError(
-				"You are not authorized to deleted this review",
+				"You are not authorized to delete this review",
 				403
 			);
 		const deletedReview = await Review.findOneAndUpdate(

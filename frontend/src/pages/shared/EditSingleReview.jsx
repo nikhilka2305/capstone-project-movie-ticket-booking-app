@@ -167,7 +167,7 @@ function EditSingleReview() {
 					</dialog>
 					<div className="button-group flex gap-4 justify-center">
 						<Button
-							label="Delete This Movie"
+							label="Delete this Review"
 							colorClass="bg-red-500 text-white"
 							disabled={editReview.deleted}
 							onClick={() =>
