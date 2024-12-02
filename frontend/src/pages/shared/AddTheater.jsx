@@ -173,7 +173,7 @@ function AddTheater() {
 						control={control}
 						defaultValue={""}
 						rules={{
-							required: "Please select a rating",
+							required: "Please select an owner",
 						}}
 						render={({ field }) => (
 							<Select
