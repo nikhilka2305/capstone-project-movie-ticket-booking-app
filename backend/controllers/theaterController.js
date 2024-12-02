@@ -190,7 +190,6 @@ export const editIndividualTheater = async (req, res, next) => {
 
 		if (images && images.length > 0) {
 			theaterimages = await addMultipleImages(images);
-			console.log(theaterimages);
 		}
 
 		const updatedTheater = await Theater.findOneAndUpdate(

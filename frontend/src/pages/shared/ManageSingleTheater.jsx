@@ -463,6 +463,11 @@ export default function ManageSingleTheater() {
 					/>
 				</div>
 			</form>
+			{theater.adminApprovalStatus !== "Approved" && (
+				<p className="text-red-500 text-center">
+					The status of this movie is {theater.adminApprovalStatus}
+				</p>
+			)}
 			<dialog id="delete_theater" className="modal">
 				<div className="modal-box flex flex-col gap-4">
 					<form method="dialog">

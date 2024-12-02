@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { TheaterManagementRoute } from "./TheaterRoutes";
+import { AddTheaterRoute, TheaterManagementRoute } from "./TheaterRoutes";
 import { BookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
 import { AdminDashboardComponent } from "../pages/admin/AdminDashboardComponent";
@@ -25,6 +25,7 @@ export const AdminDashboard = {
 			element: <AdminDashboardComponent />,
 		},
 		TheaterManagementRoute,
+		AddTheaterRoute,
 		BookingRoute,
 	],
 };

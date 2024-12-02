@@ -47,7 +47,7 @@ function AddTheater() {
 		theaterimages: "",
 	});
 	const [feedback, setFeedback] = useState("");
-	const { ownerid } = useParams();
+	const { ownerid, adminid } = useParams();
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "seatClasses",
@@ -63,8 +63,11 @@ function AddTheater() {
 	};
 
 	useEffect(() => {
-		if (ownerid !== user.loggedUserId) {
+		if (ownerid && ownerid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./theaterowner/${user.loggedUserId}`);
+		}
+		if (adminid && user.role !== "Admin") {
+			navigate(`/`);
 		}
 		async function getOwners() {
 			setLoading(true);

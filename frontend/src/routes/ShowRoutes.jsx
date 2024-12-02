@@ -28,6 +28,18 @@ export const ShowRoutes = {
 	],
 };
 
+export const ManageShowRoutes = {
+	path: "manageshows",
+	element: <Outlet />,
+	children: [
+		{
+			index: true,
+			element: <h1>Manage Shows</h1>,
+		},
+		IndividualShow,
+	],
+};
+
 export const AddTheaterShow = {
 	path: "addshow",
 	element: <AddShow />,

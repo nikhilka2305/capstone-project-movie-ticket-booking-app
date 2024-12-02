@@ -34,7 +34,11 @@ export const IndividualTheaterManagementRoute = {
 
 export const AddTheaterRoute = {
 	path: "addtheater",
-	element: <AddTheater />,
+	element: (
+		<ProtectRoute roles={["TheaterOwner", "Admin"]}>
+			<AddTheater />
+		</ProtectRoute>
+	),
 };
 
 export const ManageSingleTheaterRoute = {
@@ -53,7 +57,6 @@ export const TheaterManagementRoute = {
 	children: [
 		{ index: true, element: <ManageTheaters /> },
 		ManageSingleTheaterRoute,
-		AddTheaterRoute,
 	],
 };
 

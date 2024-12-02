@@ -60,7 +60,7 @@ export function AdminDashboardComponent() {
 									Manage Theaters
 								</button>
 							</Link>
-							<Link to={"../../theaters/managetheaters/addtheater"}>
+							<Link to={"addtheater"}>
 								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
 									Add Theater
 								</button>
