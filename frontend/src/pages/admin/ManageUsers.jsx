@@ -50,16 +50,25 @@ export default function ManageUsers() {
 					</div>
 				)}
 				{users.map((item, i) => (
-					<Link
+					<BookingCard
 						key={i}
-						to={`./${item?.userId}`}
-						className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+						image={item?.displayImage}
+						title={item?.username}
 					>
-						<BookingCard
-							image={item?.displayImage}
-							title={item?.username}
-						></BookingCard>
-					</Link>
+						<Link
+							key={i}
+							to={`./${item?.userId}`}
+							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+						>
+							Edit Profile
+						</Link>
+						<Link
+							to={`/user/${item?.userId}`}
+							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+						>
+							<p>User Dashboard</p>
+						</Link>
+					</BookingCard>
 				))}
 			</div>
 			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
