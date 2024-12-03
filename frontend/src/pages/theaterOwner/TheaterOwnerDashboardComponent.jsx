@@ -13,30 +13,48 @@ export function TheaterOwnerDashboardComponent() {
 	const navigate = useNavigate();
 	const { ownerid } = useParams();
 	const [bookingStats, setBookingStats] = useState({});
+	const [theaterBookingStats, setTheaterBookingStats] = useState({});
+	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
+		useState({});
 
 	useEffect(() => {
 		if (ownerid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./theaterowner/${user.loggedUserId}`);
 		}
+		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 		setLoading(true);
 		async function getPersonalBookingData() {
 			try {
-				const serverUrl = `${
-					import.meta.env.VITE_SERVER_BASE_URL
-				}/theaterowner/${ownerid}`;
-				const response = await axios.get(`${serverUrl}/getbookingstats`);
+				const response = await axios.get(
+					`${serverUrl}/theaterowner/${ownerid}/getbookingstats`
+				);
 
 				setBookingStats(response.data[0]);
-				const recentResponse = await axios.get(`${serverUrl}/bookings`, {
-					params: { page: 1, limit: 4 },
-				});
 			} catch (err) {
 				toast.error("Unable to fetch owner booking data");
 			}
 		}
 
-		getPersonalBookingData();
+		async function getTotalBookingData() {
+			const ownerTheaterStats = await axios.get(
+				`${serverUrl}/theaterowner/${ownerid}/totalbookingstats`,
+				{
+					params: { status: "Confirmed" },
+				}
+			);
 
+			setTheaterBookingStats(ownerTheaterStats.data);
+			const ownerTheaterCancelledStats = await axios.get(
+				`${serverUrl}/theaterowner/${ownerid}/totalbookingstats`,
+				{
+					params: { status: "Cancelled" },
+				}
+			);
+			setCancelledTheaterBookingStats(ownerTheaterCancelledStats.data);
+		}
+
+		getPersonalBookingData();
+		getTotalBookingData();
 		setLoading(false);
 	}, [user, ownerid, navigate]);
 
@@ -47,14 +65,21 @@ export function TheaterOwnerDashboardComponent() {
 			{!loading && (
 				<>
 					<h2>Theater Owner Dashboard</h2>
-					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
-							<h2>Own Theater Total Booking Details</h2>
+					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 t my-8">
+						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
+							<StatsComponent
+								label1="Total Bookings"
+								label2="Total Revenue"
+								label3="Cancelled Bookings"
+								value1={theaterBookingStats?.totalBookings ?? 0}
+								value2={`₹${theaterBookingStats?.totalBookingAmount ?? 0}`}
+								value3={cancelledTheaterBookingStats?.totalBookings ?? 0}
+							/>
 						</div>
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
+						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
 							<h2>TheaterOwner Bookings Graph</h2>
 						</div>
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
+						<div className="border w-full  rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"managetheaters"}>
 								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
 									Manage Own Theaters

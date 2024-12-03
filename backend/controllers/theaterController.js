@@ -179,6 +179,7 @@ export const editIndividualTheater = async (req, res, next) => {
 			theaterName,
 			location,
 			seats,
+			owner,
 			seatClasses,
 			amenities,
 			adminApprovalStatus,
@@ -197,6 +198,7 @@ export const editIndividualTheater = async (req, res, next) => {
 			{
 				theaterName: theaterName,
 				location,
+				owner: req.user.role === "Admin" ? owner : req.user.loggedUserObjectId,
 				adminApprovalStatus: req.user.role === "Admin" ? "Approved" : "Pending",
 				images: images && [...theaterimages],
 				seats: seats && { ...seats },

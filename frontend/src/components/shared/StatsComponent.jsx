@@ -12,17 +12,17 @@ export default function StatsComponent({
 		<div className="stats stats-vertical lg:stats-horizontal shadow">
 			<div className="stat place-items-center">
 				<div className="stat-title">{label1}</div>
-				<div className="stat-value">{value1}</div>
+				<div className="stat-value text-xl">{value1}</div>
 			</div>
 
 			<div className="stat place-items-center">
 				<div className="stat-title">{label2}</div>
-				<div className="stat-value">{value2}</div>
+				<div className="stat-value text-xl">{value2}</div>
 			</div>
 
 			<div className="stat place-items-center">
 				<div className="stat-title">{label3}</div>
-				<div className="stat-value">{value3}</div>
+				<div className="stat-value text-xl">{value3}</div>
 			</div>
 		</div>
 	);

@@ -13,30 +13,47 @@ export function AdminDashboardComponent() {
 	const navigate = useNavigate();
 	const { adminid } = useParams();
 	const [bookingStats, setBookingStats] = useState({});
+	const [theaterBookingStats, setTheaterBookingStats] = useState({});
+	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
+		useState({});
 
 	useEffect(() => {
 		if (adminid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./theaterowner/${user.loggedUserId}`);
 		}
 		setLoading(true);
+		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 		async function getPersonalBookingData() {
 			try {
-				const serverUrl = `${
-					import.meta.env.VITE_SERVER_BASE_URL
-				}/admin/${adminid}`;
-				const response = await axios.get(`${serverUrl}/getbookingstats`);
+				const response = await axios.get(
+					`${serverUrl}/admin/${adminid}/getbookingstats`
+				);
 
 				setBookingStats(response.data[0]);
-				const recentResponse = await axios.get(`${serverUrl}/bookings`, {
-					params: { page: 1, limit: 4 },
-				});
 			} catch (err) {
 				toast.error("Couldn't fetch data");
 			}
 		}
 
 		getPersonalBookingData();
+		async function getTotalBookingData() {
+			const ownerTheaterStats = await axios.get(
+				`${serverUrl}/admin/totalbookingstats`,
+				{
+					params: { status: "Confirmed" },
+				}
+			);
 
+			setTheaterBookingStats(ownerTheaterStats.data);
+			const ownerTheaterCancelledStats = await axios.get(
+				`${serverUrl}/admin/totalbookingstats`,
+				{
+					params: { status: "Cancelled" },
+				}
+			);
+			setCancelledTheaterBookingStats(ownerTheaterCancelledStats.data);
+		}
+		getTotalBookingData();
 		setLoading(false);
 	}, [user, adminid, navigate]);
 
@@ -47,10 +64,18 @@ export function AdminDashboardComponent() {
 			{!loading && (
 				<>
 					<h2>Bookings & Theaters </h2>
-					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
-							<h2>Total Booking Details</h2>
+					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 my-8">
+						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
+							<StatsComponent
+								label1="Total Bookings"
+								label2="Total Revenue"
+								label3="Cancelled Bookings"
+								value1={theaterBookingStats?.totalBookings ?? 0}
+								value2={`₹${theaterBookingStats?.totalBookingAmount ?? 0}`}
+								value3={cancelledTheaterBookingStats?.totalBookings ?? 0}
+							/>
 						</div>
+
 						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
 							<h2>Bookings Graph</h2>
 						</div>

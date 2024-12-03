@@ -95,7 +95,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 		}
 	} catch (err) {
 		return res
-			.status(err.statusCode)
+			.status(err?.statusCode || 500)
 			.json({ message: "Error", error: err.message });
 	}
 };
@@ -137,22 +137,19 @@ export const viewIndividualBooking = async (req, res, nex) => {
 };
 
 export const viewBookings = async (req, res, next) => {
-	const user = req.user;
-	let filterConditions = {};
-	if (user.role === "TheaterOwner") {
-		filterConditions = {
-			// "showInfo.theater.owner._id": user.loggedUserObjectId,
-			"showInfo.theater.owner._id": {
-				$eq: new ObjectId(user.loggedUserObjectId),
-			},
-		};
-	}
 	try {
-		const bookings = await Booking.aggregate([
-			// {
-			// 	$match: filterConditions,
-			// },
+		const { page = 1, limit = 5, status } = req.query;
 
+		const user = req.user;
+		const filterConditions = {
+			...(user.role === "TheaterOwner" && {
+				"showInfo.theater.owner._id": new ObjectId(user.loggedUserObjectId),
+			}),
+			...(status && { status }),
+		};
+
+		// Base aggregation pipeline
+		const aggregation = [
 			{
 				$lookup: {
 					from: "shows",
@@ -171,7 +168,6 @@ export const viewBookings = async (req, res, next) => {
 				},
 			},
 			{ $unwind: "$showInfo.movie" },
-
 			{
 				$lookup: {
 					from: "theaters",
@@ -190,66 +186,19 @@ export const viewBookings = async (req, res, next) => {
 				},
 			},
 			{ $unwind: "$showInfo.theater.owner" },
+			{
+				$match: filterConditions,
+			},
+		];
+		const totalBookingsData = await Booking.aggregate([
+			...aggregation,
+			{ $count: "totalBookings" },
+		]);
+		const totalBookings = totalBookingsData[0]?.totalBookings || 0;
 
-			{
-				$lookup: {
-					from: "users",
-					localField: "user",
-					foreignField: "_id",
-					as: "userDetails",
-				},
-			},
-			{
-				$lookup: {
-					from: "admins",
-					localField: "user",
-					foreignField: "_id",
-					as: "adminDetails",
-				},
-			},
-			{
-				$lookup: {
-					from: "theaterowners",
-					localField: "user",
-					foreignField: "_id",
-					as: "theaterOwnerDetails",
-				},
-			},
-			{
-				$addFields: {
-					userInfo: {
-						$switch: {
-							branches: [
-								{
-									case: {
-										$eq: ["$userType", "User"],
-									},
-									then: {
-										$arrayElemAt: ["$userDetails", 0],
-									},
-								},
-								{
-									case: {
-										$eq: ["$userType", "Admin"],
-									},
-									then: {
-										$arrayElemAt: ["$adminDetails", 0],
-									},
-								},
-								{
-									case: {
-										$eq: ["$userType", "TheaterOwner"],
-									},
-									then: {
-										$arrayElemAt: ["$theaterOwnerDetails", 0],
-									},
-								},
-							],
-							default: null,
-						},
-					},
-				},
-			},
+		const skip = (page - 1) * limit;
+		const bookingResults = await Booking.aggregate([
+			...aggregation,
 			{
 				$project: {
 					showInfo: {
@@ -269,23 +218,95 @@ export const viewBookings = async (req, res, next) => {
 							},
 						},
 					},
-
-					userInfo: 1,
 					userType: 1,
 					createdAt: 1,
 					updatedAt: 1,
 					bookingDate: 1,
 					_id: 1,
 					bookingId: 1,
-
 					seats: 1,
-					totalAmount: 1,
-					__v: 1,
 				},
+			},
+			{ $sort: { createdAt: -1 } },
+			{ $skip: skip },
+			{ $limit: parseInt(limit) },
+		]);
+
+		res.status(200).json({
+			bookings: bookingResults,
+			totalBookings,
+			totalPages: Math.ceil(totalBookings / limit),
+			currentPage: page,
+		});
+	} catch (err) {
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
+	}
+};
+
+export const totalBookingStats = async (req, res, next) => {
+	try {
+		const { ownerid } = req.params;
+		const { status } = req.query;
+
+		const user = req.user;
+		let filterConditions;
+		if (ownerid) {
+			if (user.role === "TheaterOwner")
+				filterConditions = {
+					...(user.role === "TheaterOwner" && {
+						"showInfo.theater.owner._id": new ObjectId(user.loggedUserObjectId),
+					}),
+					...(status && { status }),
+				};
+			else {
+				const ownerData = await TheaterOwner.findOne({ userId: ownerid })
+					.lean()
+					.select("_id");
+
+				filterConditions = {
+					"showInfo.theater.owner._id": ownerData._id,
+					...(status && { status }),
+				};
+			}
+		} else {
+			filterConditions = { ...(status && { status }) };
+		}
+
+		const aggregation = [
+			{
+				$lookup: {
+					from: "shows",
+					localField: "showInfo",
+					foreignField: "_id",
+					as: "showInfo",
+				},
+			},
+			{ $unwind: "$showInfo" },
+			{
+				$lookup: {
+					from: "theaters",
+					localField: "showInfo.theater",
+					foreignField: "_id",
+					as: "showInfo.theater",
+				},
+			},
+			{ $unwind: "$showInfo.theater" },
+			{
+				$lookup: {
+					from: "theaterowners",
+					localField: "showInfo.theater.owner",
+					foreignField: "_id",
+					as: "showInfo.theater.owner",
+				},
+			},
+			{ $unwind: "$showInfo.theater.owner" },
+			{
+				$match: filterConditions,
 			},
 			{
 				$addFields: {
-					// Calculate total amount by summing up the price of each seat based on seatClass
 					BookingAmount: {
 						$sum: {
 							$map: {
@@ -298,23 +319,27 @@ export const viewBookings = async (req, res, next) => {
 				},
 			},
 			{
-				$project: {
-					userInfo: {
-						passwordHash: 0,
-						deleted: 0,
-						updatedAt: 0,
-						createdAt: 0,
-					},
+				$group: {
+					_id: null,
+					totalBookings: { $sum: 1 },
+					totalBookingAmount: { $sum: "$BookingAmount" },
 				},
 			},
-			{
-				$match: filterConditions,
-			},
-		]);
+		];
 
-		res.json(bookings);
+		const result = await Booking.aggregate(aggregation);
+
+		const totalBookings = result[0]?.totalBookings || 0;
+		const totalBookingAmount = result[0]?.totalBookingAmount || 0;
+
+		res.status(200).json({
+			totalBookings,
+			totalBookingAmount,
+		});
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 

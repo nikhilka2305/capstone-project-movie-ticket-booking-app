@@ -4,6 +4,7 @@ import {
 	addBooking,
 	cancelBooking,
 	getPersonalBookingStats,
+	totalBookingStats,
 	viewBookings,
 	viewIndividualBooking,
 } from "../controllers/bookingController.js";

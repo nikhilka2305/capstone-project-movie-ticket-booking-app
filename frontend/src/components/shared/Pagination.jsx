@@ -29,7 +29,7 @@ export function Pagination({ page, setPage, totalPages }) {
 	const buttons = [];
 	for (let i = 1; i <= totalPages; i++) {
 		buttons.push(
-			<IconButton {...getItemProps(i)} key={i}>
+			<IconButton {...getItemProps(i)} key={i} className=" dark:text-gray-100">
 				{i}
 			</IconButton>
 		);
@@ -43,7 +43,11 @@ export function Pagination({ page, setPage, totalPages }) {
 				onClick={prev}
 				disabled={active === 1}
 			>
-				<ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
+				<ArrowLeftIcon
+					strokeWidth={2}
+					className="h-4 w-4 text-gray-900 dark:text-gray-100"
+				/>{" "}
+				Previous
 			</Button>
 			<div className="flex items-center gap-2">{buttons}</div>
 			<Button
@@ -53,7 +57,10 @@ export function Pagination({ page, setPage, totalPages }) {
 				disabled={totalPages === 0 || active === totalPages}
 			>
 				Next
-				<ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+				<ArrowRightIcon
+					strokeWidth={2}
+					className="h-4 w-4 text-gray-900 dark:text-gray-100"
+				/>
 			</Button>
 		</div>
 	);
