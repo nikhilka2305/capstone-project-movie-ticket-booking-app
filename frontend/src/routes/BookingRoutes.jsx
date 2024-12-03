@@ -3,6 +3,7 @@ import Bookings from "../pages/shared/Bookings";
 import SingleBooking from "../pages/shared/SingleBooking";
 import AddBooking from "../pages/shared/AddBooking";
 import ProtectRoute from "../hooks/ProtectRoute";
+import TotalBookings from "../pages/shared/TotalBookings";
 
 export const ManageBooking = {
 	path: "manage",
@@ -38,13 +39,7 @@ export const BookingRoute = {
 
 export const TheaterBookingRoute = {
 	path: "theaterbookings",
-	element: (
-		<h4>
-			All/Filtered Theater Bookings
-			<Outlet />
-		</h4>
-	),
-	children: [IndividualBooking],
+	element: <TotalBookings />,
 };
 
 export const AddBookingRoute = {

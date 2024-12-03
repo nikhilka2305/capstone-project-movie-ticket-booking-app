@@ -10,7 +10,7 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import toast from "react-hot-toast";
 
-function Bookings() {
+export default function TotalBookings() {
 	const [bookings, setBookings] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(1); // Current page
@@ -41,7 +41,7 @@ function Bookings() {
 			try {
 				const serverUrl = `${
 					import.meta.env.VITE_SERVER_BASE_URL
-				}/${urlPath}/${urlid}/bookings`;
+				}/${urlPath}/${urlid}/theaterbookings`;
 
 				const response = await axios.get(`${serverUrl}`, {
 					params: { page, limit: 8 },
@@ -60,7 +60,7 @@ function Bookings() {
 	}, [page]);
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<h1 className="text-2xl mb-lg-2 my-4">Your Bookings</h1>
+			<h1 className="text-2xl mb-lg-2 my-4">Your Theater Bookings</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>
@@ -70,7 +70,7 @@ function Bookings() {
 				</div>
 			)}
 			{bookings.map((item, i) => (
-				<Link key={i} to={`./${item.bookingId}`}>
+				<Link key={i} to={`/bookings/${item.bookingId}`}>
 					<BookingCard
 						image={item.showInfo.movie.posterImage}
 						title={`Booking Id: ${item.bookingId}`}
@@ -79,7 +79,7 @@ function Bookings() {
 						<p>{item.showInfo.theater.theaterName}</p>
 						<p>{formatDate(new Date(item.showInfo.showTime))}</p>
 						<p>{item.status}</p>
-						<p>{`Booking Cost: ₹${item.BookingAmount}/-`}</p>
+						<p>{`Booking Cost: ₹${item.bookingAmount}/-`}</p>
 						<p>Seats: </p>
 						<ul className="flex gap-2">
 							{item.seats.map((seat, i) => (
@@ -98,5 +98,3 @@ function Bookings() {
 		</main>
 	);
 }
-
-export default Bookings;

@@ -11,12 +11,6 @@ import {
 import { authenticateToken } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import { validateBooking } from "../middleware/bookingValidation.js";
-router.get(
-	"/",
-	authenticateToken,
-	authorization("Admin", "TheaterOwner"),
-	viewBookings
-);
 
 router.get("/:bookingid", authenticateToken, viewIndividualBooking);
 router.delete("/:bookingid", authenticateToken, cancelBooking);

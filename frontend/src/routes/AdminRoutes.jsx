@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { AddTheaterRoute, TheaterManagementRoute } from "./TheaterRoutes";
-import { BookingRoute } from "./BookingRoutes";
+import { BookingRoute, TheaterBookingRoute } from "./BookingRoutes";
 import Profile from "../pages/shared/Profile";
 import { AdminDashboardComponent } from "../pages/admin/AdminDashboardComponent";
 import ManageUsers from "../pages/admin/ManageUsers";
@@ -27,6 +27,7 @@ export const AdminDashboard = {
 		TheaterManagementRoute,
 		AddTheaterRoute,
 		BookingRoute,
+		TheaterBookingRoute,
 	],
 };
 export const AdminProfileRoute = {

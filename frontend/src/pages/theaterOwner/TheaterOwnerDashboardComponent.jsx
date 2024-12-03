@@ -75,6 +75,11 @@ export function TheaterOwnerDashboardComponent() {
 								value2={`₹${theaterBookingStats?.totalBookingAmount ?? 0}`}
 								value3={cancelledTheaterBookingStats?.totalBookings ?? 0}
 							/>
+							<Link to="theaterbookings" className="my-4">
+								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+									View Theater Bookings
+								</button>
+							</Link>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
 							<h2>TheaterOwner Bookings Graph</h2>

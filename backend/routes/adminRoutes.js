@@ -17,6 +17,7 @@ import { viewTheaters } from "../controllers/theaterController.js";
 import {
 	getPersonalBookingStats,
 	totalBookingStats,
+	viewBookings,
 	viewPersonalBookings,
 } from "../controllers/bookingController.js";
 import {
@@ -64,10 +65,16 @@ router.get(
 	viewPersonalBookings
 ),
 	router.get(
-		"/:adminid/getbookingstats",
+		"/:adminid/theaterbookings",
 		authenticateToken,
-		getPersonalBookingStats
+		authorization("Admin"),
+		viewBookings
 	);
+router.get(
+	"/:adminid/getbookingstats",
+	authenticateToken,
+	getPersonalBookingStats
+);
 router.get(
 	"/totalbookingstats",
 	authenticateToken,

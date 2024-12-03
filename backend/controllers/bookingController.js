@@ -139,16 +139,32 @@ export const viewIndividualBooking = async (req, res, nex) => {
 export const viewBookings = async (req, res, next) => {
 	try {
 		const { page = 1, limit = 5, status } = req.query;
-
+		const { ownerid } = req.params;
 		const user = req.user;
-		const filterConditions = {
-			...(user.role === "TheaterOwner" && {
-				"showInfo.theater.owner._id": new ObjectId(user.loggedUserObjectId),
-			}),
-			...(status && { status }),
-		};
 
-		// Base aggregation pipeline
+		let filterConditions;
+		if (ownerid) {
+			if (user.role === "TheaterOwner")
+				filterConditions = {
+					...(user.role === "TheaterOwner" && {
+						"showInfo.theater.owner._id": new ObjectId(user.loggedUserObjectId),
+					}),
+					...(status && { status }),
+				};
+			else {
+				const ownerData = await TheaterOwner.findOne({ userId: ownerid })
+					.lean()
+					.select("_id");
+
+				filterConditions = {
+					"showInfo.theater.owner._id": ownerData._id,
+					...(status && { status }),
+				};
+			}
+		} else {
+			filterConditions = { ...(status && { status }) };
+		}
+
 		const aggregation = [
 			{
 				$lookup: {
@@ -189,7 +205,30 @@ export const viewBookings = async (req, res, next) => {
 			{
 				$match: filterConditions,
 			},
+			{
+				$lookup: {
+					from: "theaters",
+					localField: "showInfo.theater._id",
+					foreignField: "_id",
+					as: "theaterDetails",
+				},
+			},
+			{ $unwind: "$theaterDetails" },
+			{
+				$addFields: {
+					bookingAmount: {
+						$reduce: {
+							input: "$seats",
+							initialValue: 0,
+							in: {
+								$add: ["$$value", "$$this.seatClass.price"],
+							},
+						},
+					},
+				},
+			},
 		];
+
 		const totalBookingsData = await Booking.aggregate([
 			...aggregation,
 			{ $count: "totalBookings" },
@@ -206,6 +245,7 @@ export const viewBookings = async (req, res, next) => {
 							movieName: 1,
 							_id: 1,
 							movieId: 1,
+							posterImage: 1,
 						},
 						theater: {
 							_id: 1,
@@ -217,6 +257,7 @@ export const viewBookings = async (req, res, next) => {
 								ownerId: 1,
 							},
 						},
+						showTime: 1,
 					},
 					userType: 1,
 					createdAt: 1,
@@ -225,6 +266,7 @@ export const viewBookings = async (req, res, next) => {
 					_id: 1,
 					bookingId: 1,
 					seats: 1,
+					bookingAmount: 1,
 				},
 			},
 			{ $sort: { createdAt: -1 } },

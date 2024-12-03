@@ -16,6 +16,7 @@ import { checkAuth } from "../controllers/commonControllers.js";
 import {
 	getPersonalBookingStats,
 	totalBookingStats,
+	viewBookings,
 	viewPersonalBookings,
 } from "../controllers/bookingController.js";
 import {
@@ -63,10 +64,16 @@ router.get(
 	viewPersonalBookings
 ),
 	router.get(
-		"/:ownerid/getbookingstats",
+		"/:ownerid/theaterbookings",
 		authenticateToken,
-		getPersonalBookingStats
+		authorization("Admin", "TheaterOwner"),
+		viewBookings
 	);
+router.get(
+	"/:ownerid/getbookingstats",
+	authenticateToken,
+	getPersonalBookingStats
+);
 router.get(
 	"/:ownerid/totalbookingstats",
 	authenticateToken,
