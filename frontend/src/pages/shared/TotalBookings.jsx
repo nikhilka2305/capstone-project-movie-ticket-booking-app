@@ -58,6 +58,11 @@ export default function TotalBookings() {
 		}
 		getBookings();
 	}, [page]);
+
+	const ConditionalLink = ({ condition, to, children }) => {
+		return condition ? <Link to={to}>{children}</Link> : <>{children}</>;
+	};
+
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<h1 className="text-2xl mb-lg-2 my-4">Your Theater Bookings</h1>
@@ -70,7 +75,13 @@ export default function TotalBookings() {
 				</div>
 			)}
 			{bookings.map((item, i) => (
-				<Link key={i} to={`/bookings/${item.bookingId}`}>
+				<ConditionalLink
+					condition={user.role === "Admin"}
+					key={i}
+					to={`/${userType[item.userType]}/${item.userData.userId}/bookings/${
+						item.bookingId
+					}`}
+				>
 					<BookingCard
 						image={item.showInfo.movie.posterImage}
 						title={`Booking Id: ${item.bookingId}`}
@@ -90,8 +101,9 @@ export default function TotalBookings() {
 								</li>
 							))}
 						</ul>
+						<p>Booked By: {item.userData.username}</p>
 					</BookingCard>
-				</Link>
+				</ConditionalLink>
 			))}
 
 			<Pagination page={page} setPage={setPage} totalPages={totalPages} />

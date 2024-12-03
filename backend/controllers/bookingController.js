@@ -215,6 +215,79 @@ export const viewBookings = async (req, res, next) => {
 			},
 			{ $unwind: "$theaterDetails" },
 			{
+				$lookup: {
+					from: "users",
+					localField: "user",
+					foreignField: "_id",
+					as: "userDetails",
+				},
+			},
+			// Lookup in theaterowners collection
+			{
+				$lookup: {
+					from: "theaterowners",
+					localField: "user",
+					foreignField: "_id",
+					as: "theaterOwnerDetails",
+				},
+			},
+			// Lookup in admins collection
+			{
+				$lookup: {
+					from: "admins",
+					localField: "user",
+					foreignField: "_id",
+					as: "adminDetails",
+				},
+			},
+			// Merge the results into a single field
+			{
+				$addFields: {
+					userData: {
+						$arrayElemAt: [
+							{
+								$concatArrays: [
+									{
+										$map: {
+											input: "$userDetails",
+											as: "u",
+											in: {
+												username: "$$u.username", // Field name in `users` collection
+												userId: "$$u.userId",
+												_id: "$$u._id",
+											},
+										},
+									},
+									{
+										$map: {
+											input: "$theaterOwnerDetails",
+											as: "t",
+											in: {
+												username: "$$t.username", // Field name in `theaterowners` collection
+												userId: "$$t.userId",
+												_id: "$$t._id",
+											},
+										},
+									},
+									{
+										$map: {
+											input: "$adminDetails",
+											as: "a",
+											in: {
+												username: "$$a.username", // Field name in `admins` collection
+												userId: "$$a.userId",
+												_id: "$$a._id",
+											},
+										},
+									},
+								],
+							},
+							0, // Get the first non-empty object
+						],
+					},
+				},
+			},
+			{
 				$addFields: {
 					bookingAmount: {
 						$reduce: {
@@ -267,6 +340,8 @@ export const viewBookings = async (req, res, next) => {
 					bookingId: 1,
 					seats: 1,
 					bookingAmount: 1,
+					status: 1,
+					userData: 1,
 				},
 			},
 			{ $sort: { createdAt: -1 } },
