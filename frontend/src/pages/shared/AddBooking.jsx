@@ -17,8 +17,6 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
-
 function AddBooking() {
 	const navigate = useNavigate();
 
@@ -98,6 +96,9 @@ function AddBooking() {
 	}, [showid, navigate, selectedSeats]);
 
 	const handleAddBooking = async function (evt) {
+		const stripe = await loadStripe(
+			import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+		);
 		const selectedSeatInfo = selectedSeats.map((seat) => {
 			const [row, col] = seat.seatNumber.split("-");
 			return {
