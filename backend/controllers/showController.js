@@ -12,8 +12,10 @@ export const viewShows = async (req, res, next) => {
 	const { movieid, theaterid } = req.params;
 
 	const now = new Date();
+	const nowIST = new Date(now.getTime() - 5.5 * 60 * 60 * 1000);
+	// console.log("Current Time in IST:", nowIST);
 
-	const filterConditions = { showTime: { $gt: now } };
+	const filterConditions = { showTime: { $gt: nowIST } };
 	if (!req.user) filterConditions.deleted = false;
 
 	try {
@@ -55,7 +57,9 @@ export const viewShows = async (req, res, next) => {
 			res.status(200).json(shows);
 		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -100,7 +104,9 @@ export const addShow = async (req, res, next) => {
 			return res.status(201).json({ message: "Successfully created show" });
 		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -114,7 +120,9 @@ export const individualShow = async (req, res, next) => {
 		if (!show) throw new Error("No such show exists");
 		return res.status(200).json(show);
 	} catch (err) {
-		res.status(404).json({ error: "Couldn't find show details", message: err });
+		res
+			.status(err?.statusCode || 404)
+			.json({ error: "Couldn't find show details", message: err });
 	}
 };
 
@@ -144,9 +152,11 @@ export const editShow = async (req, res, next) => {
 			{ runValidators: true, new: true }
 		);
 
-		return res.json({ message: `Succesfully Updated ${showid}` });
+		return res.status(201).json({ message: `Succesfully Updated ${showid}` });
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
 
@@ -165,8 +175,10 @@ export const deleteShow = async (req, res, next) => {
 		}
 		handleShowDeletion(showid);
 
-		return res.json({ message: `Succesfully Deleted ${showid}` });
+		return res.status(204).json({ message: `Succesfully Deleted ${showid}` });
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err.message });
 	}
 };
