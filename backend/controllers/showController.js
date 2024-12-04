@@ -12,10 +12,8 @@ export const viewShows = async (req, res, next) => {
 	const { movieid, theaterid } = req.params;
 
 	const now = new Date();
-	const nowIST = new Date(now.getTime() - 5.5 * 60 * 60 * 1000);
-	// console.log("Current Time in IST:", nowIST);
 
-	const filterConditions = { showTime: { $gt: nowIST } };
+	const filterConditions = { showTime: { $gt: now } };
 	if (!req.user) filterConditions.deleted = false;
 
 	try {
@@ -42,7 +40,7 @@ export const viewShows = async (req, res, next) => {
 				.skip(skip)
 				.limit(limit);
 			const totalShows = await Show.countDocuments(filterConditions);
-
+			console.log(shows);
 			res.status(200).json({
 				shows,
 				totalShows,

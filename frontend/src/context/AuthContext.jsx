@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }) => {
 				});
 			}
 		} catch (err) {
-			toast.error("Unable to authenticate");
 			setAuth({
 				isAuthenticated: false,
 				user: {
