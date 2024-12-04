@@ -9,6 +9,7 @@ import reviewRouter from "./reviewRoutes.js";
 import theaterOwnerRouter from "./theaterOwnerRoutes.js";
 import theaterRouter from "./theaterRoutes.js";
 import showRouter from "./showRoutes.js";
+import paymentRouter from "./paymentRoutes.js";
 import { authenticateToken } from "../middleware/authentication.js";
 import { checkAuth, logout } from "../controllers/commonControllers.js";
 
@@ -21,6 +22,7 @@ router.use("/review", reviewRouter);
 router.use("/theater", theaterRouter);
 router.use("/show", showRouter);
 router.use("/theaterOwner", theaterOwnerRouter);
+router.use("/payments", paymentRouter);
 router.post("/logout", authenticateToken, logout);
 
 export { router as router };

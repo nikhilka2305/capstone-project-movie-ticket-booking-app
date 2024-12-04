@@ -1,17 +1,23 @@
 import React from "react";
 import { useContext, useEffect, useState } from "react";
-import Input from "../../components/shared/formcomponents/Input";
+
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import Select from "../../components/shared/formcomponents/Select";
+
 import Card from "../../components/shared/Card";
 import { SeatSelection } from "./SeatGrid";
 import { formatDate } from "../../utils/dateFormatter";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
+
+// Stripe
+
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 function AddBooking() {
 	const navigate = useNavigate();
@@ -105,29 +111,58 @@ function AddBooking() {
 				},
 			};
 		});
+
+		const displaySeatInfo = selectedSeats.map((seat) => {
+			return {
+				image: show.movie.posterImage,
+				seatNumber: formatSeatNumber(seat.seatNumber),
+				seatClass: {
+					className: seat.className,
+					price: seat.price,
+				},
+			};
+		});
+
 		const bookingInfo = {
 			showInfo: show._id,
 			seats: selectedSeatInfo,
 		};
-		const serverUrl = `${
-			import.meta.env.VITE_SERVER_BASE_URL
-		}/booking/newBooking`;
+		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 		evt.preventDefault();
-		let loadingToast = toast.loading("Confirming Booking..");
+		let loadingToast = toast.loading("Confirming Booking.. Making Payment");
 
 		try {
-			let bookingData = await axios.post(serverUrl, bookingInfo, {
-				headers: {
-					"Content-Type": "application/json",
+			console.log(displaySeatInfo);
+			console.log(bookingInfo);
+
+			let session = await axios.post(
+				`${serverUrl}/payments/create-checkout-session`,
+				{
+					bookingData: {
+						displaySeatInfo,
+						bookingInfo,
+						price: selectedSeats.reduce((total, seat) => total + seat.price, 0),
+					},
 				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+			console.log("session===========", session);
+
+			const result = stripe.redirectToCheckout({
+				sessionId: session.data.sessionId,
 			});
+			console.log(result);
 
 			toast.dismiss(loadingToast);
-			toast.success("Booking Completed");
-			navigate(`/shows/${show.showId}`);
+			toast.success("Payment Initiated");
+			// navigate(`/shows/${show.showId}`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
-			toast.error("Unable to Complete Booking");
+			toast.error("Unable to Initiate Payment Booking");
 		}
 	};
 

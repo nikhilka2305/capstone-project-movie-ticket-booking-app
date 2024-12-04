@@ -16,6 +16,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={0.5}
 				checked={roundedrating === 0.5}
 				className="mask mask-star-2 mask-half-1 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -23,6 +24,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={1}
 				checked={roundedrating === 1}
 				className="mask mask-star-2 mask-half-2 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -30,6 +32,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={1.5}
 				checked={roundedrating === 1.5}
 				className="mask mask-star-2 mask-half-1 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -37,6 +40,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={2}
 				checked={roundedrating === 2}
 				className="mask mask-star-2 mask-half-2 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -44,6 +48,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={2.5}
 				checked={roundedrating === 2.5}
 				className="mask mask-star-2 mask-half-1 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -51,6 +56,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={3}
 				checked={roundedrating === 3}
 				className="mask mask-star-2 mask-half-2 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -58,6 +64,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={3.5}
 				checked={roundedrating === 3.5}
 				className="mask mask-star-2 mask-half-1 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -65,6 +72,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={4}
 				checked={roundedrating === 4}
 				className="mask mask-star-2 mask-half-2 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -72,6 +80,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={4.5}
 				checked={roundedrating === 4.5}
 				className="mask mask-star-2 mask-half-1 bg-green-500"
+				readOnly
 			/>
 			<input
 				type="radio"
@@ -79,6 +88,7 @@ export default function AverageRating({ rating, ratingSize = "rating-sm" }) {
 				value={5}
 				checked={roundedrating === 5}
 				className="mask mask-star-2 mask-half-2 bg-green-500"
+				readOnly
 			/>
 		</div>
 	);

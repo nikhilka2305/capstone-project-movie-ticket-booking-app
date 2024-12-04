@@ -31,6 +31,8 @@ import Home from "../pages/shared/Home";
 import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import Error404 from "../pages/shared/Error404";
+import PaymentSuccess from "../pages/shared/PaymentSuccess";
+import PaymentFailed from "../pages/shared/PaymentFailed";
 
 export default function RouteIndex() {
 	const router = createBrowserRouter([
@@ -193,6 +195,30 @@ export default function RouteIndex() {
 				</>
 			),
 			children: [AdminLoginRoute, AdminSignUpRoute],
+		},
+		{
+			path: "/paymentsuccess",
+			element: (
+				<>
+					<Header />
+					<ProtectRoute roles={["Admin", "TheaterOwner", "User"]}>
+						<PaymentSuccess />
+					</ProtectRoute>
+					<Footer />
+				</>
+			),
+		},
+		{
+			path: "/paymentfailed",
+			element: (
+				<>
+					<Header />
+					<ProtectRoute roles={["Admin", "TheaterOwner", "User"]}>
+						<PaymentFailed />
+					</ProtectRoute>
+					<Footer />
+				</>
+			),
 		},
 
 		{
