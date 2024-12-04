@@ -133,9 +133,6 @@ function AddBooking() {
 		let loadingToast = toast.loading("Confirming Booking.. Making Payment");
 
 		try {
-			console.log(displaySeatInfo);
-			console.log(bookingInfo);
-
 			let session = await axios.post(
 				`${serverUrl}/payments/create-checkout-session`,
 				{
@@ -151,12 +148,10 @@ function AddBooking() {
 					},
 				}
 			);
-			console.log("session===========", session);
 
 			const result = stripe.redirectToCheckout({
 				sessionId: session.data.sessionId,
 			});
-			console.log(result);
 
 			toast.dismiss(loadingToast);
 			toast.success("Payment Initiated");

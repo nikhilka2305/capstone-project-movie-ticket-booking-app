@@ -3,7 +3,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const makePayment = async (req, res) => {
 	const { bookingData } = req.body;
-	console.log(bookingData);
+
 	const lineItems = bookingData.displaySeatInfo.map((item) => ({
 		price_data: {
 			currency: "inr",
@@ -15,7 +15,7 @@ const makePayment = async (req, res) => {
 		},
 		quantity: 1,
 	}));
-	console.log(lineItems);
+
 	try {
 		const session = await stripe.checkout.sessions.create({
 			payment_method_types: ["card"], // Specify payment methods
@@ -27,7 +27,7 @@ const makePayment = async (req, res) => {
 			success_url: `${process.env.CORS_DOMAIN}/paymentsuccess?sessionId={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${process.env.CORS_DOMAIN}/paymentfailed`,
 		});
-		console.log("session----------", session.id);
+
 		res.json({ success: true, sessionId: session.id });
 	} catch (err) {
 		res

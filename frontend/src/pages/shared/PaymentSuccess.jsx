@@ -7,7 +7,7 @@ export default function PaymentSuccess() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 	const [queryParams] = useSearchParams();
-	console.log(queryParams.get("sessionId"));
+
 	const sessionId = queryParams.get("sessionId");
 	useEffect(() => {
 		try {
@@ -17,9 +17,6 @@ export default function PaymentSuccess() {
 					`${serverUrl}/payments/get-session-data/?sessionId=${sessionId}`
 				);
 				const { bookinginfo, line_items } = response.data;
-
-				console.log("Metadata (Backend Booking Info):", bookinginfo);
-				console.log("Line Items (Display Info):", line_items);
 
 				let bookingData = await axios.post(
 					`${serverUrl}/booking/newBooking`,
