@@ -464,7 +464,7 @@ export const addBooking = async (req, res, next) => {
 	const { showInfo, seats } = req.body;
 	const user = req.user.loggedUserObjectId;
 	const userType = req.user.role;
-	if (new Date(showInfo.showTimeIST) < Date.now())
+	if (new Date(showInfo.showTime) < Date.now())
 		throw new HandleError(
 			"This Show has ended / cancelled.. You cannot book",
 			404

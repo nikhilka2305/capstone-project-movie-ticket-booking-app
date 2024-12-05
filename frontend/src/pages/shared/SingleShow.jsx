@@ -95,11 +95,13 @@ function SingleShow() {
 					<Card
 						loading={loading}
 						title={show.movie.movieName}
-						subtitle={`Show Date & Time: ${formatDate(
-							new Date(show.showTimeIST)
-						)} Theater: ${show.theater.theaterName}`}
+						subtitle={`Show Date & Time: ${new Date(
+							show.showTime
+						).toLocaleString("en-IN", {
+							timeZone: "Asia/Kolkata",
+						})} Theater: ${show.theater.theaterName}`}
 						image={show.movie.posterImage}
-						btndisabled={new Date(show.showTimeIST) < Date.now()}
+						btndisabled={new Date(show.showTime).getTime() < Date.now()}
 						onClick={() => navigate("addbooking")}
 					>
 						<div>

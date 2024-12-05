@@ -1,4 +1,8 @@
 export function formatDate(date) {
+	if (!(date instanceof Date) || isNaN(date.getTime())) {
+		console.error("Invalid date:", date);
+		return "Invalid date";
+	}
 	const day = String(date.getDate()).padStart(2, "0");
 	const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
 	const year = date.getFullYear();
@@ -9,6 +13,10 @@ export function formatDate(date) {
 }
 
 export const formatDateYYYYMMDD = (date) => {
+	if (!(date instanceof Date) || isNaN(date.getTime())) {
+		console.error("Invalid date:", date);
+		return "Invalid date";
+	}
 	if (!date) return "";
 	const d = new Date(date);
 	const year = d.getFullYear();
@@ -18,6 +26,10 @@ export const formatDateYYYYMMDD = (date) => {
 };
 
 export function formatDateTimeLocal(date) {
+	if (!(date instanceof Date) || isNaN(date.getTime())) {
+		console.error("Invalid date:", date);
+		return "Invalid date";
+	}
 	if (!date) return "";
 	const d = new Date(date);
 	const year = d.getFullYear();

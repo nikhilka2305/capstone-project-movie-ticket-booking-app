@@ -11,7 +11,7 @@ export const viewShows = async (req, res, next) => {
 
 	const { movieid, theaterid } = req.params;
 
-	const now = new Date();
+	const now = new Date().toISOString();
 
 	const filterConditions = { showTime: { $gt: now } };
 	if (!req.user) filterConditions.deleted = false;
@@ -40,7 +40,7 @@ export const viewShows = async (req, res, next) => {
 				.skip(skip)
 				.limit(limit);
 			const totalShows = await Show.countDocuments(filterConditions);
-			console.log(shows);
+
 			res.status(200).json({
 				shows,
 				totalShows,
@@ -65,7 +65,10 @@ export const addShow = async (req, res, next) => {
 	const { theaterid } = req.params;
 	const { showTime, movie } = req.body;
 	// Verify Theater Owner
-
+	console.log(showTime);
+	const parsedShowTime = new Date(showTime); // Convert to Date object
+	const utcShowTime = parsedShowTime.toISOString(); // Ensure UTC format
+	console.log(utcShowTime);
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid })
 			.populate("owner", "ownerId username _id")
@@ -91,10 +94,10 @@ export const addShow = async (req, res, next) => {
 		) {
 			throw new HandleError("You are not authorized to do this", 403);
 		}
-		const validShowTime = validateDateTime(showTime);
+		const validShowTime = validateDateTime(utcShowTime);
 		if (validShowTime) {
 			const show = new Show({
-				showTime,
+				showTime: utcShowTime,
 				movie,
 				theater: theater._id,
 			});
@@ -144,13 +147,20 @@ export const editShow = async (req, res, next) => {
 			throw new Error("You are not authorized to do this");
 		}
 		const { showTime, movie } = req.body;
-		const updatedShow = await Show.findOneAndUpdate(
-			{ showId: showid },
-			{ showTime, movie },
-			{ runValidators: true, new: true }
-		);
+		const parsedShowTime = new Date(showTime); // Convert to Date object
+		const utcShowTime = parsedShowTime.toISOString();
+		const validShowTime = validateDateTime(utcShowTime);
+		if (validShowTime) {
+			const updatedShow = await Show.findOneAndUpdate(
+				{ showId: showid },
+				{ showTime: utcShowTime, movie },
+				{ runValidators: true, new: true }
+			);
 
-		return res.status(201).json({ message: `Succesfully Updated ${showid}` });
+			return res
+				.status(201)
+				.json({ message: `Succesfully Updated ${showid}`, updatedShow });
+		}
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)

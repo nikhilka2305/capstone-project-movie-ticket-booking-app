@@ -80,8 +80,11 @@ function SingleBooking() {
 					<div>
 						<div className="tags flex flex justify-start gap-2">
 							<p className={tagsClasses}>
-								{formatDate(new Date(booking.showInfo.showTimeIST))} -{" "}
-								{new Date(booking.showInfo.showTimeIST) < Date.now()
+								{new Date(booking.showInfo.showTime).toLocaleString("en-IN", {
+									timeZone: "Asia/Kolkata",
+								})}{" "}
+								-{" "}
+								{new Date(booking.showInfo.showTime).getTime() < Date.now()
 									? "Show Over"
 									: "Upcoming"}
 							</p>

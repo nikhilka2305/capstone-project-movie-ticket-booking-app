@@ -77,7 +77,11 @@ function Bookings() {
 					>
 						<p>{item.showInfo.movie.movieName}</p>
 						<p>{item.showInfo.theater.theaterName}</p>
-						<p>{formatDate(new Date(item.showInfo.showTime))}</p>
+						<p>
+							{new Date(item.showInfo.showTime).toLocaleString("en-IN", {
+								timeZone: "Asia/Kolkata",
+							})}
+						</p>
 						<p>{item.status}</p>
 						<p>{`Booking Cost: ₹${item.BookingAmount}/-`}</p>
 						<p>Seats: </p>
