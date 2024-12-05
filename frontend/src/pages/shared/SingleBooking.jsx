@@ -73,7 +73,7 @@ function SingleBooking() {
 					btnLabel="Cancel Booking"
 					btndisabled={
 						booking.status === "Cancelled" ||
-						new Date(booking.showInfo.showTimeIST) < Date.now()
+						new Date(booking.showInfo.showTime) < Date.now()
 					}
 					onClick={() => document.getElementById("my_modal_3").showModal()}
 				>

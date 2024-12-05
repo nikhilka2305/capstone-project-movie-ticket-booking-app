@@ -53,7 +53,7 @@ function AddBooking() {
 
 				setShow(responseData);
 
-				if (new Date(responseData.showTimeIST) < Date.now()) {
+				if (new Date(responseData.showTime) < Date.now()) {
 					setInValidShow(true);
 				}
 				const theaterData = responseData.theater;
@@ -177,9 +177,11 @@ function AddBooking() {
 					<Card
 						loading={loading}
 						title={show.movie.movieName}
-						subtitle={`Show Date & Time: ${formatDate(
-							new Date(show.showTimeIST)
-						)} Theater: ${show.theater.theaterName}`}
+						subtitle={`Show Date & Time: ${new Date(
+							show.showTime
+						).toLocaleString("en-IN", {
+							timeZone: "Asia/Kolkata",
+						})} Theater: ${show.theater.theaterName}`}
 						image={show.movie.posterImage}
 						onClick={() => navigate("/shows")}
 						btnLabel="Browse Other Shows"

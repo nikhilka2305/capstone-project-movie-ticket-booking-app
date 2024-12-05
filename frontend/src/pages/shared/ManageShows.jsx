@@ -64,7 +64,9 @@ export default function ManageShows() {
 							url={item.movie.posterImage}
 							title={item.movie.movieName}
 							description={item.theater.theaterName}
-							otherInfo={formatDate(new Date(item.showTimeIST))}
+							otherInfo={new Date(item.showTime).toLocaleString("en-IN", {
+								timeZone: "Asia/Kolkata",
+							})}
 						/>
 					</Link>
 				))}

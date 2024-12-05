@@ -65,10 +65,10 @@ export const addShow = async (req, res, next) => {
 	const { theaterid } = req.params;
 	const { showTime, movie } = req.body;
 	// Verify Theater Owner
-	console.log(showTime);
+
 	const parsedShowTime = new Date(showTime); // Convert to Date object
 	const utcShowTime = parsedShowTime.toISOString(); // Ensure UTC format
-	console.log(utcShowTime);
+
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterid })
 			.populate("owner", "ownerId username _id")
