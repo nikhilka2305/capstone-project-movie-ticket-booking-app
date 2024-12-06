@@ -54,6 +54,11 @@ export default function ManageTheaterOwners() {
 						<div className="skeleton h-4 w-full"></div>
 					</div>
 				)}
+				{theaterOwners.length === 0 && (
+					<h2 className="text-2xl text-center mt-8 mx-auto">
+						No Theater Owners
+					</h2>
+				)}
 				{theaterOwners.map((item, i) => (
 					<BookingCard
 						key={i}

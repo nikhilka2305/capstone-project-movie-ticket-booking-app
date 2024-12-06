@@ -51,6 +51,11 @@ function ManageMovies() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{movies.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">
+					No Movies available
+				</h2>
+			)}
 			<PosterSlider posters={movies} classes="">
 				{movies.map((item, i) => (
 					<Link to={`${item.movieId}/`} key={i}>

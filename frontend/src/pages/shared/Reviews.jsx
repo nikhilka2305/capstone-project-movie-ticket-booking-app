@@ -68,6 +68,9 @@ function Reviews() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{reviews.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">No Reviews</h2>
+			)}
 			{reviews.map((item, i) => (
 				<Link key={i} to={`/managereviews/${item.reviewId}`}>
 					<BookingCard

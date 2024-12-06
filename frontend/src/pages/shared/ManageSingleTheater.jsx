@@ -511,12 +511,12 @@ export default function ManageSingleTheater() {
 					</form>
 
 					<h3 className="text-center text-2xl font-bold mb-4">
-						Are you sure about Deleting this Movie: {theater.theaterName}?
+						Are you sure about Deleting this Theater: {theater.theaterName}?
 					</h3>
 
 					<Button
 						colorClass="bg-red-500 text-white"
-						label="Delete Movie"
+						label="Delete Theater"
 						onClick={handleDeleteTheater}
 					/>
 				</div>
@@ -530,12 +530,12 @@ export default function ManageSingleTheater() {
 					</form>
 
 					<h3 className="text-center text-2xl font-bold mb-4">
-						Are you sure about Approving this Movie: {theater.theaterName}?
+						Are you sure about Approving this Theater: {theater.theaterName}?
 					</h3>
 
 					<Button
 						colorClass="bg-green-500 text-white"
-						label="Approve Movie"
+						label="Approve Theater"
 						onClick={handleApproveTheater}
 					/>
 				</div>
@@ -553,7 +553,7 @@ export default function ManageSingleTheater() {
 					/>
 				)}
 				<Button
-					label="Delete This Movie"
+					label="Delete This Theater"
 					colorClass="bg-red-500 text-white"
 					disabled={theater.adminApprovalStatus === "Deleted"}
 					onClick={() => document.getElementById("delete_theater").showModal()}

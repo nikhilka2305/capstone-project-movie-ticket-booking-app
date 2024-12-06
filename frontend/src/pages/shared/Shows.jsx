@@ -57,6 +57,11 @@ export default function Shows() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{shows.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">
+					No Shows available
+				</h2>
+			)}
 			<PosterSlider posters={shows} classes="">
 				{shows.map((item, i) => (
 					<Link to={`/shows/${item.showId}`} key={i}>

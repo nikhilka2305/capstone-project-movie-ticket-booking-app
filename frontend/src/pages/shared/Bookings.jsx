@@ -69,6 +69,9 @@ function Bookings() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{bookings.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">No Bookings</h2>
+			)}
 			{bookings.map((item, i) => (
 				<Link key={i} to={`./${item.bookingId}`}>
 					<BookingCard

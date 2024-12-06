@@ -3,7 +3,7 @@ import HandleError from "../middleware/errorHandling.js";
 export function validateDateTime(date) {
 	const inputDate = new Date(date);
 	const now = new Date();
-	console.log(date);
+
 	if (isNaN(inputDate.getTime())) {
 		throw new HandleError("Invalid date format.", 500);
 	}

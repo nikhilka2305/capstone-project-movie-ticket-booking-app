@@ -74,6 +74,9 @@ export default function TotalBookings() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{bookings.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">No Bookings</h2>
+			)}
 			{bookings.map((item, i) => (
 				<ConditionalLink
 					condition={user.role === "Admin"}

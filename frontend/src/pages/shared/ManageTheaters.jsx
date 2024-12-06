@@ -63,6 +63,11 @@ function ManageTheaters() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
+			{theaters.length === 0 && (
+				<h2 className="text-2xl text-center mt-8 mx-auto">
+					No Theaters available
+				</h2>
+			)}
 			<PosterSlider classes="h-full">
 				{theaters?.map((item, i) => (
 					<Link to={`./${item.theaterId}/manage`} key={i}>

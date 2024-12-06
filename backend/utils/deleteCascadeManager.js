@@ -40,10 +40,14 @@ export const handleBookingCancellation = async (bookingId) => {
 export const handleShowDeletion = async (showId) => {
 	try {
 		const show = await Show.findOne({ showId: showId });
-		if (!show || show.deleted)
+		const now = new Date().toISOString();
+		if (!show || show.deleted || show.showTime > now)
 			throw new HandleError("The show is not found or is already deleted");
 
-		const bookings = await Booking.find({ showInfo: show._id });
+		const bookings = await Booking.find({
+			showInfo: show._id,
+			status: "Confirmed",
+		});
 
 		for (const booking of bookings) {
 			await Booking.findByIdAndUpdate(
@@ -52,6 +56,7 @@ export const handleShowDeletion = async (showId) => {
 				{ new: true }
 			);
 		}
+
 		const updatedShow = await Show.findOneAndUpdate(
 			{ showId: showId },
 			{ deleted: true },
@@ -65,11 +70,19 @@ export const handleShowDeletion = async (showId) => {
 export const handleTheaterDeletion = async (theaterId) => {
 	try {
 		const theater = await Theater.findOne({ theaterId: theaterId });
+		const now = new Date().toISOString();
 
-		const shows = await Show.find({ theater: theater._id });
-		if (!shows || shows.length === 0)
+		const shows = await Show.find({
+			theater: theater._id,
+			deleted: false,
+			showTime: { $gt: now },
+		});
+
+		if (shows && shows.length > 0)
 			for (let show of shows) {
-				await handleShowDeletion(show.showId);
+				if (show.deleted === false && show.showTime.toISOString() > now) {
+					await handleShowDeletion(show.showId);
+				}
 			}
 
 		const deletedTheater = await Theater.findOneAndUpdate(
@@ -89,7 +102,7 @@ export const handleTheaterOwnerDeletion = async (ownerId) => {
 		const theaterowner = await TheaterOwner.findOne({ userId: ownerId });
 
 		const theaters = await Theater.find({ owner: theaterowner._id });
-		if (!theaters || theaters.length === 0)
+		if (theaters && theaters.length > 0)
 			for (let theater of theaters) {
 				await handleTheaterDeletion(theater.theaterId);
 			}

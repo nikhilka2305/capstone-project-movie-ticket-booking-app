@@ -49,6 +49,9 @@ export default function ManageUsers() {
 						<div className="skeleton h-4 w-full"></div>
 					</div>
 				)}
+				{users.length === 0 && (
+					<h2 className="text-2xl text-center mt-8 mx-auto">No Users</h2>
+				)}
 				{users.map((item, i) => (
 					<BookingCard
 						key={i}
