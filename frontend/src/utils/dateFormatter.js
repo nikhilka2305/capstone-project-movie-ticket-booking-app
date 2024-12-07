@@ -12,9 +12,10 @@ export function formatDate(date) {
 }
 
 export const formatDateYYYYMMDD = (date) => {
-	if (!(date instanceof Date) || isNaN(date.getTime())) {
-		return "Invalid date";
+	if (!(new Date(date) instanceof Date) || isNaN(new Date(date).getTime())) {
+		if (!(date instanceof Date) || isNaN(date.getTime())) return "Invalid date";
 	}
+	console.log(date);
 	if (!date) return "";
 	const d = new Date(date);
 	const year = d.getFullYear();
@@ -24,8 +25,8 @@ export const formatDateYYYYMMDD = (date) => {
 };
 
 export function formatDateTimeLocal(date) {
-	if (!(date instanceof Date) || isNaN(date.getTime())) {
-		return "Invalid date";
+	if (!(new Date(date) instanceof Date) || isNaN(new Date(date).getTime())) {
+		if (!(date instanceof Date) || isNaN(date.getTime())) return "Invalid date";
 	}
 	if (!date) return "";
 	const d = new Date(date);
