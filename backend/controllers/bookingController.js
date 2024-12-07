@@ -12,12 +12,13 @@ export const viewPersonalBookings = async (req, res, next) => {
 	const userid = req.params.userid || req.params.adminid || req.params.ownerid;
 
 	let filterOptions = {};
-	if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
-		throw new HandleError("You are not authorized to see this page", 403);
-	else if (req.user.loggedUserId === userid) {
-		filterOptions = { user: req.user.loggedUserObjectId };
-	}
+
 	try {
+		if (req.user.role !== "Admin" && req.user.loggedUserId !== userid)
+			throw new HandleError("You are not authorized to see this page", 403);
+		else if (req.user.loggedUserId === userid) {
+			filterOptions = { user: req.user.loggedUserObjectId };
+		}
 		if (req.user.role === "Admin") {
 			if (req.params.userid) {
 				filterOptions.user = await User.findOne({ userId: userid }).select(
@@ -855,6 +856,86 @@ export const getMonthlyData = async (req, res, next) => {
 		}));
 
 		res.status(200).json(result);
+	} catch (err) {
+		res.status(err.statusCode || 500).json({ message: err.message });
+	}
+};
+
+export const getBookingRevenueShare = async (req, res, next) => {
+	const { ownerid } = req.params;
+	const { limit, metric = "revenue" } = req.query;
+	const matchFilter = {
+		status: "Confirmed", // Only confirmed bookings
+	};
+	try {
+		if (
+			ownerid &&
+			req.user.role !== "Admin" &&
+			req.user.loggedUserId !== ownerid
+		) {
+			throw new HandleError("You are not authorized!", 403);
+		}
+		if (ownerid) {
+			const user = await TheaterOwner.findOne({ userId: ownerid })
+				.lean()
+				.select("_id");
+			if (!user) {
+				throw new HandleError("Such a Theater owner doesn't exist", 404);
+			}
+
+			matchFilter["theaterDetails.owner"] = user._id;
+		}
+		const aggregatePipeLine = [
+			{
+				$lookup: {
+					from: "shows", // Join with shows collection
+					localField: "showInfo",
+					foreignField: "_id",
+					as: "showDetails",
+				},
+			},
+			{ $unwind: "$showDetails" },
+			{
+				$lookup: {
+					from: "theaters", // Join with theaters collection
+					localField: "showDetails.theater",
+					foreignField: "_id",
+					as: "theaterDetails",
+				},
+			},
+			{ $unwind: "$theaterDetails" },
+			{ $match: matchFilter },
+			{
+				$group: {
+					_id: "$theaterDetails.theaterName", // Group by theater name
+					totalBookings: { $sum: 1 },
+					totalRevenue: {
+						$sum: {
+							$reduce: {
+								input: "$seats",
+								initialValue: 0,
+								in: { $add: ["$$value", "$$this.seatClass.price"] },
+							},
+						},
+					},
+				},
+			},
+			{
+				$sort: {
+					[metric === "revenue" ? "totalRevenue" : "totalBookings"]: -1,
+				},
+			},
+			{
+				$project: {
+					_id: 0,
+					theaterName: "$_id",
+					value: metric === "revenue" ? "$totalRevenue" : "$totalBookings",
+				},
+			},
+		];
+		const data = await Booking.aggregate(aggregatePipeLine);
+
+		res.status(200).json(data);
 	} catch (err) {
 		res.status(err.statusCode || 500).json({ message: err.message });
 	}

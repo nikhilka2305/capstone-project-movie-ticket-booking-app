@@ -46,10 +46,9 @@ export const viewTheaterOwners = async (req, res, next) => {
 export const viewTheaterOwnerProfile = async (req, res, next) => {
 	const { ownerid } = req.params;
 
-	if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
-		throw new HandleError("You are not authorized to see this page", 403);
-
 	try {
+		if (req.user.role !== "Admin" && req.user.loggedUserId !== ownerid)
+			throw new HandleError("You are not authorized to see this page", 403);
 		const owner = await TheaterOwner.findOne({ userId: ownerid }).select(
 			"-passwordHash"
 		);

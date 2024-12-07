@@ -8,6 +8,7 @@ import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
 import LineChart from "../../components/shared/LineChart";
+import PieChart from "../../components/shared/PieChart";
 
 export function AdminDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -22,9 +23,14 @@ export function AdminDashboardComponent() {
 	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
 		useState({});
 	const [chartFilter, setChartFilter] = useState("bookings");
+	const [shareFilter, setShareFilter] = useState("revenue");
+	const [bookingRevenueShare, setBookingRevenueShare] = useState([]);
 
 	function filterChange(filter) {
 		setChartFilter(filter);
+	}
+	function shareFilterChange(filter) {
+		setShareFilter(filter);
 	}
 
 	useEffect(() => {
@@ -100,19 +106,35 @@ export function AdminDashboardComponent() {
 					}
 				);
 
-				console.log(monthlydata);
 				setMonthlyData(monthlydata.data);
 			} catch (err) {
 				toast.error("Couldn't fetch monthly chart data");
 			}
 		}
+		async function getBookingRevenueShare(metric = shareFilter) {
+			try {
+				const sharedata = await axios.get(
+					`${serverUrl}/booking/getbookingrevenueshare`,
+					{
+						params: {
+							metric: metric,
+						},
+					}
+				);
+
+				setBookingRevenueShare(sharedata.data);
+			} catch (err) {
+				toast.error("Couldn't fetch share chart data");
+			}
+		}
+		getBookingRevenueShare();
 		getTotalBookingData();
 		getBookingsByMovie();
 		getBookingsByTheaters();
 
 		getMonthlyData(chartFilter);
 		setLoading(false);
-	}, [user, adminid, navigate, chartFilter]);
+	}, [user, adminid, navigate, chartFilter, shareFilter]);
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
@@ -123,7 +145,7 @@ export function AdminDashboardComponent() {
 					<h2>Bookings & Theaters </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 my-8">
 						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-12">
-							<div className="min-h-[128px] max-h-[256px]">
+							<div className="min-h-[128px] max-h-fit">
 								<BarChart
 									data={movieBookingData}
 									title="Movie Bookings"
@@ -131,7 +153,7 @@ export function AdminDashboardComponent() {
 									valueKey="bookings"
 								/>
 							</div>
-							<div className="min-h-[128px] max-h-[256px]">
+							<div className="min-h-[128px] max-h-fit">
 								<BarChart
 									data={theaterBookingData}
 									title="Theater Bookings"
@@ -141,11 +163,20 @@ export function AdminDashboardComponent() {
 							</div>
 						</div>
 						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
-							<LineChart
-								data={monthlyData}
-								filter={chartFilter}
-								onFilterChange={filterChange}
-							/>
+							<div className="min-h-[128px] max-h-fit">
+								<LineChart
+									data={monthlyData}
+									filter={chartFilter}
+									onFilterChange={filterChange}
+								/>
+							</div>
+							<div className="min-h-[128px] max-h-fit">
+								<PieChart
+									data={bookingRevenueShare}
+									filter={shareFilter}
+									onFilterChange={shareFilterChange}
+								/>
+							</div>
 						</div>
 
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">

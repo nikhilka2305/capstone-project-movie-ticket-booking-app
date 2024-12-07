@@ -3,6 +3,7 @@ const router = Router();
 import {
 	addBooking,
 	cancelBooking,
+	getBookingRevenueShare,
 	getBookingsByMovie,
 	getBookingsByTheaters,
 	getMonthlyData,
@@ -32,6 +33,12 @@ router.get(
 	authenticateToken,
 	authorization("Admin"),
 	getMonthlyData
+);
+router.get(
+	"/getbookingrevenueshare",
+	authenticateToken,
+	authorization("Admin"),
+	getBookingRevenueShare
 );
 router.get("/:bookingid", authenticateToken, viewIndividualBooking);
 router.delete("/:bookingid", authenticateToken, cancelBooking);

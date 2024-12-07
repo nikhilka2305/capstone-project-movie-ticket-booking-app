@@ -8,6 +8,7 @@ import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
 import LineChart from "../../components/shared/LineChart";
+import PieChart from "../../components/shared/PieChart";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -21,8 +22,13 @@ export function TheaterOwnerDashboardComponent() {
 	const [theaterBookingData, setTheaterBookingData] = useState([]);
 	const [chartFilter, setChartFilter] = useState("bookings");
 	const [monthlyData, setMonthlyData] = useState([]);
+	const [shareFilter, setShareFilter] = useState("revenue");
+	const [bookingRevenueShare, setBookingRevenueShare] = useState([]);
 	function filterChange(filter) {
 		setChartFilter(filter);
+	}
+	function shareFilterChange(filter) {
+		setShareFilter(filter);
 	}
 	useEffect(() => {
 		if (ownerid !== user.loggedUserId && user.role !== "Admin") {
@@ -86,6 +92,23 @@ export function TheaterOwnerDashboardComponent() {
 				toast.error("Couldn't fetch monthly chart data");
 			}
 		}
+		async function getBookingRevenueShare(metric = shareFilter) {
+			try {
+				const sharedata = await axios.get(
+					`${serverUrl}/theaterowner/${ownerid}/getbookingrevenueshare`,
+					{
+						params: {
+							metric: metric,
+						},
+					}
+				);
+
+				setBookingRevenueShare(sharedata.data);
+			} catch (err) {
+				toast.error("Couldn't fetch share chart data");
+			}
+		}
+		getBookingRevenueShare();
 		getMonthlyData(chartFilter);
 		getBookingsByTheaters();
 		getPersonalBookingData();
@@ -117,7 +140,7 @@ export function TheaterOwnerDashboardComponent() {
 							</Link>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
-							<div className="max-h-lg">
+							<div className="min-h-[128px] max-h-fit">
 								<BarChart
 									data={theaterBookingData}
 									title="Theater Bookings"
@@ -127,11 +150,20 @@ export function TheaterOwnerDashboardComponent() {
 							</div>
 						</div>
 						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
-							<LineChart
-								data={monthlyData}
-								filter={chartFilter}
-								onFilterChange={filterChange}
-							/>
+							<div className="min-h-[128px] max-h-fit">
+								<LineChart
+									data={monthlyData}
+									filter={chartFilter}
+									onFilterChange={filterChange}
+								/>
+							</div>
+							<div className="min-h-[128px] max-h-fit">
+								<PieChart
+									data={bookingRevenueShare}
+									filter={shareFilter}
+									onFilterChange={shareFilterChange}
+								/>
+							</div>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"managetheaters"}>

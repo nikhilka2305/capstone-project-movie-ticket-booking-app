@@ -14,6 +14,7 @@ import { viewTheaters } from "../controllers/theaterController.js";
 import { authorization } from "../middleware/authorization.js";
 import { checkAuth } from "../controllers/commonControllers.js";
 import {
+	getBookingRevenueShare,
 	getBookingsByTheaters,
 	getMonthlyData,
 	getPersonalBookingStats,
@@ -77,6 +78,12 @@ router.get(
 		authorization("Admin", "TheaterOwner"),
 		getMonthlyData
 	);
+router.get(
+	"/:ownerid/getbookingrevenueshare",
+	authenticateToken,
+	authorization("Admin", "TheaterOwner"),
+	getBookingRevenueShare
+);
 router.get(
 	"/:ownerid/theaterbookings",
 	authenticateToken,
