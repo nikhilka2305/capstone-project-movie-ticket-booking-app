@@ -100,6 +100,7 @@ export function AdminDashboardComponent() {
 					}
 				);
 
+				console.log(monthlydata);
 				setMonthlyData(monthlydata.data);
 			} catch (err) {
 				toast.error("Couldn't fetch monthly chart data");

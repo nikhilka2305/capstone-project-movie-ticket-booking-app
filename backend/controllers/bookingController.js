@@ -792,10 +792,12 @@ export const getMonthlyData = async (req, res, next) => {
 					"showDetails.theater": { $in: theaterIds },
 				},
 			},
+			//
 			{
 				$group: {
 					_id: {
-						$dateToString: { format: "%Y-%m", date: "$showDetails.showTime" },
+						year: { $year: "$showDetails.showTime" },
+						month: { $month: "$showDetails.showTime" },
 					},
 					totalBookings: { $sum: 1 },
 					totalRevenue: {
@@ -809,12 +811,46 @@ export const getMonthlyData = async (req, res, next) => {
 					},
 				},
 			},
-			{ $sort: { _id: 1 } },
+			{
+				$sort: { "_id.year": 1, "_id.month": 1 }, // Sort by year first, then by month
+			},
+			{
+				$project: {
+					_id: 0,
+					month: {
+						$concat: [
+							{ $toString: "$_id.year" },
+							" ",
+							{
+								$arrayElemAt: [
+									[
+										"January",
+										"February",
+										"March",
+										"April",
+										"May",
+										"June",
+										"July",
+										"August",
+										"September",
+										"October",
+										"November",
+										"December",
+									],
+									{ $subtract: ["$_id.month", 1] }, // Convert month number to name
+								],
+							},
+						],
+					},
+					totalBookings: 1,
+					totalRevenue: 1,
+				},
+			},
 		];
 
 		const bookings = await Booking.aggregate(aggregatePipeLine);
 		const result = bookings.map((b) => ({
-			month: b._id,
+			month: b.month,
 			value: filter === "revenue" ? b.totalRevenue : b.totalBookings,
 		}));
 

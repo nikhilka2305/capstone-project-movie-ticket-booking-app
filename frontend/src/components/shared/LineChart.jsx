@@ -4,6 +4,7 @@ import { Chart as ChartJS } from "chart.js/auto";
 
 const LineChart = ({ data, filter, onFilterChange }) => {
 	useEffect(() => {}, [data, filter]);
+
 	const chartData = {
 		labels: data.map((item) => item.month),
 		datasets: [

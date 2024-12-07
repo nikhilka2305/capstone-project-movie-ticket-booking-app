@@ -72,7 +72,6 @@ export function TheaterOwnerDashboardComponent() {
 		}
 		async function getMonthlyData(filter = chartFilter) {
 			try {
-				console.log(filter);
 				const monthlydata = await axios.get(
 					`${serverUrl}/theaterowner/${ownerid}/getmonthlydata`,
 					{
