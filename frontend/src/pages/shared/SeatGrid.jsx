@@ -62,30 +62,37 @@ function SeatLegend({ classColors }) {
 
 function SeatGrid({ seatGrid, onSeatSelect, classColors, displayOnly }) {
 	return (
-		<section className="grid grid-rows gap-2 mt-8">
-			{seatGrid.map((row, rowIndex) => (
-				<div key={rowIndex} className="flex gap-1">
-					<div className="flex items-center justify-center w-8 font-bold">
-						{convertToLetter(rowIndex)}
-					</div>
-					{row.map((seat) => (
-						<button
-							key={seat.seatNumber}
-							className={`w-12 h-12 rounded rounded-md text-sm ${
-								seat.isBooked
-									? "bg-red-500 text-black"
-									: seat.isSelected
-									? "bg-gray-600 text-white"
-									: classColors[seat.className] || "bg-gray-300 text-black"
-							}`}
-							disabled={seat.isBooked || displayOnly}
-							onClick={() => onSeatSelect(seat.seatNumber)}
-						>
-							{formatSeatNumber(seat.seatNumber)}
-						</button>
+		<section className="overflow-x-auto">
+			<div className="inline-block min-w-full">
+				<div
+					className="grid gap-2"
+					style={{ gridTemplateRows: `repeat(${seatGrid.length}, auto)` }}
+				>
+					{seatGrid.map((row, rowIndex) => (
+						<div key={rowIndex} className="flex gap-1 items-center">
+							<div className="flex items-center justify-center w-6 font-bold">
+								{convertToLetter(rowIndex)}
+							</div>
+							{row.map((seat) => (
+								<button
+									key={seat.seatNumber}
+									className={`w-8 h-8 md:w-12 md:h-12 rounded text-sm ${
+										seat.isBooked
+											? "bg-red-500 text-black"
+											: seat.isSelected
+											? "bg-gray-600 text-white"
+											: classColors[seat.className] || "bg-gray-300 text-black"
+									}`}
+									disabled={seat.isBooked || displayOnly}
+									onClick={() => onSeatSelect(seat.seatNumber)}
+								>
+									{formatSeatNumber(seat.seatNumber)}
+								</button>
+							))}
+						</div>
 					))}
 				</div>
-			))}
+			</div>
 		</section>
 	);
 }
