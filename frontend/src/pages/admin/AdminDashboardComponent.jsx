@@ -7,6 +7,7 @@ import Poster from "../../components/shared/Poster";
 import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
+import LineChart from "../../components/shared/LineChart";
 
 export function AdminDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -16,9 +17,15 @@ export function AdminDashboardComponent() {
 	const [bookingStats, setBookingStats] = useState({});
 	const [movieBookingData, setMovieBookingData] = useState([]);
 	const [theaterBookingData, setTheaterBookingData] = useState([]);
+	const [monthlyData, setMonthlyData] = useState([]);
 	const [theaterBookingStats, setTheaterBookingStats] = useState({});
 	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
 		useState({});
+	const [chartFilter, setChartFilter] = useState("bookings");
+
+	function filterChange(filter) {
+		setChartFilter(filter);
+	}
 
 	useEffect(() => {
 		if (adminid !== user.loggedUserId && user.role !== "Admin") {
@@ -65,7 +72,7 @@ export function AdminDashboardComponent() {
 				const bookingMovies = await axios.get(
 					`${serverUrl}/booking/getbookingsbymovie`
 				);
-				console.log(bookingMovies);
+
 				setMovieBookingData(bookingMovies.data);
 			} catch (err) {
 				toast.error("Couldn't fetch bookings chart data");
@@ -76,17 +83,35 @@ export function AdminDashboardComponent() {
 				const bookingTheaters = await axios.get(
 					`${serverUrl}/booking/getbookingsbytheaters`
 				);
-				console.log(bookingTheaters);
+
 				setTheaterBookingData(bookingTheaters.data);
 			} catch (err) {
 				toast.error("Couldn't fetch bookings chart data");
 			}
 		}
+		async function getMonthlyData(filter = chartFilter) {
+			try {
+				const monthlydata = await axios.get(
+					`${serverUrl}/booking/getmonthlydata`,
+					{
+						params: {
+							filter: filter,
+						},
+					}
+				);
+
+				setMonthlyData(monthlydata.data);
+			} catch (err) {
+				toast.error("Couldn't fetch monthly chart data");
+			}
+		}
 		getTotalBookingData();
 		getBookingsByMovie();
 		getBookingsByTheaters();
+
+		getMonthlyData(chartFilter);
 		setLoading(false);
-	}, [user, adminid, navigate]);
+	}, [user, adminid, navigate, chartFilter]);
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
@@ -96,7 +121,7 @@ export function AdminDashboardComponent() {
 				<>
 					<h2>Bookings & Theaters </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 my-8">
-						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
+						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-12">
 							<div className="min-h-[128px] max-h-[256px]">
 								<BarChart
 									data={movieBookingData}
@@ -113,6 +138,13 @@ export function AdminDashboardComponent() {
 									valueKey="bookings"
 								/>
 							</div>
+						</div>
+						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
+							<LineChart
+								data={monthlyData}
+								filter={chartFilter}
+								onFilterChange={filterChange}
+							/>
 						</div>
 
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">

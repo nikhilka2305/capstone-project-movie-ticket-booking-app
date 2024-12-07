@@ -43,5 +43,7 @@ export default function BarChart({ data, labelKey, valueKey, title }) {
 			title: { display: true, text: title },
 		},
 	};
-	return <Bar data={chartData} options={options} />;
+	return (
+		<Bar data={chartData} options={options} height="250px" width="350px" />
+	);
 }

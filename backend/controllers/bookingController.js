@@ -5,6 +5,7 @@ import { Admin } from "../models/Admin.js";
 import { ObjectId } from "mongodb";
 import HandleError from "../middleware/errorHandling.js";
 import { handleBookingCancellation } from "../utils/deleteCascadeManager.js";
+import { Theater } from "../models/Theater.js";
 
 export const viewPersonalBookings = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
@@ -663,7 +664,6 @@ export const getBookingsByMovie = async (req, res, next) => {
 			{ $sort: { bookings: -1 } }, // Optional: Sort by most bookings
 		];
 		if (limit) {
-			console.log("111", limit);
 			aggregatePipeLine.push({ $limit: parseInt(limit) });
 		}
 		const data = await Booking.aggregate(aggregatePipeLine);
@@ -699,7 +699,7 @@ export const getBookingsByTheaters = async (req, res, next) => {
 			if (!user) {
 				throw new HandleError("Such a Theater owner doesn't exist", 404);
 			}
-			console.log(user._id);
+
 			matchStage.$match["theaterDetails.owner"] = user._id;
 		}
 		const aggregatePipeLine = [
@@ -735,7 +735,90 @@ export const getBookingsByTheaters = async (req, res, next) => {
 			aggregatePipeLine.push({ $limit: limit });
 		}
 		const data = await Booking.aggregate(aggregatePipeLine);
-		res.json(data);
+		res.status(200).json(data);
+	} catch (err) {
+		res.status(err.statusCode || 500).json({ message: err.message });
+	}
+};
+
+export const getMonthlyData = async (req, res, next) => {
+	const { ownerid } = req.params;
+	const { limit, filter = "bookings" } = req.query;
+	let theaterFilter = {};
+	try {
+		if (
+			ownerid &&
+			req.user.role !== "Admin" &&
+			req.user.loggedUserId !== ownerid
+		) {
+			throw new HandleError("You are not authorized!", 403);
+		}
+		if (ownerid) {
+			const user = await TheaterOwner.findOne({ userId: ownerid })
+				.lean()
+				.select("_id");
+			if (!user) {
+				throw new HandleError("Such a Theater owner doesn't exist", 404);
+			}
+
+			theaterFilter = { owner: user._id };
+		}
+		const theaters = await Theater.find(theaterFilter, { _id: 1 });
+
+		const theaterIds = theaters.map((t) => t._id);
+
+		const aggregatePipeLine = [
+			{
+				$lookup: {
+					from: "shows", // Join with shows collection
+					localField: "showInfo",
+					foreignField: "_id",
+					as: "showDetails",
+				},
+			},
+			{ $unwind: "$showDetails" },
+			{
+				$lookup: {
+					from: "theaters", // Join with theaters collection
+					localField: "showDetails.theater",
+					foreignField: "_id",
+					as: "theaterDetails",
+				},
+			},
+			{ $unwind: "$theaterDetails" },
+			{
+				$match: {
+					status: "Confirmed",
+					"showDetails.theater": { $in: theaterIds },
+				},
+			},
+			{
+				$group: {
+					_id: {
+						$dateToString: { format: "%Y-%m", date: "$showDetails.showTime" },
+					},
+					totalBookings: { $sum: 1 },
+					totalRevenue: {
+						$sum: {
+							$reduce: {
+								input: "$seats",
+								initialValue: 0,
+								in: { $add: ["$$value", "$$this.seatClass.price"] },
+							},
+						},
+					},
+				},
+			},
+			{ $sort: { _id: 1 } },
+		];
+
+		const bookings = await Booking.aggregate(aggregatePipeLine);
+		const result = bookings.map((b) => ({
+			month: b._id,
+			value: filter === "revenue" ? b.totalRevenue : b.totalBookings,
+		}));
+
+		res.status(200).json(result);
 	} catch (err) {
 		res.status(err.statusCode || 500).json({ message: err.message });
 	}

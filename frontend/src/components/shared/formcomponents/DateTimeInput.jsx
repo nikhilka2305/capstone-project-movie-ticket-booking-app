@@ -3,8 +3,6 @@ import { formatToISTDateTime } from "../../../utils/dateFormatter";
 
 const DateTimeInput = forwardRef(
 	({ label, value, onChange, name, errors }, ref) => {
-		console.log(errors);
-
 		// Convert the UTC date to IST format for display in the input
 		const handleInput = (evt) => {
 			const inputValue = evt.target.value;

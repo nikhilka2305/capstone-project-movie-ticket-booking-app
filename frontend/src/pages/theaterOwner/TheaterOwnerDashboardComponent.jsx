@@ -7,6 +7,7 @@ import Poster from "../../components/shared/Poster";
 import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
+import LineChart from "../../components/shared/LineChart";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -18,6 +19,11 @@ export function TheaterOwnerDashboardComponent() {
 	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
 		useState({});
 	const [theaterBookingData, setTheaterBookingData] = useState([]);
+	const [chartFilter, setChartFilter] = useState("bookings");
+	const [monthlyData, setMonthlyData] = useState([]);
+	function filterChange(filter) {
+		setChartFilter(filter);
+	}
 	useEffect(() => {
 		if (ownerid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./theaterowner/${user.loggedUserId}`);
@@ -58,17 +64,35 @@ export function TheaterOwnerDashboardComponent() {
 				const bookingTheaters = await axios.get(
 					`${serverUrl}/theaterowner/${ownerid}/getbookingsbytheaters`
 				);
-				console.log(bookingTheaters);
+
 				setTheaterBookingData(bookingTheaters.data);
 			} catch (err) {
 				toast.error("Couldn't fetch bookings chart data");
 			}
 		}
+		async function getMonthlyData(filter = chartFilter) {
+			try {
+				console.log(filter);
+				const monthlydata = await axios.get(
+					`${serverUrl}/theaterowner/${ownerid}/getmonthlydata`,
+					{
+						params: {
+							filter: filter,
+						},
+					}
+				);
+
+				setMonthlyData(monthlydata.data);
+			} catch (err) {
+				toast.error("Couldn't fetch monthly chart data");
+			}
+		}
+		getMonthlyData(chartFilter);
 		getBookingsByTheaters();
 		getPersonalBookingData();
 		getTotalBookingData();
 		setLoading(false);
-	}, [user, ownerid, navigate]);
+	}, [user, ownerid, navigate, chartFilter]);
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
@@ -102,6 +126,13 @@ export function TheaterOwnerDashboardComponent() {
 									valueKey="bookings"
 								/>
 							</div>
+						</div>
+						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
+							<LineChart
+								data={monthlyData}
+								filter={chartFilter}
+								onFilterChange={filterChange}
+							/>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"managetheaters"}>

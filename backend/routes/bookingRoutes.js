@@ -5,6 +5,7 @@ import {
 	cancelBooking,
 	getBookingsByMovie,
 	getBookingsByTheaters,
+	getMonthlyData,
 	getPersonalBookingStats,
 	totalBookingStats,
 	viewBookings,
@@ -25,6 +26,12 @@ router.get(
 	authenticateToken,
 	authorization("Admin"),
 	getBookingsByTheaters
+);
+router.get(
+	"/getmonthlydata",
+	authenticateToken,
+	authorization("Admin"),
+	getMonthlyData
 );
 router.get("/:bookingid", authenticateToken, viewIndividualBooking);
 router.delete("/:bookingid", authenticateToken, cancelBooking);
