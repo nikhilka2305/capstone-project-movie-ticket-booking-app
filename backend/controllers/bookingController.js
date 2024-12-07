@@ -627,3 +627,116 @@ export const getPersonalBookingStats = async (req, res, next) => {
 			.json({ message: "Error", error: err.message });
 	}
 };
+
+export const getBookingsByMovie = async (req, res, next) => {
+	const { limit } = req.query;
+	try {
+		const aggregatePipeLine = [
+			{
+				$match: { status: "Confirmed" }, // Filter bookings with status "Confirmed"
+			},
+			{
+				$lookup: {
+					from: "shows", // Join with the shows collection
+					localField: "showInfo", // Field in bookings collection
+					foreignField: "_id", // Field in shows collection
+					as: "showDetails",
+				},
+			},
+			{ $unwind: "$showDetails" }, // Unwind the showDetails array
+			{
+				$lookup: {
+					from: "movies", // Join with the movies collection
+					localField: "showDetails.movie", // Field in shows collection
+					foreignField: "_id", // Field in movies collection
+					as: "movieDetails",
+				},
+			},
+			{ $unwind: "$movieDetails" }, // Unwind the movieDetails array
+			{
+				$group: {
+					_id: "$showDetails.movie", // Group by movie ID
+					movieName: { $first: "$movieDetails.movieName" }, // Get the movie name
+					bookings: { $sum: 1 }, // Count the number of bookings per movie
+				},
+			},
+			{ $sort: { bookings: -1 } }, // Optional: Sort by most bookings
+		];
+		if (limit) {
+			console.log("111", limit);
+			aggregatePipeLine.push({ $limit: parseInt(limit) });
+		}
+		const data = await Booking.aggregate(aggregatePipeLine);
+
+		res.json(data);
+	} catch (err) {
+		res
+			.status(err.status || 500)
+			.json({ error: "Failed to fetch movie booking data" });
+	}
+};
+
+export const getBookingsByTheaters = async (req, res, next) => {
+	const { ownerid } = req.params;
+	const { limit } = req.query;
+	try {
+		if (
+			ownerid &&
+			req.user.role !== "Admin" &&
+			req.user.loggedUserId !== ownerid
+		) {
+			throw new HandleError("You are not authorized!", 403);
+		}
+		const matchStage = {
+			$match: {
+				status: "Confirmed", // Only include confirmed bookings
+			},
+		};
+		if (ownerid) {
+			const user = await TheaterOwner.findOne({ userId: ownerid })
+				.lean()
+				.select("_id");
+			if (!user) {
+				throw new HandleError("Such a Theater owner doesn't exist", 404);
+			}
+			console.log(user._id);
+			matchStage.$match["theaterDetails.owner"] = user._id;
+		}
+		const aggregatePipeLine = [
+			{
+				$lookup: {
+					from: "shows", // Join with shows collection
+					localField: "showInfo",
+					foreignField: "_id",
+					as: "showDetails",
+				},
+			},
+			{ $unwind: "$showDetails" },
+			{
+				$lookup: {
+					from: "theaters", // Join with theaters collection
+					localField: "showDetails.theater",
+					foreignField: "_id",
+					as: "theaterDetails",
+				},
+			},
+			{ $unwind: "$theaterDetails" },
+			matchStage,
+			{
+				$group: {
+					_id: "$showDetails.theater",
+					theaterName: { $first: "$theaterDetails.theaterName" }, // Group by theater name
+					bookings: { $sum: 1 }, // Count bookings
+				},
+			},
+			{ $sort: { bookings: -1 } },
+		];
+		if (limit) {
+			aggregatePipeLine.push({ $limit: limit });
+		}
+		const data = await Booking.aggregate(aggregatePipeLine);
+		res.json(data);
+	} catch (err) {
+		res.status(err.statusCode || 500).json({ message: err.message });
+	}
+};

@@ -6,6 +6,7 @@ import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
 import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
+import BarChart from "../../components/shared/BarChart";
 
 export function AdminDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -13,6 +14,8 @@ export function AdminDashboardComponent() {
 	const navigate = useNavigate();
 	const { adminid } = useParams();
 	const [bookingStats, setBookingStats] = useState({});
+	const [movieBookingData, setMovieBookingData] = useState([]);
+	const [theaterBookingData, setTheaterBookingData] = useState([]);
 	const [theaterBookingStats, setTheaterBookingStats] = useState({});
 	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
 		useState({});
@@ -31,29 +34,57 @@ export function AdminDashboardComponent() {
 
 				setBookingStats(response.data[0]);
 			} catch (err) {
-				toast.error("Couldn't fetch data");
+				toast.error("Couldn't fetch personal booking data");
 			}
 		}
 
 		getPersonalBookingData();
 		async function getTotalBookingData() {
-			const ownerTheaterStats = await axios.get(
-				`${serverUrl}/admin/totalbookingstats`,
-				{
-					params: { status: "Confirmed" },
-				}
-			);
+			try {
+				const ownerTheaterStats = await axios.get(
+					`${serverUrl}/admin/totalbookingstats`,
+					{
+						params: { status: "Confirmed" },
+					}
+				);
 
-			setTheaterBookingStats(ownerTheaterStats.data);
-			const ownerTheaterCancelledStats = await axios.get(
-				`${serverUrl}/admin/totalbookingstats`,
-				{
-					params: { status: "Cancelled" },
-				}
-			);
-			setCancelledTheaterBookingStats(ownerTheaterCancelledStats.data);
+				setTheaterBookingStats(ownerTheaterStats.data);
+				const ownerTheaterCancelledStats = await axios.get(
+					`${serverUrl}/admin/totalbookingstats`,
+					{
+						params: { status: "Cancelled" },
+					}
+				);
+				setCancelledTheaterBookingStats(ownerTheaterCancelledStats.data);
+			} catch (err) {
+				toast.error("Couldn't fetch total booking data");
+			}
+		}
+		async function getBookingsByMovie() {
+			try {
+				const bookingMovies = await axios.get(
+					`${serverUrl}/booking/getbookingsbymovie`
+				);
+				console.log(bookingMovies);
+				setMovieBookingData(bookingMovies.data);
+			} catch (err) {
+				toast.error("Couldn't fetch bookings chart data");
+			}
+		}
+		async function getBookingsByTheaters() {
+			try {
+				const bookingTheaters = await axios.get(
+					`${serverUrl}/booking/getbookingsbytheaters`
+				);
+				console.log(bookingTheaters);
+				setTheaterBookingData(bookingTheaters.data);
+			} catch (err) {
+				toast.error("Couldn't fetch bookings chart data");
+			}
 		}
 		getTotalBookingData();
+		getBookingsByMovie();
+		getBookingsByTheaters();
 		setLoading(false);
 	}, [user, adminid, navigate]);
 
@@ -65,6 +96,25 @@ export function AdminDashboardComponent() {
 				<>
 					<h2>Bookings & Theaters </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 my-8">
+						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
+							<div className="min-h-[128px] max-h-[256px]">
+								<BarChart
+									data={movieBookingData}
+									title="Movie Bookings"
+									labelKey="movieName"
+									valueKey="bookings"
+								/>
+							</div>
+							<div className="min-h-[128px] max-h-[256px]">
+								<BarChart
+									data={theaterBookingData}
+									title="Theater Bookings"
+									labelKey="theaterName"
+									valueKey="bookings"
+								/>
+							</div>
+						</div>
+
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
 							<StatsComponent
 								label1="Total Bookings"
@@ -81,9 +131,6 @@ export function AdminDashboardComponent() {
 							</Link>
 						</div>
 
-						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col items-center ">
-							<h2>Bookings Graph</h2>
-						</div>
 						<div className="border w-full md:w-1/3 rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"../../theaters/managetheaters"}>
 								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">

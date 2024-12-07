@@ -6,6 +6,7 @@ import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
 import StatsComponent from "../../components/shared/StatsComponent";
 import toast from "react-hot-toast";
+import BarChart from "../../components/shared/BarChart";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -16,7 +17,7 @@ export function TheaterOwnerDashboardComponent() {
 	const [theaterBookingStats, setTheaterBookingStats] = useState({});
 	const [cancelledTheaterBookingStats, setCancelledTheaterBookingStats] =
 		useState({});
-
+	const [theaterBookingData, setTheaterBookingData] = useState([]);
 	useEffect(() => {
 		if (ownerid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./theaterowner/${user.loggedUserId}`);
@@ -52,7 +53,18 @@ export function TheaterOwnerDashboardComponent() {
 			);
 			setCancelledTheaterBookingStats(ownerTheaterCancelledStats.data);
 		}
-
+		async function getBookingsByTheaters() {
+			try {
+				const bookingTheaters = await axios.get(
+					`${serverUrl}/theaterowner/${ownerid}/getbookingsbytheaters`
+				);
+				console.log(bookingTheaters);
+				setTheaterBookingData(bookingTheaters.data);
+			} catch (err) {
+				toast.error("Couldn't fetch bookings chart data");
+			}
+		}
+		getBookingsByTheaters();
 		getPersonalBookingData();
 		getTotalBookingData();
 		setLoading(false);
@@ -82,7 +94,14 @@ export function TheaterOwnerDashboardComponent() {
 							</Link>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
-							<h2>TheaterOwner Bookings Graph</h2>
+							<div className="max-h-lg">
+								<BarChart
+									data={theaterBookingData}
+									title="Theater Bookings"
+									labelKey="theaterName"
+									valueKey="bookings"
+								/>
+							</div>
 						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
 							<Link to={"managetheaters"}>
