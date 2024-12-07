@@ -65,42 +65,46 @@ export default function Home() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			<h2 className="text-center my-4">Now Running</h2>
-			{nowRunningMovies.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">
-					No now running movies
-				</h2>
+			{!loading && (
+				<>
+					<h2 className="text-center my-4">Now Running</h2>
+					{nowRunningMovies.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">
+							No now running movies
+						</h2>
+					)}
+					<PosterSlider posters={nowRunningMovies} classes="">
+						{nowRunningMovies.map((item, i) => (
+							<Link to={`/movies/${item.movieId}`} key={i}>
+								<Poster url={item.posterImage} title={item.movieName} />
+							</Link>
+						))}
+					</PosterSlider>
+					<Pagination
+						page={pageNowRunning}
+						setPage={setPageNowRunning}
+						totalPages={totalPagesNowRunning}
+					/>
+					<h2 className="text-center my-4">New Releases</h2>
+					{newReleaseMovies.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">
+							No new release movies
+						</h2>
+					)}
+					<PosterSlider posters={newReleaseMovies} classes="">
+						{newReleaseMovies.map((item, i) => (
+							<Link to={`/movies/${item.movieId}`} key={i}>
+								<Poster url={item.posterImage} title={item.movieName} />
+							</Link>
+						))}
+					</PosterSlider>
+					<Pagination
+						page={pageNewRelease}
+						setPage={setPageNewRelease}
+						totalPages={totalPagesNewRelease}
+					/>
+				</>
 			)}
-			<PosterSlider posters={nowRunningMovies} classes="">
-				{nowRunningMovies.map((item, i) => (
-					<Link to={`/movies/${item.movieId}`} key={i}>
-						<Poster url={item.posterImage} title={item.movieName} />
-					</Link>
-				))}
-			</PosterSlider>
-			<Pagination
-				page={pageNowRunning}
-				setPage={setPageNowRunning}
-				totalPages={totalPagesNowRunning}
-			/>
-			<h2 className="text-center my-4">New Releases</h2>
-			{newReleaseMovies.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">
-					No new release movies
-				</h2>
-			)}
-			<PosterSlider posters={newReleaseMovies} classes="">
-				{newReleaseMovies.map((item, i) => (
-					<Link to={`/movies/${item.movieId}`} key={i}>
-						<Poster url={item.posterImage} title={item.movieName} />
-					</Link>
-				))}
-			</PosterSlider>
-			<Pagination
-				page={pageNewRelease}
-				setPage={setPageNewRelease}
-				totalPages={totalPagesNewRelease}
-			/>
 		</main>
 	);
 }
