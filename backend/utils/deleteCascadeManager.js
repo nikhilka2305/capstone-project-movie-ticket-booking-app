@@ -33,7 +33,7 @@ export const handleBookingCancellation = async (bookingId) => {
 			);
 		}
 	} catch (err) {
-		throw new HandleError(err.message, err.statusCode);
+		throw new HandleError(err?.message, err?.statusCode);
 	}
 };
 
@@ -63,7 +63,7 @@ export const handleShowDeletion = async (showId) => {
 			{ runValidators: true, new: true }
 		);
 	} catch (err) {
-		throw new HandleError(err.message, err.statusCode);
+		throw new HandleError(err?.message, err?.statusCode);
 	}
 };
 
@@ -93,7 +93,7 @@ export const handleTheaterDeletion = async (theaterId) => {
 			{ runValidators: true, new: true }
 		);
 	} catch (err) {
-		throw new HandleError(err.message, err.statusCode);
+		throw new HandleError(err?.message, err?.statusCode);
 	}
 };
 
@@ -113,6 +113,6 @@ export const handleTheaterOwnerDeletion = async (ownerId) => {
 			{ new: true }
 		);
 	} catch (err) {
-		throw new HandleError(err.message, err.statusCode);
+		throw new HandleError(err?.message, err?.statusCode);
 	}
 };

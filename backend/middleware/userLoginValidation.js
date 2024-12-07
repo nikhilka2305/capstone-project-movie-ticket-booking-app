@@ -17,7 +17,7 @@ export const validateUserLogin = (req, res, next) => {
 	if (error) {
 		return res.status(400).json({
 			error: "Validation failed",
-			details: error.details.map((err) => err.message),
+			details: error.details.map((err) => err?.message),
 		});
 	}
 

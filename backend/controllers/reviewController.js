@@ -51,8 +51,8 @@ export const viewReviews = async (req, res, next) => {
 		}
 	} catch (err) {
 		return res
-			.status(err.statusCode)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -69,7 +69,7 @@ export const viewIndividualReview = async (req, res, next) => {
 			throw new HandleError("You are not authorized to edit this review", 403);
 		return res.status(200).json(review);
 	} catch (err) {
-		res.status(err.statusCode).json({ message: err.message });
+		res.status(err?.statusCode).json({ message: err?.message });
 	}
 };
 
@@ -110,7 +110,7 @@ export const viewIndividualUserReview = async (req, res, next) => {
 			res.status(200).json(reviews);
 		}
 	} catch (err) {
-		res.status(err.statusCode || 500).json({ message: err.message });
+		res.status(err?.statusCode || 500).json({ message: err?.message });
 	}
 };
 
@@ -134,7 +134,7 @@ export const editReview = async (req, res, next) => {
 		);
 		return res.status(200).send("Review updated");
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res.status(err?.statusCode).json({ message: err?.message });
 	}
 };
 
@@ -158,7 +158,7 @@ export const deleteReview = async (req, res, next) => {
 		);
 		return res.status(204).send("Review deleted");
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res.status(err?.statusCode).json({ message: err?.message });
 	}
 };
 
@@ -255,8 +255,8 @@ export const addReview = async (req, res, next) => {
 		return res.send("Success");
 	} catch (err) {
 		return res
-			.status(err.statusCode)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -284,13 +284,15 @@ export const averageRating = async (req, res, next) => {
 		}, 0);
 		const averageRating = totalRating / reviews.length;
 
-		return res.json({
+		return res.status(200).json({
 			message: "The Average rating is",
 			averageRating: averageRating,
 			reviewCount: reviews.length,
 		});
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -434,7 +436,7 @@ export const getPersonalReviewStats = async (req, res, next) => {
 		res.status(200).json(reviewStats);
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };

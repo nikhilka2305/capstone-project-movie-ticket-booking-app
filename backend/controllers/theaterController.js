@@ -47,7 +47,9 @@ export const viewTheaters = async (req, res, next) => {
 			res.status(200).json(theaters);
 		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -80,7 +82,9 @@ export const viewTheatersAdmin = async (req, res, next) => {
 			res.status(200).json(theaters);
 		}
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -102,8 +106,8 @@ export const viewIndividualTheater = async (req, res, next) => {
 		return res.status(200).json(theater);
 	} catch (err) {
 		return res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -127,8 +131,8 @@ export const viewManageIndividualTheater = async (req, res, next) => {
 		}
 	} catch (err) {
 		return res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -159,7 +163,9 @@ export const addTheater = async (req, res, next) => {
 		await theater.save();
 		return res.send("Success");
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -208,11 +214,13 @@ export const editIndividualTheater = async (req, res, next) => {
 			{ new: true, upsert: true }
 		);
 
-		return res.json({ message: `Succesfully Updated ${theaterid}` });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: `Succesfully Updated ${theaterid}` });
 	} catch (err) {
 		return res
-			.status(err.statusCode ? err.statusCode : 500)
-			.json({ message: err.message });
+			.status(err?.statusCode ? err?.statusCode : 500)
+			.json({ message: err?.message });
 	}
 };
 
@@ -234,7 +242,7 @@ export const deleteIndividualTheater = async (req, res, next) => {
 		handleTheaterDeletion(theaterid);
 		return res.status(204).json({ message: "Succesfully Deleted" });
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res.status(err?.statusCode).json({ message: err?.message });
 	}
 
 	res.send(`You have deleted ${theaterid} page`);

@@ -38,8 +38,8 @@ export const viewTheaterOwners = async (req, res, next) => {
 		}
 	} catch (err) {
 		return res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -56,8 +56,8 @@ export const viewTheaterOwnerProfile = async (req, res, next) => {
 		res.status(200).json(owner);
 	} catch (err) {
 		return res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -85,8 +85,8 @@ export const updateTheaterOwnerProfile = async (req, res, next) => {
 		res.status(201).json({ message: "Profile updated", user: user });
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ error: "Unable to update profile", message: err.message });
+			.status(err?.statusCode || 500)
+			.json({ error: "Unable to update profile", message: err?.message });
 	}
 };
 
@@ -107,8 +107,8 @@ export const registerTheaterOwner = async (req, res, next) => {
 		return res.status(200).send("Success");
 	} catch (err) {
 		return res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -147,9 +147,9 @@ export const loginTheaterOwner = async (req, res) => {
 			}
 		}
 	} catch (err) {
-		res.status(err.statusCode || 500).json({
+		res.status(err?.statusCode || 500).json({
 			error: "Login Failed",
-			message: err.message,
+			message: err?.message,
 		});
 	}
 };
@@ -172,8 +172,8 @@ export const resetTheaterOwnerPassword = async (req, res, next) => {
 		res.status(201).json("Password Reset");
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ error: "Unable to Reset Password", message: err.message });
+			.status(err?.statusCode || 500)
+			.json({ error: "Unable to Reset Password", message: err?.message });
 	}
 };
 
@@ -205,7 +205,7 @@ export const deleteTheaterOwner = async (req, res, next) => {
 		}
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ error: "Unable to delete account", message: err.message });
+			.status(err?.statusCode || 500)
+			.json({ error: "Unable to delete account", message: err?.message });
 	}
 };

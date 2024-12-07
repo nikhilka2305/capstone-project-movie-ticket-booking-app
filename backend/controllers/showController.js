@@ -57,7 +57,7 @@ export const viewShows = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -107,7 +107,7 @@ export const addShow = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -164,7 +164,7 @@ export const editShow = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -187,6 +187,6 @@ export const deleteShow = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };

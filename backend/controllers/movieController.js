@@ -52,7 +52,9 @@ export const viewMovies = async (req, res, next) => {
 			res.status(200).json(movies);
 		}
 	} catch (err) {
-		return res.status(500).json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -69,9 +71,11 @@ export const viewIndividualMovie = async (req, res, next) => {
 				.status(404)
 				.json({ message: "Not Found", error: "Such a Movie doesn't exist" });
 		}
-		return res.json(movie);
+		return res.status(200).json(movie);
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -121,7 +125,7 @@ export const editIndividualMovie = async (req, res, next) => {
 		);
 		return res.status(201).json({ message: "Movie updated" });
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res.status(err?.statusCode).json({ message: err?.message });
 	}
 };
 
@@ -140,7 +144,9 @@ export const deleteIndividualMovie = async (req, res, next) => {
 		);
 		return res.status(204).json({ message: " Movie Deleted" });
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -177,8 +183,10 @@ export const addMovie = async (req, res, next) => {
 			userType: req.user.role,
 		});
 		await movie.save();
-		return res.send("Success");
+		return res.status(200).send("Success");
 	} catch (err) {
-		return res.json({ message: "Error", error: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };

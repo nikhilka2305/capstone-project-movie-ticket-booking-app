@@ -24,6 +24,6 @@ export const authenticateToken = (req, res, next) => {
 			next();
 		});
 	} catch (err) {
-		res.status(err.statusCode).json({ message: err.message });
+		res.status(err?.statusCode).json({ message: err?.message });
 	}
 };

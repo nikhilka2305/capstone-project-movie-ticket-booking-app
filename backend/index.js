@@ -32,7 +32,7 @@ app.all("*", (req, res, next) => {
 	try {
 		throw new HandleError("Such an end point doesn't exist...Class", 404);
 	} catch (err) {
-		res.status(err.statusCode).json({ message: err.message });
+		res.status(err?.statusCode).json({ message: err?.message });
 	}
 });
 

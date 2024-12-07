@@ -39,13 +39,13 @@ export const multerSingleFileHandler = function (fieldname) {
 
 				return res
 					.status(err?.statusCode || 500)
-					.json({ Error: "Multer Error", message: err.message });
+					.json({ Error: "Multer Error", message: err?.message });
 			} else if (err) {
 				// Other errors
 
 				return res
-					.status(err.statusCode)
-					.json({ Error: "Non Multer Error", message: err.message });
+					.status(err?.statusCode)
+					.json({ Error: "Non Multer Error", message: err?.message });
 			}
 			next();
 		});
@@ -60,13 +60,13 @@ export const multerMultipleFileHandler = function (fieldname, limit) {
 
 				return res
 					.status(500)
-					.json({ Error: "Multer Error", message: err.message });
+					.json({ Error: "Multer Error", message: err?.message });
 			} else if (err) {
 				// Other errors
 
 				return res
 					.status(505)
-					.json({ Error: "Non Multer Error", message: err.message });
+					.json({ Error: "Non Multer Error", message: err?.message });
 			}
 			next();
 		});

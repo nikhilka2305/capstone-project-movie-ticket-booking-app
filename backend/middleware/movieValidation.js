@@ -57,7 +57,7 @@ export const validateMovie = (validator) => {
 				error: "Validation failed",
 				details: error.details.map((err) => ({
 					field: err.context.key,
-					message: err.message,
+					message: err?.message,
 				})),
 			});
 		}

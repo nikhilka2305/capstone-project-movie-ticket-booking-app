@@ -98,7 +98,7 @@ export const viewPersonalBookings = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -132,9 +132,12 @@ export const viewIndividualBooking = async (req, res, nex) => {
 			)
 		)
 			throw new HandleError("You are not Authorized to view this booking", 403);
-		return res.json(booking);
+		return res.status(200).json(booking);
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res
+			.status(err?.statusCode || 500)
+			.status(err?.statusCode)
+			.json({ message: err?.message });
 	}
 };
 
@@ -360,7 +363,7 @@ export const viewBookings = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -458,7 +461,7 @@ export const totalBookingStats = async (req, res, next) => {
 	} catch (err) {
 		return res
 			.status(err?.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -485,8 +488,8 @@ export const addBooking = async (req, res, next) => {
 		return res.status(200).json({ message: "Success" });
 	} catch (err) {
 		return res
-			.status(err.statusCode)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -528,7 +531,7 @@ export const cancelBooking = async (req, res, next) => {
 			return res.status(204).json({ message: "Booking Cancelled" });
 		}
 	} catch (err) {
-		return res.status(err.statusCode).json({ message: err.message });
+		return res.status(err?.statusCode).json({ message: err?.message });
 	}
 };
 
@@ -625,8 +628,8 @@ export const getPersonalBookingStats = async (req, res, next) => {
 		res.status(200).json(bookingStats);
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ message: "Error", error: err.message });
+			.status(err?.statusCode || 500)
+			.json({ message: "Error", error: err?.message });
 	}
 };
 
@@ -669,7 +672,7 @@ export const getBookingsByMovie = async (req, res, next) => {
 		}
 		const data = await Booking.aggregate(aggregatePipeLine);
 
-		res.json(data);
+		res.status(200).json(data);
 	} catch (err) {
 		res
 			.status(err.status || 500)
@@ -738,7 +741,7 @@ export const getBookingsByTheaters = async (req, res, next) => {
 		const data = await Booking.aggregate(aggregatePipeLine);
 		res.status(200).json(data);
 	} catch (err) {
-		res.status(err.statusCode || 500).json({ message: err.message });
+		res.status(err?.statusCode || 500).json({ message: err?.message });
 	}
 };
 
@@ -857,7 +860,7 @@ export const getMonthlyData = async (req, res, next) => {
 
 		res.status(200).json(result);
 	} catch (err) {
-		res.status(err.statusCode || 500).json({ message: err.message });
+		res.status(err?.statusCode || 500).json({ message: err?.message });
 	}
 };
 
@@ -937,6 +940,6 @@ export const getBookingRevenueShare = async (req, res, next) => {
 
 		res.status(200).json(data);
 	} catch (err) {
-		res.status(err.statusCode || 500).json({ message: err.message });
+		res.status(err?.statusCode || 500).json({ message: err?.message });
 	}
 };

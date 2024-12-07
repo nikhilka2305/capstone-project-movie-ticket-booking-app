@@ -28,11 +28,11 @@ const makePayment = async (req, res) => {
 			cancel_url: `${process.env.CORS_DOMAIN}/paymentfailed`,
 		});
 
-		res.json({ success: true, sessionId: session.id });
+		res.status(200).json({ success: true, sessionId: session.id });
 	} catch (err) {
 		res
 			.status(err?.statusCode || 500)
-			.json({ message: err.message || "Internal Server Error" });
+			.json({ message: err?.message || "Internal Server Error" });
 	}
 };
 
@@ -43,15 +43,15 @@ const getSessionData = async (req, res, next) => {
 			expand: ["line_items"],
 		});
 
-		res.json({
+		res.status(200).json({
 			success: true,
 			bookinginfo: JSON.parse(session.metadata.bookingInfo),
 			line_items: session.line_items.data,
 		});
 	} catch (err) {
 		res
-			.status(err.statusCode || 500)
-			.json({ message: err.message || "Internal Server Error" });
+			.status(err?.statusCode || 500)
+			.json({ message: err?.message || "Internal Server Error" });
 	}
 };
 
