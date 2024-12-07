@@ -63,23 +63,27 @@ function ManageTheaters() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			{theaters.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">
-					No Theaters available
-				</h2>
+			{!loading && (
+				<>
+					{theaters.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">
+							No Theaters available
+						</h2>
+					)}
+					<PosterSlider classes="h-full">
+						{theaters?.map((item, i) => (
+							<Link to={`./${item.theaterId}/manage`} key={i}>
+								<Poster
+									url={item.images[0]}
+									title={item.theaterName}
+									otherInfo={`Status: ${item.adminApprovalStatus}`}
+								/>
+							</Link>
+						))}
+					</PosterSlider>
+					<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+				</>
 			)}
-			<PosterSlider classes="h-full">
-				{theaters?.map((item, i) => (
-					<Link to={`./${item.theaterId}/manage`} key={i}>
-						<Poster
-							url={item.images[0]}
-							title={item.theaterName}
-							otherInfo={`Status: ${item.adminApprovalStatus}`}
-						/>
-					</Link>
-				))}
-			</PosterSlider>
-			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);
 }

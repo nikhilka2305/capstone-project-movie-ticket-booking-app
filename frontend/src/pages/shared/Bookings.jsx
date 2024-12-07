@@ -69,39 +69,43 @@ function Bookings() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			{bookings.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">No Bookings</h2>
-			)}
-			{bookings.map((item, i) => (
-				<Link key={i} to={`./${item.bookingId}`}>
-					<BookingCard
-						image={item.showInfo.movie.posterImage}
-						title={`Booking Id: ${item.bookingId}`}
-					>
-						<p>{item.showInfo.movie.movieName}</p>
-						<p>{item.showInfo.theater.theaterName}</p>
-						<p>
-							{new Date(item.showInfo.showTime).toLocaleString("en-IN", {
-								timeZone: "Asia/Kolkata",
-							})}
-						</p>
-						<p>{item.status}</p>
-						<p>{`Booking Cost: ₹${item.BookingAmount}/-`}</p>
-						<p>Seats: </p>
-						<ul className="flex gap-2">
-							{item.seats.map((seat, i) => (
-								<li key={i}>
-									{formatSeatNumber(
-										`${seat.seatNumber.row}-${seat.seatNumber.col},`
-									)}
-								</li>
-							))}
-						</ul>
-					</BookingCard>
-				</Link>
-			))}
+			{!loading && (
+				<>
+					{bookings.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">No Bookings</h2>
+					)}
+					{bookings.map((item, i) => (
+						<Link key={i} to={`./${item.bookingId}`}>
+							<BookingCard
+								image={item.showInfo.movie.posterImage}
+								title={`Booking Id: ${item.bookingId}`}
+							>
+								<p>{item.showInfo.movie.movieName}</p>
+								<p>{item.showInfo.theater.theaterName}</p>
+								<p>
+									{new Date(item.showInfo.showTime).toLocaleString("en-IN", {
+										timeZone: "Asia/Kolkata",
+									})}
+								</p>
+								<p>{item.status}</p>
+								<p>{`Booking Cost: ₹${item.BookingAmount}/-`}</p>
+								<p>Seats: </p>
+								<ul className="flex gap-2">
+									{item.seats.map((seat, i) => (
+										<li key={i}>
+											{formatSeatNumber(
+												`${seat.seatNumber.row}-${seat.seatNumber.col},`
+											)}
+										</li>
+									))}
+								</ul>
+							</BookingCard>
+						</Link>
+					))}
 
-			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+					<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+				</>
+			)}
 		</main>
 	);
 }

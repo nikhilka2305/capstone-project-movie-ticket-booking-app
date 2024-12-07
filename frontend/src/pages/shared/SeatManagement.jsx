@@ -6,6 +6,7 @@ import Button from "../../components/shared/formcomponents/Button";
 import { SeatSelection } from "./SeatGrid";
 import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { use } from "react";
 
 export default function SeatManagement() {
 	const navigate = useNavigate();
@@ -51,9 +52,10 @@ export default function SeatManagement() {
 				toast.error("Unable to fetch theater data");
 			}
 		}
-		setLoading(false);
+
 		getTheaterDetails();
-	}, [theaterid]);
+		setLoading(false);
+	}, [theaterid, navigate, user]);
 	useEffect(() => {
 		async function getTheaterData() {
 			const serverUrl = `${
@@ -129,28 +131,40 @@ export default function SeatManagement() {
 	return (
 		<>
 			<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-				<SeatClassRangeSelector
-					seatClasses={seatClasses}
-					maxRows={maxRows}
-					assignedRows={assignedRows}
-					onRangeChange={handleRangeChange}
-					onReset={handleReset}
-				/>
+				{loading && (
+					<div className="flex w-52 flex-col gap-4">
+						<div className="skeleton h-32 w-full"></div>
+						<div className="skeleton h-4 w-28"></div>
+						<div className="skeleton h-4 w-full"></div>
+						<div className="skeleton h-4 w-full"></div>
+					</div>
+				)}
+				{!loading && (
+					<>
+						<SeatClassRangeSelector
+							seatClasses={seatClasses}
+							maxRows={maxRows}
+							assignedRows={assignedRows}
+							onRangeChange={handleRangeChange}
+							onReset={handleReset}
+						/>
 
-				{unallocatedRows.length > 0 &&
-					seatClasses.every((sc) => sc.rows.length > 0) && (
-						<p className="text-orange-500 text-sm my-4">
-							Warning: Some rows ({unallocatedRows.join(", ")}) remain
-							unallocated.
-						</p>
-					)}
-				<Button
-					onClick={handleSeatUpdate}
-					disabled={unallocatedRows.length > 0 ? "disabled" : false}
-					label="Update Seats"
-				/>
-				<h2 className="mt-4">Seat Grid</h2>
-				<SeatSelection theaterSeats={theaterSeats} />
+						{unallocatedRows.length > 0 &&
+							seatClasses.every((sc) => sc.rows.length > 0) && (
+								<p className="text-orange-500 text-sm my-4">
+									Warning: Some rows ({unallocatedRows.join(", ")}) remain
+									unallocated.
+								</p>
+							)}
+						<Button
+							onClick={handleSeatUpdate}
+							disabled={unallocatedRows.length > 0 ? "disabled" : false}
+							label="Update Seats"
+						/>
+						<h2 className="mt-4">Seat Grid</h2>
+						<SeatSelection theaterSeats={theaterSeats} />
+					</>
+				)}
 			</main>
 		</>
 	);

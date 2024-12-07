@@ -49,30 +49,34 @@ export default function ManageUsers() {
 						<div className="skeleton h-4 w-full"></div>
 					</div>
 				)}
-				{users.length === 0 && (
-					<h2 className="text-2xl text-center mt-8 mx-auto">No Users</h2>
+				{!loading && (
+					<>
+						{users.length === 0 && (
+							<h2 className="text-2xl text-center mt-8 mx-auto">No Users</h2>
+						)}
+						{users.map((item, i) => (
+							<BookingCard
+								key={i}
+								image={item?.displayImage}
+								title={item?.username}
+							>
+								<Link
+									key={i}
+									to={`./${item?.userId}`}
+									className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+								>
+									Edit Profile
+								</Link>
+								<Link
+									to={`/user/${item?.userId}`}
+									className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+								>
+									<p>User Dashboard</p>
+								</Link>
+							</BookingCard>
+						))}
+					</>
 				)}
-				{users.map((item, i) => (
-					<BookingCard
-						key={i}
-						image={item?.displayImage}
-						title={item?.username}
-					>
-						<Link
-							key={i}
-							to={`./${item?.userId}`}
-							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
-						>
-							Edit Profile
-						</Link>
-						<Link
-							to={`/user/${item?.userId}`}
-							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
-						>
-							<p>User Dashboard</p>
-						</Link>
-					</BookingCard>
-				))}
 			</div>
 			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>

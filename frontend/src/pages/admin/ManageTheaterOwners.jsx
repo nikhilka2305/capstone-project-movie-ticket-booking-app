@@ -54,31 +54,35 @@ export default function ManageTheaterOwners() {
 						<div className="skeleton h-4 w-full"></div>
 					</div>
 				)}
-				{theaterOwners.length === 0 && (
-					<h2 className="text-2xl text-center mt-8 mx-auto">
-						No Theater Owners
-					</h2>
+				{!loading && (
+					<>
+						{theaterOwners.length === 0 && (
+							<h2 className="text-2xl text-center mt-8 mx-auto">
+								No Theater Owners
+							</h2>
+						)}
+						{theaterOwners.map((item, i) => (
+							<BookingCard
+								key={i}
+								image={item?.displayImage}
+								title={item?.username}
+							>
+								<Link
+									to={`./${item?.userId}`}
+									className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+								>
+									<p>Edit Profile</p>
+								</Link>
+								<Link
+									to={`/theaterowner/${item?.userId}`}
+									className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
+								>
+									<p>Owner Dashboard</p>
+								</Link>
+							</BookingCard>
+						))}
+					</>
 				)}
-				{theaterOwners.map((item, i) => (
-					<BookingCard
-						key={i}
-						image={item?.displayImage}
-						title={item?.username}
-					>
-						<Link
-							to={`./${item?.userId}`}
-							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
-						>
-							<p>Edit Profile</p>
-						</Link>
-						<Link
-							to={`/theaterowner/${item?.userId}`}
-							className="w-full md:w-2/5 lg:w-1/3 xl:w-1/4"
-						>
-							<p>Owner Dashboard</p>
-						</Link>
-					</BookingCard>
-				))}
 			</div>
 			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>

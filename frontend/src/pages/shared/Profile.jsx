@@ -200,209 +200,219 @@ function Profile({ type, idtype }) {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			{userData ? (
-				<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
-					<img
-						className="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0"
-						src={
-							userData.displayImage
-								? userData.displayImage
-								: "https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg"
-						}
-						alt={`Profile photo of ${userData.username}`}
-					/>
-					{showUploadForm && (
-						<form
-							className="showUploadForm flex flex-col items-center gap-4"
-							onSubmit={handleSubmit(handleUploadPhoto)}
-							noValidate
-						>
-							<Input
-								type="file"
-								label="Upload Profile Picture"
-								name="displayimage"
-								id="displayimage"
-								classes="file-input file-input-lg file-input-ghost w-full"
-								fileTypes={["image/jpeg", " image/jpg", " image/png"]}
-								register={register}
-								validationSchema={{
-									required: "Image required",
-								}}
-								errors={errors}
-							></Input>
-							<div className="button-group flex gap-4 justify-center">
-								<Button type="submit" label="Submit" />
-								<Button
-									label="Cancel"
-									onClick={() => {
-										reset();
-										setShowUploadForm(false);
-									}}
-								/>
-							</div>
-						</form>
-					)}
-					{!showUploadForm && (
-						<button type="button" onClick={() => setShowUploadForm(true)}>
-							Update Photo
-						</button>
-					)}
-					<div className="text-center space-y-2 sm:text-left ">
-						<div className="space-y-0.5 flex flex-col gap-4 items-center">
-							<p className="text-xl text-black font-semibold">
-								{userData.username}
-							</p>
-							<form
-								className="showEditDetailsForm flex flex-col gap-4 items-center"
-								onSubmit={handleSubmit(handleEditDetails)}
-								noValidate
-							>
-								<Input
-									label="Enter Email"
-									name="email"
-									id="email"
-									type="email"
-									register={register}
-									validationSchema={{
-										required: "Email required",
-										pattern: {
-											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-											message: "invalid email address",
-										},
-									}}
-									errors={errors}
-									disabled={!isEdittable}
-								/>
-								<Input
-									label="Enter Mobile"
-									name="mobile"
-									id="mobile"
-									type="number"
-									register={register}
-									validationSchema={{
-										required: "Mobile required",
-										minLength: {
-											value: 10,
-											message: "Please enter a minimum of 10 characters",
-										},
-										maxLength: {
-											value: 10,
-											message: "Please enter a maximum of 10 characters",
-										},
-									}}
-									errors={errors}
-									disabled={!isEdittable}
-								/>
-								{userData && userData.role === "User" && (
-									// <MoviePreferences
-									// 	preferenceData={userData.moviePreferences}
-									// />
-									<>
-										<Input
-											label="Genre"
-											name="moviePreferences.genre"
-											type="text"
-											id="genre"
-											register={register}
-											validationSchema={{
-												minLength: {
-													value: 5,
-													message: "Please enter a minimum of 5 characters",
-												},
-												maxLength: {
-													value: 15,
-													message: "Please enter a maximum of 15 characters",
-												},
-											}}
-											errors={errors}
-											disabled={!isEdittable}
-										/>
-										<SelectActors
-											name="moviePreferences.favactors"
-											register={register}
-											setValue={setValue}
-											getValues={getValues}
-											maxNumber={5}
-											errors={errors}
-											validationSchema={{
-												minLength: {
-													value: 5,
-													message: "At least 5 characters required.",
-												},
-												maxLength: {
-													value: 20,
-													message: "Maximum 20 characters allowed.",
-												},
-											}}
-											disabled={!isEdittable}
-										/>
-									</>
-								)}
-								{isEdittable && (
+			{!loading && (
+				<>
+					{userData ? (
+						<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
+							<img
+								className="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0"
+								src={
+									userData.displayImage
+										? userData.displayImage
+										: "https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg"
+								}
+								alt={`Profile photo of ${userData.username}`}
+							/>
+							{showUploadForm && (
+								<form
+									className="showUploadForm flex flex-col items-center gap-4"
+									onSubmit={handleSubmit(handleUploadPhoto)}
+									noValidate
+								>
+									<Input
+										type="file"
+										label="Upload Profile Picture"
+										name="displayimage"
+										id="displayimage"
+										classes="file-input file-input-lg file-input-ghost w-full"
+										fileTypes={["image/jpeg", " image/jpg", " image/png"]}
+										register={register}
+										validationSchema={{
+											required: "Image required",
+										}}
+										errors={errors}
+									></Input>
 									<div className="button-group flex gap-4 justify-center">
 										<Button type="submit" label="Submit" />
 										<Button
 											label="Cancel"
 											onClick={() => {
 												reset();
-												setIsEdittable(false);
+												setShowUploadForm(false);
 											}}
 										/>
 									</div>
-								)}
-							</form>
-							{(userData.deleted || userData.blocked) && (
-								<p>This account is deleted or blocked</p>
+								</form>
 							)}
-
-							{!isEdittable && (
-								<div className="flex justify-between w-full mt-8 mx-auto">
-									<button type="button" onClick={() => setIsEdittable(true)}>
-										Edit profile Details
-									</button>
-									{!userData.deleted && (
-										<button
-											className="btn"
-											onClick={() =>
-												document.getElementById("my_modal_4").showModal()
-											}
-										>
-											Delete Your Account?
-										</button>
+							{!showUploadForm && (
+								<button type="button" onClick={() => setShowUploadForm(true)}>
+									Update Photo
+								</button>
+							)}
+							<div className="text-center space-y-2 sm:text-left ">
+								<div className="space-y-0.5 flex flex-col gap-4 items-center">
+									<p className="text-xl text-black font-semibold">
+										{userData.username}
+									</p>
+									<form
+										className="showEditDetailsForm flex flex-col gap-4 items-center"
+										onSubmit={handleSubmit(handleEditDetails)}
+										noValidate
+									>
+										<Input
+											label="Enter Email"
+											name="email"
+											id="email"
+											type="email"
+											register={register}
+											validationSchema={{
+												required: "Email required",
+												pattern: {
+													value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+													message: "invalid email address",
+												},
+											}}
+											errors={errors}
+											disabled={!isEdittable}
+										/>
+										<Input
+											label="Enter Mobile"
+											name="mobile"
+											id="mobile"
+											type="number"
+											register={register}
+											validationSchema={{
+												required: "Mobile required",
+												minLength: {
+													value: 10,
+													message: "Please enter a minimum of 10 characters",
+												},
+												maxLength: {
+													value: 10,
+													message: "Please enter a maximum of 10 characters",
+												},
+											}}
+											errors={errors}
+											disabled={!isEdittable}
+										/>
+										{userData && userData.role === "User" && (
+											// <MoviePreferences
+											// 	preferenceData={userData.moviePreferences}
+											// />
+											<>
+												<Input
+													label="Genre"
+													name="moviePreferences.genre"
+													type="text"
+													id="genre"
+													register={register}
+													validationSchema={{
+														minLength: {
+															value: 5,
+															message: "Please enter a minimum of 5 characters",
+														},
+														maxLength: {
+															value: 15,
+															message:
+																"Please enter a maximum of 15 characters",
+														},
+													}}
+													errors={errors}
+													disabled={!isEdittable}
+												/>
+												<SelectActors
+													name="moviePreferences.favactors"
+													register={register}
+													setValue={setValue}
+													getValues={getValues}
+													maxNumber={5}
+													errors={errors}
+													validationSchema={{
+														minLength: {
+															value: 5,
+															message: "At least 5 characters required.",
+														},
+														maxLength: {
+															value: 20,
+															message: "Maximum 20 characters allowed.",
+														},
+													}}
+													disabled={!isEdittable}
+												/>
+											</>
+										)}
+										{isEdittable && (
+											<div className="button-group flex gap-4 justify-center">
+												<Button type="submit" label="Submit" />
+												<Button
+													label="Cancel"
+													onClick={() => {
+														reset();
+														setIsEdittable(false);
+													}}
+												/>
+											</div>
+										)}
+									</form>
+									{(userData.deleted || userData.blocked) && (
+										<p>This account is deleted or blocked</p>
 									)}
 
-									<dialog id="my_modal_4" className="modal">
-										<div className="modal-box w-11/12 max-w-5xl">
-											<h3 className="font-bold text-lg">Deleting Account</h3>
-											<p className="py-4">Are You Sure?</p>
-											<div className="modal-action">
-												<form method="dialog">
-													{/* if there is a button, it will close the modal */}
-													<div className="button-group flex gap-4 justify-center">
-														<Button
-															type="submit"
-															label="Delete"
-															colorClass="bg-red-600 text-white"
-															onClick={handleDeleteUser}
-														/>
+									{!isEdittable && (
+										<div className="flex justify-between w-full mt-8 mx-auto">
+											<button
+												type="button"
+												onClick={() => setIsEdittable(true)}
+											>
+												Edit profile Details
+											</button>
+											{!userData.deleted && (
+												<button
+													className="btn"
+													onClick={() =>
+														document.getElementById("my_modal_4").showModal()
+													}
+												>
+													Delete Your Account?
+												</button>
+											)}
 
-														<Button
-															type="submit"
-															label="Cancel"
-															colorClass="bg-green-500"
-														/>
+											<dialog id="my_modal_4" className="modal">
+												<div className="modal-box w-11/12 max-w-5xl">
+													<h3 className="font-bold text-lg">
+														Deleting Account
+													</h3>
+													<p className="py-4">Are You Sure?</p>
+													<div className="modal-action">
+														<form method="dialog">
+															{/* if there is a button, it will close the modal */}
+															<div className="button-group flex gap-4 justify-center">
+																<Button
+																	type="submit"
+																	label="Delete"
+																	colorClass="bg-red-600 text-white"
+																	onClick={handleDeleteUser}
+																/>
+
+																<Button
+																	type="submit"
+																	label="Cancel"
+																	colorClass="bg-green-500"
+																/>
+															</div>
+														</form>
 													</div>
-												</form>
-											</div>
+												</div>
+											</dialog>
 										</div>
-									</dialog>
+									)}
 								</div>
-							)}
+							</div>
 						</div>
-					</div>
-				</div>
-			) : (
-				<></>
+					) : (
+						<></>
+					)}
+				</>
 			)}
 		</>
 	);

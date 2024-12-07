@@ -68,36 +68,43 @@ function Reviews() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			{reviews.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">No Reviews</h2>
+			{!loading && (
+				<>
+					{reviews.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">No Reviews</h2>
+					)}
+					{reviews.map((item, i) => (
+						<Link key={i} to={`/managereviews/${item.reviewId}`}>
+							<BookingCard
+								image={
+									item.userId.displayImage ||
+									"https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg"
+								}
+								title={`Review For ${
+									item.movieId?.movieName || item.theaterId?.theaterName
+								}`}
+							>
+								{/* <p>{item.showInfo.movie.movieName}</p> */}
+								<p>{formatDate(new Date(item.createdAt))}</p>
+								<p className="flex items-center">
+									Rating:{" "}
+									<DisplayRating
+										rating={item.userRating}
+										ratingSize="rating-sm"
+									/>{" "}
+								</p>
+
+								<p>UserReview: </p>
+								<p>{item.userReview}</p>
+								<p>Review by: {item.userId.username}</p>
+								<p>Review For: {item.reviewFor}</p>
+							</BookingCard>
+						</Link>
+					))}
+
+					<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+				</>
 			)}
-			{reviews.map((item, i) => (
-				<Link key={i} to={`/managereviews/${item.reviewId}`}>
-					<BookingCard
-						image={
-							item.userId.displayImage ||
-							"https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg"
-						}
-						title={`Review For ${
-							item.movieId?.movieName || item.theaterId?.theaterName
-						}`}
-					>
-						{/* <p>{item.showInfo.movie.movieName}</p> */}
-						<p>{formatDate(new Date(item.createdAt))}</p>
-						<p className="flex items-center">
-							Rating:{" "}
-							<DisplayRating rating={item.userRating} ratingSize="rating-sm" />{" "}
-						</p>
-
-						<p>UserReview: </p>
-						<p>{item.userReview}</p>
-						<p>Review by: {item.userId.username}</p>
-						<p>Review For: {item.reviewFor}</p>
-					</BookingCard>
-				</Link>
-			))}
-
-			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);
 }

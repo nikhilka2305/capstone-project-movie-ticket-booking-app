@@ -57,26 +57,30 @@ export default function ManageShows() {
 					<div className="skeleton h-4 w-full"></div>
 				</div>
 			)}
-			{shows.length === 0 && (
-				<h2 className="text-2xl text-center mt-8 mx-auto">
-					No Shows available
-				</h2>
+			{!loading && (
+				<>
+					{shows.length === 0 && (
+						<h2 className="text-2xl text-center mt-8 mx-auto">
+							No Shows available
+						</h2>
+					)}
+					<PosterSlider posters={shows} classes="">
+						{shows.map((item, i) => (
+							<Link to={`${item.showId}/manage`} key={i}>
+								<Poster
+									url={item.movie.posterImage}
+									title={item.movie.movieName}
+									description={item.theater.theaterName}
+									otherInfo={new Date(item.showTime).toLocaleString("en-IN", {
+										timeZone: "Asia/Kolkata",
+									})}
+								/>
+							</Link>
+						))}
+					</PosterSlider>
+					<Pagination page={page} setPage={setPage} totalPages={totalPages} />
+				</>
 			)}
-			<PosterSlider posters={shows} classes="">
-				{shows.map((item, i) => (
-					<Link to={`${item.showId}/manage`} key={i}>
-						<Poster
-							url={item.movie.posterImage}
-							title={item.movie.movieName}
-							description={item.theater.theaterName}
-							otherInfo={new Date(item.showTime).toLocaleString("en-IN", {
-								timeZone: "Asia/Kolkata",
-							})}
-						/>
-					</Link>
-				))}
-			</PosterSlider>
-			<Pagination page={page} setPage={setPage} totalPages={totalPages} />
 		</main>
 	);
 }

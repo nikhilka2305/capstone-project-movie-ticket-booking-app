@@ -58,7 +58,14 @@ function UserDashboardComponent() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<h1 className="text-center text-2xl my-8">User Dashboard</h1>
-			{loading && <p>Loading...</p>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			{!loading && (
 				<>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4  md:mx-auto ">
