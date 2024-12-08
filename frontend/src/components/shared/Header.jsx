@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import toast from "react-hot-toast";
 
@@ -8,6 +8,23 @@ export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
 
 	const [displayImage, setDisplayImage] = useState("");
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const dropdownRef = useRef(null);
+	const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setIsDropdownOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
+	// Closes dropdown when clicking outside
 
 	useEffect(() => {
 		if (!isAuthenticated)
@@ -40,11 +57,12 @@ export default function Header() {
 		<header className="px-4">
 			<div className="navbar bg-base- flex gap-4">
 				<div className="flex-none">
-					<div className="dropdown">
+					<div ref={dropdownRef} className="dropdown">
 						<div
 							tabIndex={0}
 							role="button"
 							className="btn btn-ghost btn-circle"
+							onClick={toggleDropdown}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -61,33 +79,56 @@ export default function Header() {
 								/>
 							</svg>
 						</div>
-						<ul
-							tabIndex={0}
-							className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-						>
-							<li>
-								<Link to={"/"}>Home</Link>
-							</li>
-							<li>
-								<Link to={"/movies"}>Movies</Link>
-							</li>
-							<li>
-								<Link to={"/theaters"}>Theaters</Link>
-							</li>
-							<li>
-								<Link to={"/shows"}>Shows</Link>
-							</li>
-							{!isAuthenticated && (
-								<>
-									<li>
-										<Link to={"/login"}>User Login</Link>
-									</li>
-									<li>
-										<Link to={"/toauth/tologin"}>Theater Owner Login</Link>
-									</li>
-								</>
-							)}
-						</ul>
+						{isDropdownOpen && (
+							<ul
+								tabIndex={0}
+								className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+							>
+								<li>
+									<Link to={"/"} onClick={() => setIsDropdownOpen(false)}>
+										Home
+									</Link>
+								</li>
+								<li>
+									<Link to={"/movies"} onClick={() => setIsDropdownOpen(false)}>
+										Movies
+									</Link>
+								</li>
+								<li>
+									<Link
+										to={"/theaters"}
+										onClick={() => setIsDropdownOpen(false)}
+									>
+										Theaters
+									</Link>
+								</li>
+								<li>
+									<Link to={"/shows"} onClick={() => setIsDropdownOpen(false)}>
+										Shows
+									</Link>
+								</li>
+								{!isAuthenticated && (
+									<>
+										<li>
+											<Link
+												to={"/login"}
+												onClick={() => setIsDropdownOpen(false)}
+											>
+												User Login
+											</Link>
+										</li>
+										<li>
+											<Link
+												to={"/toauth/tologin"}
+												onClick={() => setIsDropdownOpen(false)}
+											>
+												Theater Owner Login
+											</Link>
+										</li>
+									</>
+								)}
+							</ul>
+						)}
 					</div>
 				</div>
 				<div className="flex-1 gap-4">
