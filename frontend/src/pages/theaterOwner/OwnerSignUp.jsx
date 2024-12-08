@@ -35,7 +35,7 @@ function OwnerSignUp() {
 			});
 
 			toast.success("Successfully Signed up");
-			navigate("toauth/tologin");
+			navigate("/toauth/tologin");
 		} catch (err) {
 			toast.error("Unable to Signup");
 		}
