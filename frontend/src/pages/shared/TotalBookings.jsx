@@ -107,7 +107,7 @@ export default function TotalBookings() {
 										</li>
 									))}
 								</ul>
-								<p>Booked By: {item.userData.username}</p>
+								<p>Booked By: {item?.userData?.username}</p>
 							</BookingCard>
 						</ConditionalLink>
 					))}
