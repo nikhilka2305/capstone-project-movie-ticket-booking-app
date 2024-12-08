@@ -215,12 +215,10 @@ export const editIndividualTheater = async (req, res, next) => {
 		);
 
 		return res
-			.status(err?.statusCode || 500)
+			.status(200)
 			.json({ message: `Succesfully Updated ${theaterid}` });
 	} catch (err) {
-		return res
-			.status(err?.statusCode ? err?.statusCode : 500)
-			.json({ message: err?.message });
+		return res.status(err?.statusCode || 500).json({ message: err?.message });
 	}
 };
 
