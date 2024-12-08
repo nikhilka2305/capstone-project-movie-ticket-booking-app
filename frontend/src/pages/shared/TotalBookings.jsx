@@ -49,6 +49,7 @@ export default function TotalBookings() {
 				const responseData = response.data;
 
 				const bookingsData = responseData.bookings;
+				console.log(bookingsData);
 				setBookings(bookingsData);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
@@ -84,7 +85,7 @@ export default function TotalBookings() {
 							condition={user.role === "Admin"}
 							key={i}
 							to={`/${userType[item.userType]}/${
-								item.userData.userId
+								item?.userData?.userId
 							}/bookings/${item.bookingId}`}
 						>
 							<BookingCard
