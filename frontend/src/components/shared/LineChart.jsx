@@ -26,12 +26,11 @@ const LineChart = ({ data, filter, onFilterChange }) => {
 				text: `Monthly ${filter === "revenue" ? "Revenue" : "Bookings"}`,
 			},
 		},
-		// maintainAspectRatio: false,
 	};
 
 	return (
 		<div className="p-4">
-			<div className="flex justify-end mb-2">
+			<div className="flex justify-center mb-2">
 				<button
 					className={`btn ${filter === "bookings" ? "btn-active" : ""}`}
 					onClick={() => onFilterChange("bookings")}
@@ -45,7 +44,7 @@ const LineChart = ({ data, filter, onFilterChange }) => {
 					Revenue
 				</button>
 			</div>
-			<Line data={chartData} options={options} height="250px" width="350px" />
+			<Line data={chartData} options={options} />
 		</div>
 	);
 };

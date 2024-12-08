@@ -34,7 +34,7 @@ export default function PieChart({ data, filter, onFilterChange }) {
 
 	return (
 		<div className="p-4">
-			<div className="flex justify-end mb-2">
+			<div className="flex justify-center mb-2">
 				<button
 					className={`btn ${filter === "bookings" ? "btn-active" : ""}`}
 					onClick={() => onFilterChange("bookings")}
