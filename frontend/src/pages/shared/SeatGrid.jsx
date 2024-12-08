@@ -158,6 +158,9 @@ export function SeatSelection({
 
 	return (
 		<div className="w-full flex flex-col justify-center items-center">
+			<div className="screenishere border mt-2 mb-4 w-11/12 md:w-1/3 text-center">
+				<p>Screen is Here</p>
+			</div>
 			<SeatGrid
 				seatGrid={seatGrid}
 				onSeatSelect={handleSeatSelect}

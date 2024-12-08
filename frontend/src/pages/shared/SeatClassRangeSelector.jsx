@@ -170,7 +170,7 @@ export default function SeatClassRangeSelector({
 							<button
 								type="button"
 								onClick={() => handleEdit(seatClass.className)}
-								className="py-1 px-3 bg-yellow-500 text-white rounded"
+								className="my-1 py-1 px-3 bg-yellow-500 text-white rounded"
 							>
 								Edit
 							</button>
