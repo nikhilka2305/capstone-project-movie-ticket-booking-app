@@ -200,6 +200,9 @@ export default function ManageSingleTheater() {
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Deleted Theater");
 			navigate(`/theaters/managetheaters`);
+			if (user.role == "TheaterOwner")
+				navigate(`/theaterowner/${user?.loggedUserId}`);
+			else navigate(`/admin/${user?.loggedUserId}`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete Theater");
