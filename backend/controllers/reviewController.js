@@ -269,11 +269,11 @@ export const averageRating = async (req, res, next) => {
 		if (movieid) {
 			const movie = await Movie.findOne({ movieId: movieid }).lean();
 			if (!movie) throw new HandleError("Movie doesn't exist", 404);
-			reviews = await Review.find({ movieId: movie._id });
+			reviews = await Review.find({ movieId: movie._id, deleted: false });
 		} else if (theaterid) {
 			const theater = await Theater.findOne({ theaterId: theaterid }).lean();
 			if (!theater) throw new HandleError("Theater doesn't exist", 404);
-			reviews = await Review.find({ theaterId: theater._id });
+			reviews = await Review.find({ theaterId: theater._id, deleted: false });
 		}
 		if (!reviews || reviews.length === 0)
 			return res.status(200).json({ message: "No Reviews are added" });
