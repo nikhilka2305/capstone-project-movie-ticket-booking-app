@@ -122,7 +122,14 @@ export default function ManageSingleShow() {
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
 			<h2 className="text-center">Update Show</h2>
-			{loading && <p>Loading</p>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			{!loading && (
 				<>
 					<form

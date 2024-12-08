@@ -99,7 +99,14 @@ function AddReview() {
 	return (
 		<section className="mx-auto my-8 w-full md:w-4/5 flex flex-col gap-8  items-center">
 			<h2 className="text-center">Add Review</h2>
-			{loading && <p>Loading</p>}
+			{loading && (
+				<div className="flex w-52 flex-col gap-4">
+					<div className="skeleton h-32 w-full"></div>
+					<div className="skeleton h-4 w-28"></div>
+					<div className="skeleton h-4 w-full"></div>
+					<div className="skeleton h-4 w-full"></div>
+				</div>
+			)}
 			{!loading && (
 				<>
 					<div className="card bg-base-100 w-full max-w-lg shadow-xl">

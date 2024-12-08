@@ -67,6 +67,7 @@ function SingleMovie() {
 						<div className="tags flex justify-start gap-2">
 							<p className={tagsClasses}>{movie.genre}</p>
 							<p className={tagsClasses}>{movie.language}</p>
+							<p className={tagsClasses}>{movie.movieduration} mins</p>
 							<p className={tagsClasses}>
 								{new Date(movie.releaseDate).toLocaleDateString("en-IN")}
 							</p>
