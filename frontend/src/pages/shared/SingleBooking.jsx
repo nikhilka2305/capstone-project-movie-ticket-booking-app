@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Card from "../../components/shared/Card";
-import { formatDate } from "../../utils/dateFormatter";
+import { dayJSUTCtoIST, formatDate } from "../../utils/dateFormatter";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import toast from "react-hot-toast";
 import Button from "../../components/shared/formcomponents/Button";
@@ -25,6 +25,10 @@ function SingleBooking() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
+
+				const showTimeIST = dayJSUTCtoIST(responseData.showInfo.showTime);
+
+				responseData.showInfo.showTime = showTimeIST;
 
 				setBooking(responseData);
 			} catch (err) {
@@ -80,10 +84,7 @@ function SingleBooking() {
 					<div>
 						<div className="tags flex flex justify-start gap-2">
 							<p className={tagsClasses}>
-								{new Date(booking.showInfo.showTime).toLocaleString("en-IN", {
-									timeZone: "Asia/Kolkata",
-								})}{" "}
-								-{" "}
+								{booking.showInfo.showTime} -{" "}
 								{new Date(booking.showInfo.showTime).getTime() < Date.now()
 									? "Show Over"
 									: "Upcoming"}

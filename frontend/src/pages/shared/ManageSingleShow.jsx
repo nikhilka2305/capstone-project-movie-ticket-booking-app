@@ -7,7 +7,11 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
-import { formatDateTimeLocal } from "../../utils/dateFormatter.js";
+import {
+	dayJSISTtoUTC,
+	dayJSUTCtoIST,
+	formatDateTimeLocal,
+} from "../../utils/dateFormatter.js";
 
 export default function ManageSingleShow() {
 	const [show, setShow] = useState({});
@@ -29,7 +33,7 @@ export default function ManageSingleShow() {
 	useEffect(() => {
 		const defaultValues = {
 			movie: show.movie?._id || "",
-			showTime: formatDateTimeLocal(show.showTime) || "",
+			showTime: show.showTime || "",
 		};
 
 		reset(defaultValues);
@@ -42,6 +46,10 @@ export default function ManageSingleShow() {
 			try {
 				const response = await axios.get(`${serverUrl}/show/${showid}`);
 				const showData = response.data;
+
+				const showTimeIST = dayJSUTCtoIST(showData.showTime);
+
+				showData.showTime = showTimeIST;
 				setShow(showData);
 				const theaterData = await axios.get(
 					`${serverUrl}/theater/${theaterid}`
@@ -77,6 +85,10 @@ export default function ManageSingleShow() {
 		const show = { ...data };
 
 		try {
+			const showTimeUTC = dayJSISTtoUTC(show.showTime);
+
+			show.showTime = showTimeUTC;
+
 			const updateShow = await axios.patch(serverUrl, show, {
 				headers: {
 					"Content-Type": "application/json",

@@ -3,11 +3,13 @@ import axios from "axios";
 import Card from "../../components/shared/Card";
 import Button from "../../components/shared/formcomponents/Button";
 import { useEffect, useState } from "react";
-import { formatDate } from "../../utils/dateFormatter";
+
 import { SeatSelection } from "./SeatGrid";
-import { formatSeatNumber } from "../../utils/numbertoLetterID";
+
 import toast from "react-hot-toast";
 import AverageRating from "../../components/shared/formcomponents/AverageRating";
+
+import { dayJSUTCtoIST } from "../../utils/dateFormatter";
 
 function SingleShow() {
 	const [show, setShow] = useState();
@@ -39,6 +41,10 @@ function SingleShow() {
 			try {
 				const response = await axios.get(`${serverUrl}`);
 				const responseData = response.data;
+
+				const showTimeIST = dayJSUTCtoIST(responseData.showTime);
+
+				responseData.showTime = showTimeIST;
 
 				setShow(responseData);
 				const theaterData = responseData.theater;
@@ -95,11 +101,7 @@ function SingleShow() {
 					<Card
 						loading={loading}
 						title={show.movie.movieName}
-						subtitle={`Show Date & Time: ${new Date(
-							show.showTime
-						).toLocaleString("en-IN", {
-							timeZone: "Asia/Kolkata",
-						})} Theater: ${show.theater.theaterName}`}
+						subtitle={`Show Date & Time: ${show.showTime} Theater: ${show.theater.theaterName}`}
 						image={show.movie.posterImage}
 						btndisabled={new Date(show.showTime).getTime() < Date.now()}
 						onClick={() => navigate("addbooking")}

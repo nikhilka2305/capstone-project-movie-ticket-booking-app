@@ -1,3 +1,9 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 export function formatDate(date) {
 	if (!(date instanceof Date) || isNaN(date.getTime())) {
 		return "Invalid date";
@@ -15,7 +21,7 @@ export const formatDateYYYYMMDD = (date) => {
 	if (!(new Date(date) instanceof Date) || isNaN(new Date(date).getTime())) {
 		if (!(date instanceof Date) || isNaN(date.getTime())) return "Invalid date";
 	}
-	console.log(date);
+
 	if (!date) return "";
 	const d = new Date(date);
 	const year = d.getFullYear();
@@ -37,4 +43,17 @@ export function formatDateTimeLocal(date) {
 	const minutes = String(d.getMinutes()).padStart(2, "0");
 
 	return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function dayJSISTtoUTC(date) {
+	const showTimeUTC = dayjs.tz(date, "Asia/Kolkata").utc().format();
+	return showTimeUTC;
+}
+
+export function dayJSUTCtoIST(date) {
+	const showTimeIST = dayjs
+		.utc(date)
+		.tz("Asia/Kolkata")
+		.format("YYYY-MM-DD HH:mm");
+	return showTimeIST;
 }

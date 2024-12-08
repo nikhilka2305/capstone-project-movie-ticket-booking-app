@@ -6,6 +6,7 @@ import Poster from "../../components/shared/Poster";
 import { Link, useParams } from "react-router-dom";
 import { formatDate } from "../../utils/dateFormatter";
 import toast from "react-hot-toast";
+import { dayJSUTCtoIST } from "../../utils/dateFormatter";
 
 export default function ManageShows() {
 	const [shows, setShows] = useState([]);
@@ -71,9 +72,7 @@ export default function ManageShows() {
 									url={item.movie.posterImage}
 									title={item.movie.movieName}
 									description={item.theater.theaterName}
-									otherInfo={new Date(item.showTime).toLocaleString("en-IN", {
-										timeZone: "Asia/Kolkata",
-									})}
+									otherInfo={dayJSUTCtoIST(item.showTime)}
 								/>
 							</Link>
 						))}

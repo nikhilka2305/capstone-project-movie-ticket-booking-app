@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { Pagination } from "../../components/shared/Pagination";
 
 import { Link, useParams } from "react-router-dom";
-import { formatDate } from "../../utils/dateFormatter";
+import { dayJSUTCtoIST } from "../../utils/dateFormatter";
 import { AuthContext } from "../../context/AuthContext";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
@@ -93,11 +93,7 @@ export default function TotalBookings() {
 							>
 								<p>{item.showInfo.movie.movieName}</p>
 								<p>{item.showInfo.theater.theaterName}</p>
-								<p>
-									{new Date(item.showInfo.showTime).toLocaleString("en-IN", {
-										timeZone: "Asia/Kolkata",
-									})}
-								</p>
+								<p>{dayJSUTCtoIST(item.showInfo.showTime)}</p>
 								<p>{item.status}</p>
 								<p>{`Booking Cost: ₹${item.bookingAmount}/-`}</p>
 								<p>Seats: </p>

@@ -7,6 +7,9 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
+
+import { dayJSISTtoUTC } from "../../utils/dateFormatter";
+
 function AddShow() {
 	const {
 		control,
@@ -62,9 +65,14 @@ function AddShow() {
 		const serverUrl = `${
 			import.meta.env.VITE_SERVER_BASE_URL
 		}/theater/${theaterid}/newShow`;
-		const show = { ...data };
 
 		try {
+			const show = { ...data };
+
+			const showTimeUTC = dayJSISTtoUTC(show.showTime);
+
+			show.showTime = showTimeUTC;
+
 			const addShow = await axios.post(serverUrl, show, {
 				headers: {
 					"Content-Type": "application/json",

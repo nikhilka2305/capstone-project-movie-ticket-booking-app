@@ -4,8 +4,10 @@ import PosterSlider from "../../components/shared/PosterSlider";
 import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
 import { Link, useParams } from "react-router-dom";
-import { formatDate } from "../../utils/dateFormatter";
+
 import toast from "react-hot-toast";
+
+import { dayJSUTCtoIST } from "../../utils/dateFormatter";
 
 export default function Shows() {
 	const [shows, setShows] = useState([]);
@@ -37,6 +39,7 @@ export default function Shows() {
 				const responseData = response.data;
 
 				const shows = responseData.shows;
+
 				setShows(shows);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
@@ -71,9 +74,7 @@ export default function Shows() {
 									url={item.movie.posterImage}
 									title={item.movie.movieName}
 									description={item.theater.theaterName}
-									otherInfo={new Date(item.showTime).toLocaleString("en-IN", {
-										timeZone: "Asia/Kolkata",
-									})}
+									otherInfo={dayJSUTCtoIST(item.showTime)}
 								/>
 							</Link>
 						))}
