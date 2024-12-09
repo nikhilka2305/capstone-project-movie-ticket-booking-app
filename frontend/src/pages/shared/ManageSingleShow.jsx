@@ -121,6 +121,9 @@ export default function ManageSingleShow() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
+			<Link to=".." className="text-center">
+				Go Back
+			</Link>
 			<h2 className="text-center">Update Show</h2>
 
 			{loading && (
