@@ -151,7 +151,7 @@ export function AdminDashboardComponent() {
 				<>
 					<h2>Bookings & Theaters </h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 my-8">
-						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-12">
+						<div className="border w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-start justify-center gap-12">
 							<div className="min-h-[128px] max-h-fit">
 								<BarChart
 									data={movieBookingData}
@@ -169,7 +169,7 @@ export function AdminDashboardComponent() {
 								/>
 							</div>
 						</div>
-						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-center justify-center gap-8">
+						<div className="border min-h-[200px] w-full selection:rounded-md py-8 px-4 flex flex-col lg:flex-row items-start justify-center gap-8">
 							<div className="min-h-[128px] max-h-fit">
 								<LineChart
 									data={monthlyData}

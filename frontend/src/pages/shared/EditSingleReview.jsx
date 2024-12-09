@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import Rating from "../../components/shared/formcomponents/Rating";
 
@@ -35,6 +35,11 @@ function EditSingleReview() {
 
 	const [loading, setLoading] = useState(true);
 	const { reviewid } = useParams();
+	const params = {
+		User: "user",
+		TheaterOwner: "theaterowner",
+		Admin: "admin",
+	};
 
 	useEffect(() => {
 		setLoading(true);
@@ -63,7 +68,7 @@ function EditSingleReview() {
 			}
 		}
 		fetchData();
-	}, [reviewid, reset, user]);
+	}, [reviewid, reset, user, navigate]);
 
 	const handleUpdateReview = async function (data, evt) {
 		evt.preventDefault();
@@ -83,7 +88,7 @@ function EditSingleReview() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Updated Review");
-			navigate(`/movies/`);
+			navigate(`.`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to update review");
@@ -100,7 +105,7 @@ function EditSingleReview() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Deleted Review");
-			navigate(`/movies/`);
+			navigate(`/`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete review");
@@ -108,7 +113,13 @@ function EditSingleReview() {
 	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<h2 className="text-center">Add New Show</h2>
+			<Link
+				to={`/${params[user.role]}/${user.loggedUserId}`}
+				className="text-center"
+			>
+				Go Back to Dashboard
+			</Link>
+			<h2 className="text-center">Update Review</h2>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>

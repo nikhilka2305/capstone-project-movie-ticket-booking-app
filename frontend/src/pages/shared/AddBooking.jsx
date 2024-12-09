@@ -155,7 +155,6 @@ function AddBooking() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Payment Initiated");
-			// navigate(`/shows/${show.showId}`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Initiate Payment Booking");

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import MoviePreferences from "../../components/user/MoviePreferences";
 import Input from "../../components/shared/formcomponents/Input";
@@ -80,7 +80,7 @@ function Profile({ type, idtype }) {
 		}
 		setLoading(false);
 		getUser();
-	}, [idValue, navigate, isAuthenticated, user, type]);
+	}, [idValue, navigate, isAuthenticated, user, type, reset]);
 
 	useEffect(() => {});
 
@@ -183,7 +183,7 @@ function Profile({ type, idtype }) {
 			await checkAuth();
 			toast.success("Succesfully deleted ", idValue);
 			// await logOut();
-			navigate("/");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete ", idValue);
@@ -204,6 +204,17 @@ function Profile({ type, idtype }) {
 				<>
 					{userData ? (
 						<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
+							{user.role === "Admin" && userData.role !== "Admin" && (
+								<Link
+									to={
+										userData.role == "User"
+											? `/admin/manageusers`
+											: `/admin/managetheaterowners`
+									}
+								>
+									Go Back
+								</Link>
+							)}
 							<img
 								className="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0"
 								src={
@@ -360,12 +371,15 @@ function Profile({ type, idtype }) {
 
 									{!isEdittable && (
 										<div className="flex justify-between w-full mt-8 mx-auto">
-											<button
-												type="button"
-												onClick={() => setIsEdittable(true)}
-											>
-												Edit profile Details
-											</button>
+											{!userData.deleted && (
+												<button
+													type="button"
+													onClick={() => setIsEdittable(true)}
+													disabled={userData.deleted}
+												>
+													Edit profile Details
+												</button>
+											)}
 											{!userData.deleted && (
 												<button
 													className="btn"

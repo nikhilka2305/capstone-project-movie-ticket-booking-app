@@ -42,6 +42,7 @@ export default function ManageTheaterOwners() {
 	}, [page, navigate, user]);
 	return (
 		<main className="py-8 px-8 min-h-svh w-full flex flex-col justify-center items-center">
+			<Link to={`/admin/${user.loggedUserId}`}>Go Back</Link>
 			<h1 className="text-2xl mb-lg-2 my-4 text-center">
 				Manage Theater Owners
 			</h1>

@@ -42,6 +42,7 @@ function ManageMovies() {
 	}, [page]);
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
+			<Link to={`/admin/${user.loggedUserId}`}>Go Back</Link>
 			<h1 className="text-2xl mb-lg-2 my-4">Movies Available</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">

@@ -49,7 +49,7 @@ export default function TotalBookings() {
 				const responseData = response.data;
 
 				const bookingsData = responseData.bookings;
-				console.log(bookingsData);
+
 				setBookings(bookingsData);
 				setTotalPages(responseData.totalPages);
 				setLoading(false);
@@ -66,7 +66,8 @@ export default function TotalBookings() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<h1 className="text-2xl mb-lg-2 my-4">Your Theater Bookings</h1>
+			<Link to="..">Go Back</Link>
+			<h1 className="text-2xl mb-lg-2 my-4">Theater Bookings</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import { buildFormData } from "../../utils/manageFormData";
 import { AuthContext } from "../../context/AuthContext";
@@ -122,7 +122,7 @@ function AddTheater() {
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Theater");
 
-			navigate("/theaters");
+			navigate("..");
 		} catch (err) {
 			toast.error("Unable to Add Theater");
 			toast.dismiss(loadingToast);
@@ -130,6 +130,9 @@ function AddTheater() {
 	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
+			<Link to=".." className="text-center">
+				Go Back
+			</Link>
 			<h1 className="text-center text-2xl font-semibold">Add New Theater</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">

@@ -54,6 +54,9 @@ function ManageTheaters() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
+			<Link to={user.role === "Admin" ? `/admin/${user.loggedUserId}` : ".."}>
+				Go Back
+			</Link>
 			<h1 className="text-2xl ">Theaters</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">

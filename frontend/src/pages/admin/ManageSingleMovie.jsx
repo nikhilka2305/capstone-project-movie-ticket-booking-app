@@ -1,7 +1,7 @@
 import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import SelectActors from "../../components/shared/SelectActors";
 import { buildFormData } from "../../utils/manageFormData";
@@ -116,7 +116,7 @@ export default function ManageSingleMovie() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Approved Movie");
-			navigate(`/movies/managemovies`);
+			navigate(`..`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to approve Movie");
@@ -141,7 +141,7 @@ export default function ManageSingleMovie() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Deleted Movie");
-			navigate(`/movies/managemovies`);
+			navigate(`..`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete Movie");
@@ -150,6 +150,9 @@ export default function ManageSingleMovie() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
+			<Link to=".." className="text-center">
+				Go Back
+			</Link>
 			<h2 className="text-center">Update Movie</h2>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">

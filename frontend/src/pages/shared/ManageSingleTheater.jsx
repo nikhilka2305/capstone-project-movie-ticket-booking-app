@@ -199,10 +199,7 @@ export default function ManageSingleTheater() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Deleted Theater");
-			navigate(`/theaters/managetheaters`);
-			if (user.role == "TheaterOwner")
-				navigate(`/theaterowner/${user?.loggedUserId}`);
-			else navigate(`/admin/${user?.loggedUserId}`);
+			navigate("../..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to delete Theater");
@@ -211,6 +208,9 @@ export default function ManageSingleTheater() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
+			<Link to="../.." className="text-center">
+				Go Back
+			</Link>
 			<h1 className="text-center text-2xl font-semibold">
 				Update Theater: {theater.theaterName}
 			</h1>

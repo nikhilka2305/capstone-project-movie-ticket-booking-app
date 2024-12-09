@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import SeatClassRangeSelector from "./SeatClassRangeSelector";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Button from "../../components/shared/formcomponents/Button";
 import { SeatSelection } from "./SeatGrid";
@@ -121,6 +121,7 @@ export default function SeatManagement() {
 		try {
 			const seatsUpdated = await axios.patch(`${serverUrl}`, updateSeatClasses);
 			toast.success("Successfully updated seats");
+			navigate("..");
 		} catch (err) {
 			toast.error("Unable to update seats");
 		}
@@ -131,6 +132,7 @@ export default function SeatManagement() {
 	return (
 		<>
 			<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
+				<Link to="..">Go Back to Manage Theater</Link>
 				{loading && (
 					<div className="flex w-52 flex-col gap-4">
 						<div className="skeleton h-32 w-full"></div>

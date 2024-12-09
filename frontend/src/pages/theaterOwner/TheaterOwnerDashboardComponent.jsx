@@ -24,6 +24,7 @@ export function TheaterOwnerDashboardComponent() {
 	const [monthlyData, setMonthlyData] = useState([]);
 	const [shareFilter, setShareFilter] = useState("revenue");
 	const [bookingRevenueShare, setBookingRevenueShare] = useState([]);
+	const [ownerInfo, setOwnerInfo] = useState({});
 	function filterChange(filter) {
 		setChartFilter(filter);
 	}
@@ -36,6 +37,17 @@ export function TheaterOwnerDashboardComponent() {
 		}
 		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 		setLoading(true);
+		async function getOwnerData() {
+			try {
+				const serverUrl = `${
+					import.meta.env.VITE_SERVER_BASE_URL
+				}/theaterowner/${ownerid}`;
+				const response = await axios.get(`${serverUrl}/profile`);
+				setOwnerInfo(response.data);
+			} catch (err) {
+				toast.error("Unable to fetch user data");
+			}
+		}
 		async function getPersonalBookingData() {
 			try {
 				const response = await axios.get(
@@ -108,6 +120,7 @@ export function TheaterOwnerDashboardComponent() {
 				toast.error("Couldn't fetch share chart data");
 			}
 		}
+		getOwnerData();
 		getBookingRevenueShare();
 		getMonthlyData(chartFilter);
 		getBookingsByTheaters();
@@ -118,7 +131,12 @@ export function TheaterOwnerDashboardComponent() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<h1 className="text-center text-2xl my-8">Theater Owner Dashboard</h1>
+			{user.role === "Admin" && (
+				<Link to={`/admin/managetheaterowners`}>Go Back</Link>
+			)}
+			<h1 className="text-center text-2xl my-8">
+				{ownerInfo?.username} Theater Owner Dashboard
+			</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>
@@ -129,23 +147,7 @@ export function TheaterOwnerDashboardComponent() {
 			)}
 			{!loading && (
 				<>
-					<h2>Theater Owner Dashboard</h2>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 t my-8">
-						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
-							<StatsComponent
-								label1="Total Bookings"
-								label2="Total Revenue"
-								label3="Cancelled Bookings"
-								value1={theaterBookingStats?.totalBookings ?? 0}
-								value2={`₹${theaterBookingStats?.totalBookingAmount ?? 0}`}
-								value3={cancelledTheaterBookingStats?.totalBookings ?? 0}
-							/>
-							<Link to="theaterbookings" className="my-4">
-								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
-									View Theater Bookings
-								</button>
-							</Link>
-						</div>
 						<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
 							<div className="min-h-[128px] max-h-fit">
 								<BarChart
@@ -178,23 +180,42 @@ export function TheaterOwnerDashboardComponent() {
 									Manage Own Theaters
 								</button>
 							</Link>
-							<Link to={"addtheater"}>
-								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
-									Add Theater
-								</button>
-							</Link>
+							{user.role === "TheaterOwner" && (
+								<Link to={"addtheater"}>
+									<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+										Add Theater
+									</button>
+								</Link>
+							)}
 						</div>
 					</section>
-					<h2>Movie Management </h2>
-					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
-						<div className="border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
-							<Link to={"../../movies/addmovie"}>
-								<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
-									Add Movie
-								</button>
-							</Link>
-						</div>
-					</section>
+					<div className="border w-full  rounded-md py-8 px-4 flex flex-col items-center ">
+						<StatsComponent
+							label1="Total Bookings"
+							label2="Total Revenue"
+							label3="Cancelled Bookings"
+							value1={theaterBookingStats?.totalBookings ?? 0}
+							value2={`₹${theaterBookingStats?.totalBookingAmount ?? 0}`}
+							value3={cancelledTheaterBookingStats?.totalBookings ?? 0}
+						/>
+						<Link to="theaterbookings" className="my-4">
+							<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+								View Theater Bookings
+							</button>
+						</Link>
+					</div>
+
+					{user.role === "TheaterOwner" && (
+						<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
+							<div className="border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center ">
+								<Link to={"../../movies/addmovie"}>
+									<button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg w-52">
+										Add Movie
+									</button>
+								</Link>
+							</div>
+						</section>
+					)}
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 md:flex-row md:mx-auto md:items-start my-8">
 						<div className="userbookings border w-full rounded-md py-8 px-4 flex flex-col gap-4 items-center min-h-60">
 							<Link to="bookings">

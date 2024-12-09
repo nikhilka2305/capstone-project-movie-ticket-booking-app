@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import {
 	dayJSISTtoUTC,
@@ -97,7 +97,7 @@ export default function ManageSingleShow() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Updated Show");
-			navigate("/shows");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Update Show");
@@ -112,7 +112,7 @@ export default function ManageSingleShow() {
 			const deleteShow = await axios.delete(serverUrl);
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Deleted Show");
-			navigate("/shows");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Delete Show");
@@ -122,6 +122,7 @@ export default function ManageSingleShow() {
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
 			<h2 className="text-center">Update Show</h2>
+
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>

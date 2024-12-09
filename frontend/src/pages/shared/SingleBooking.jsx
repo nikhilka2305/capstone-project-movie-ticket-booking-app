@@ -51,7 +51,7 @@ function SingleBooking() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Booking Cancelled");
-			navigate("/");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Cancel Booking");

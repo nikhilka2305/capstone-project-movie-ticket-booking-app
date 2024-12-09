@@ -16,11 +16,23 @@ function UserDashboardComponent() {
 	const [bookingStats, setBookingStats] = useState({});
 	const [reviewStats, setReviewStats] = useState({});
 	const [recentMovies, setRecentMovies] = useState([]);
+	const [userInfo, setUserInfo] = useState({});
 	useEffect(() => {
 		if (userid !== user.loggedUserId && user.role !== "Admin") {
 			navigate(`./user/${user.loggedUserId}`);
 		}
 		setLoading(true);
+		async function getUserData() {
+			try {
+				const serverUrl = `${
+					import.meta.env.VITE_SERVER_BASE_URL
+				}/user/${userid}`;
+				const response = await axios.get(`${serverUrl}/profile`);
+				setUserInfo(response.data);
+			} catch (err) {
+				toast.error("Unable to fetch user data");
+			}
+		}
 		async function getBookingData() {
 			try {
 				const serverUrl = `${
@@ -50,6 +62,7 @@ function UserDashboardComponent() {
 				toast.error("Unable to fetch user review data");
 			}
 		}
+		getUserData();
 		getBookingData();
 		getReviewData();
 		setLoading(false);
@@ -57,7 +70,10 @@ function UserDashboardComponent() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<h1 className="text-center text-2xl my-8">User Dashboard</h1>
+			{user.role === "Admin" && <Link to={`/admin/manageusers`}>Go Back</Link>}
+			<h1 className="text-center text-2xl my-8">
+				{userInfo?.username} User Dashboard
+			</h1>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>

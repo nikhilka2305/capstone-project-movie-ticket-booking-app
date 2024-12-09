@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 
 import { dayJSISTtoUTC } from "../../utils/dateFormatter";
@@ -81,7 +81,7 @@ function AddShow() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Show");
-			navigate("/shows");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Add Show");
@@ -91,6 +91,9 @@ function AddShow() {
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
 			<h2 className="text-center">Add New Show</h2>
+			<Link to=".." className="text-center">
+				Go Back to Manage Theater
+			</Link>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">
 					<div className="skeleton h-32 w-full"></div>

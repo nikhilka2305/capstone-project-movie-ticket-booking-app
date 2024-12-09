@@ -8,7 +8,7 @@ export default function PaymentFailed() {
 	useEffect(() => {
 		setLoading(false);
 		toast.error("Payment Failed.. Try again");
-		setTimeout(() => navigate("/login"), 5000);
+		setTimeout(() => navigate("/shows"), 5000);
 	}, []);
 	return (
 		<main className="mx-16 my-8 flex flex-col gap-4 items-center">

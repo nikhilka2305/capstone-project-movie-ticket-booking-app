@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import Card from "../../components/shared/Card";
 import Poster from "../../components/shared/Poster";
@@ -45,18 +45,19 @@ function AddReview() {
 				const serverUrl = `${
 					import.meta.env.VITE_SERVER_BASE_URL
 				}/${urlPath}/${urlid}`;
-
+				console.log(serverUrl);
 				const reviewForData = await axios.get(`${serverUrl}`);
-
+				console.log(reviewForData);
 				const reviewFor = {
-					image: reviewForData.data.posterImage
-						? reviewForData.data.posterImage
-						: reviewForData.data.images[0],
-					name: reviewForData.data.movieName
-						? reviewForData.data.movieName
-						: reviewForData.data.theaterName,
+					image: reviewForData.data?.posterImage
+						? reviewForData.data?.posterImage
+						: reviewForData.data?.images[0],
+					name: reviewForData.data?.movieName
+						? reviewForData.data?.movieName
+						: reviewForData.data?.theaterName,
 				};
 
+				console.log(reviewFor);
 				setReviewFor(reviewFor);
 			} catch (err) {
 				toast.error("Unable to fetch data");
@@ -84,7 +85,7 @@ function AddReview() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Review");
-			navigate("/login");
+			navigate("..");
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error(
@@ -98,6 +99,7 @@ function AddReview() {
 	const [loading, setLoading] = useState(true);
 	return (
 		<section className="mx-auto my-8 w-full md:w-4/5 flex flex-col gap-8  items-center">
+			<Link to="..">Go Back to Reviews</Link>
 			<h2 className="text-center">Add Review</h2>
 			{loading && (
 				<div className="flex w-52 flex-col gap-4">

@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Input from "../../components/shared/formcomponents/Input";
 import Button from "../../components/shared/formcomponents/Button";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import SelectActors from "../../components/shared/SelectActors";
 import { buildFormData } from "../../utils/manageFormData";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function AddMovie() {
 	const {
@@ -21,7 +22,14 @@ export default function AddMovie() {
 	} = useForm();
 
 	const navigate = useNavigate();
-
+	const { user } = useContext(AuthContext);
+	let gobackurl;
+	if (user?.role === "Admin") {
+		gobackurl = `/admin/${user.loggedUserId}`;
+	} else if (user?.role === "TheaterOwner") {
+		gobackurl = `/theaterowner/${user.loggedUserId}`;
+	}
+	console.log(user.role, gobackurl);
 	const handleAddMovie = async (data, evt) => {
 		evt.preventDefault();
 		const serverUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/movie/addmovie`;
@@ -46,7 +54,7 @@ export default function AddMovie() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Added Movie");
-			navigate("/movies");
+			navigate(gobackurl);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to Add Movie");
@@ -55,6 +63,9 @@ export default function AddMovie() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
+			<Link to={gobackurl} className="text-center">
+				Go Back
+			</Link>
 			<h2 className="text-center">Add New Movie</h2>
 
 			<form
