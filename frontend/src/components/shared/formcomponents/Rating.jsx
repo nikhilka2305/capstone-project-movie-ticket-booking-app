@@ -82,11 +82,3 @@ const Rating = forwardRef(
 );
 
 export default Rating;
-
-export const DisplayRating = ({ rating, ratingSize }) => {
-	return (
-		<div>
-			<Rating name="rating" value={rating} readOnly ratingSize={ratingSize} />
-		</div>
-	);
-};

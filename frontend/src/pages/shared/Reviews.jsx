@@ -9,7 +9,9 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { DisplayRating } from "../../components/shared/formcomponents/Rating";
+import DisplayRating from "../../components/shared/formcomponents/DisplayRating";
+// import { DisplayRating } from "../../components/shared/formcomponents/Rating";
+// import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
 function Reviews() {
 	const [loading, setLoading] = useState(true);
@@ -87,14 +89,14 @@ function Reviews() {
 							>
 								{/* <p>{item.showInfo.movie.movieName}</p> */}
 								<p>{formatDate(new Date(item.createdAt))}</p>
-								<p className="flex items-center">
-									Rating:{" "}
+								<div className="flex items-center">
+									<p>Rating:</p>
 									<DisplayRating
 										rating={item.userRating}
 										ratingSize="rating-sm"
-									/>{" "}
-								</p>
-
+										reviewId={item.reviewId}
+									/>
+								</div>
 								<p>UserReview: </p>
 								<p>{item.userReview}</p>
 								<p>Review by: {item.userId.username}</p>

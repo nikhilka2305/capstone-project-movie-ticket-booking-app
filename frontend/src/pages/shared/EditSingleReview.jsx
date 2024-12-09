@@ -88,7 +88,7 @@ function EditSingleReview() {
 
 			toast.dismiss(loadingToast);
 			toast.success("Successfully Updated Review");
-			navigate(`.`);
+			navigate(`/`);
 		} catch (err) {
 			toast.dismiss(loadingToast);
 			toast.error("Unable to update review");
