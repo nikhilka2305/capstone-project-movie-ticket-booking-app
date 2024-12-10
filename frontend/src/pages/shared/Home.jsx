@@ -21,7 +21,7 @@ export default function Home() {
 		async function getNowRunningMovies() {
 			try {
 				const response = await axios.get(`${serverUrl}?filter=nowrunning`, {
-					params: { page: pageNowRunning, limit: 5 },
+					params: { page: pageNowRunning, limit: 4 },
 				});
 				const responseData = response.data;
 
@@ -36,7 +36,7 @@ export default function Home() {
 			setLoading(true);
 			try {
 				const response = await axios.get(`${serverUrl}?filter=newreleases`, {
-					params: { page: pageNewRelease, limit: 5 },
+					params: { page: pageNewRelease, limit: 4 },
 				});
 				const responseData = response.data;
 
