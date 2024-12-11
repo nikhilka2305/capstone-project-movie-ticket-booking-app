@@ -5,6 +5,7 @@ import { Pagination } from "../../components/shared/Pagination";
 import Poster from "../../components/shared/Poster";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function Home() {
 	const [nowRunningMovies, setNowRunningMovies] = useState([]);
@@ -54,17 +55,7 @@ export default function Home() {
 
 	return (
 		<main className="mx-16 my-8 flex flex-col gap-4 items-center">
-			<h1 className="text-center text-4xl mt- 4">
-				Welcome to Movie Booking System App
-			</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					<h2 className="text-center my-4">Now Running</h2>
