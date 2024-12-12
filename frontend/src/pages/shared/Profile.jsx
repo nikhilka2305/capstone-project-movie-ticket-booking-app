@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { buildFormData } from "../../utils/manageFormData";
 import SelectActors from "../../components/shared/SelectActors";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function Profile({ type, idtype }) {
 	const { isAuthenticated, user, setAuth, checkAuth } = useContext(AuthContext);
@@ -199,15 +200,13 @@ function Profile({ type, idtype }) {
 					{userData ? (
 						<div className="py-8 px-8 w-2/3 min-h-full mx-auto rounded-xl shadow-lg space-y-2 sm:py-4 flex flex-col gap-8 sm:items-center sm:space-y-0 sm:space-x-6 my-16">
 							{user.role === "Admin" && userData.role !== "Admin" && (
-								<Link
+								<GoBackLink
 									to={
 										userData.role == "User"
 											? `/admin/manageusers`
 											: `/admin/managetheaterowners`
 									}
-								>
-									Go Back
-								</Link>
+								/>
 							)}
 							<img
 								className="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0"

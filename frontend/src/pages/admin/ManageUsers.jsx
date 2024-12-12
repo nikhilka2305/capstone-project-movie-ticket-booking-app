@@ -8,6 +8,7 @@ import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 export default function ManageUsers() {
 	const [loading, setLoading] = useState(true);
@@ -40,7 +41,7 @@ export default function ManageUsers() {
 	}, [page, navigate, user]);
 	return (
 		<main className="py-8 px-8 min-h-svh w-full flex flex-col justify-center items-center">
-			<Link to={`/admin/${user.loggedUserId}`}>Go Back</Link>
+			<GoBackLink to={`/admin/${user.loggedUserId}`} />
 			<h1 className="text-2xl mb-lg-2 my-4 text-center">Manage Users</h1>
 			<div className="flex flex-col gap-4 md:flex-row md:flex-wrap items-center justify-between w-full">
 				{loading && <Skeleton />}

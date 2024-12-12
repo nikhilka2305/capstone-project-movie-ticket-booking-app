@@ -10,6 +10,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import toast from "react-hot-toast";
 import ForwardedInput from "../../components/shared/ForwardedInput";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function AddTheater() {
 	const {
@@ -131,9 +132,7 @@ function AddTheater() {
 	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<Link to=".." className="text-center">
-				Go Back
-			</Link>
+			<GoBackLink to=".." />
 			<h1 className="text-center text-2xl font-semibold">Add New Theater</h1>
 			{loading && <Skeleton />}
 			{!loading && (

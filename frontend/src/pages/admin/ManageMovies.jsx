@@ -9,6 +9,7 @@ import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function ManageMovies() {
 	const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ function ManageMovies() {
 	}, [page]);
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<Link to={`/admin/${user.loggedUserId}`}>Go Back</Link>
+			<GoBackLink to={`/admin/${user.loggedUserId}`} />
 			<h1 className="text-2xl mb-lg-2 my-4">Movies Available</h1>
 			{loading && <Skeleton />}
 			{!loading && (

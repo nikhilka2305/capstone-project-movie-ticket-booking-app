@@ -13,6 +13,7 @@ import {
 	formatDateTimeLocal,
 } from "../../utils/dateFormatter.js";
 import Skeleton from "../../components/shared/Skeleton.jsx";
+import GoBackLink from "../../components/shared/GoBackLink.jsx";
 
 export default function ManageSingleShow() {
 	const [show, setShow] = useState({});
@@ -122,9 +123,7 @@ export default function ManageSingleShow() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<Link to=".." className="text-center">
-				Go Back
-			</Link>
+			<GoBackLink to=".." />
 			<h2 className="text-center">Update Show</h2>
 
 			{loading && <Skeleton />}

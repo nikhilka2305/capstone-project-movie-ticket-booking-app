@@ -8,6 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { use } from "react";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 export default function SeatManagement() {
 	const navigate = useNavigate();
@@ -133,7 +134,7 @@ export default function SeatManagement() {
 	return (
 		<>
 			<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-				<Link to="..">Go Back to Manage Theater</Link>
+				<GoBackLink to=".." label="Go Back to Manage Theater" />
 				{loading && <Skeleton />}
 				{!loading && (
 					<>

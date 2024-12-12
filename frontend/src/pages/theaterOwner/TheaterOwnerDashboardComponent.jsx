@@ -10,6 +10,7 @@ import BarChart from "../../components/shared/BarChart";
 import LineChart from "../../components/shared/LineChart";
 import PieChart from "../../components/shared/PieChart";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -133,7 +134,7 @@ export function TheaterOwnerDashboardComponent() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			{user.role === "Admin" && (
-				<Link to={`/admin/managetheaterowners`}>Go Back</Link>
+				<GoBackLink to={`/admin/managetheaterowners`} />
 			)}
 			<h1 className="text-center text-2xl my-8">
 				{ownerInfo?.username} Theater Owner Dashboard

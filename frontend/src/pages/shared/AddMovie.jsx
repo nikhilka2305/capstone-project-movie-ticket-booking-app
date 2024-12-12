@@ -9,6 +9,7 @@ import { buildFormData } from "../../utils/manageFormData";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 export default function AddMovie() {
 	const {
@@ -63,9 +64,7 @@ export default function AddMovie() {
 
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<Link to={gobackurl} className="text-center">
-				Go Back
-			</Link>
+			<GoBackLink to={gobackurl} />
 			<h2 className="text-center">Add New Movie</h2>
 
 			<form

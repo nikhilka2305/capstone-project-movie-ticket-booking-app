@@ -10,6 +10,7 @@ import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import toast from "react-hot-toast";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function Bookings() {
 	const [bookings, setBookings] = useState([]);
@@ -61,7 +62,7 @@ function Bookings() {
 	}, [page]);
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			<Link to="..">Go Back</Link>
+			<GoBackLink to=".." />
 			<h1 className="text-2xl mb-lg-2 my-4">Bookings</h1>
 			{loading && <Skeleton />}
 			{!loading && (

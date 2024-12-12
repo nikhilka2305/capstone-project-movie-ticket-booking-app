@@ -10,6 +10,7 @@ import axios from "axios";
 import PosterSlider from "../../components/shared/PosterSlider";
 import Poster from "../../components/shared/Poster";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function ManageTheaters() {
 	const navigate = useNavigate();
@@ -55,9 +56,9 @@ function ManageTheaters() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
-			<Link to={user.role === "Admin" ? `/admin/${user.loggedUserId}` : ".."}>
-				Go Back
-			</Link>
+			<GoBackLink
+				to={user.role === "Admin" ? `/admin/${user.loggedUserId}` : ".."}
+			/>
 			<h1 className="text-2xl ">Theaters</h1>
 			{loading && <Skeleton />}
 			{!loading && (

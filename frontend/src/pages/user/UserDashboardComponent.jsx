@@ -8,6 +8,7 @@ import StatsComponent from "../../components/shared/StatsComponent";
 import StatSingleComponent from "../../components/shared/StatSingleComponent";
 import toast from "react-hot-toast";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function UserDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -71,7 +72,7 @@ function UserDashboardComponent() {
 
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
-			{user.role === "Admin" && <Link to={`/admin/manageusers`}>Go Back</Link>}
+			{user.role === "Admin" && <GoBackLink to={`/admin/manageusers`} />}
 			<h1 className="text-center text-2xl my-8">
 				{userInfo?.username} User Dashboard
 			</h1>

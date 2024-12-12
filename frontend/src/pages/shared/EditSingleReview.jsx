@@ -9,6 +9,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 import Rating from "../../components/shared/formcomponents/Rating";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 function EditSingleReview() {
 	const [editReview, setEditReview] = useState({});
@@ -114,12 +115,10 @@ function EditSingleReview() {
 	};
 	return (
 		<section className="mx-auto my-8 w-full lg:w-2/3 flex flex-col gap-8 ">
-			<Link
+			<GoBackLink
 				to={`/${params[user.role]}/${user.loggedUserId}`}
-				className="text-center"
-			>
-				Go Back to Dashboard
-			</Link>
+				label="Go Back to Dashboard"
+			/>
 			<h2 className="text-center">Update Review</h2>
 			{loading && <Skeleton />}
 			{!loading && (

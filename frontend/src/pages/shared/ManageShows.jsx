@@ -8,6 +8,7 @@ import { formatDate } from "../../utils/dateFormatter";
 import toast from "react-hot-toast";
 import { dayJSUTCtoIST } from "../../utils/dateFormatter";
 import Skeleton from "../../components/shared/Skeleton";
+import GoBackLink from "../../components/shared/GoBackLink";
 
 export default function ManageShows() {
 	const [shows, setShows] = useState([]);
@@ -51,7 +52,8 @@ export default function ManageShows() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<h1 className="text-2xl mb-lg-2 my-4">Shows Available</h1>
-			<Link to="..">Go Back to Manage Theater</Link>
+
+			<GoBackLink to=".." label="Go Back to Manage Theater" />
 			{loading && <Skeleton />}
 			{!loading && (
 				<>
