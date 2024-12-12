@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useContext, useEffect, useRef, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import toast from "react-hot-toast";
+import logo from "../../assets/Logo1.png";
 
 export default function Header() {
 	const { isAuthenticated, user, logOut } = useContext(AuthContext);
@@ -143,7 +144,14 @@ export default function Header() {
 				</div>
 				<div className="flex-1 gap-4">
 					<Link to={"/"} className="btn btn-ghost text-xl">
-						MBS
+						{/* MTBS
+						 */}
+
+						<img
+							src={logo}
+							alt="MTBS Logo"
+							className="h-8 md:h-10 lg:h-12 object-contain"
+						/>
 					</Link>
 				</div>
 				{!isAuthenticated && (
