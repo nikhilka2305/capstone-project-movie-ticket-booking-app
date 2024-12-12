@@ -107,7 +107,7 @@ function SingleShow() {
 						onClick={() => navigate("addbooking")}
 					>
 						<div>
-							<div className="tags flex justify-start gap-2">
+							<div className="tags flex justify-start gap-2 mb-4">
 								<p className={tagsClasses}>{show.movie.genre}</p>
 								<p className={tagsClasses}>{show.movie.language}</p>
 								<p className={tagsClasses}>{show.movie.movieduration} mins</p>
@@ -118,26 +118,31 @@ function SingleShow() {
 									Rating: <span className="font-bold">{show.movie.rating}</span>
 								</p>
 							</div>
-							<p className="text-lg  mt-2 leading-relaxed">
+							<p className="text-lg mt-2 leading-relaxed dark:text-slate-50">
 								{show.movie.movieDescription}
 							</p>
-							<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
+							<ul className="text-sm text-gray-600 dark:text-gray-300 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
 								{" "}
 								{show.movie.movieCast.map((cast, i) => (
-									<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
+									<li
+										key={i}
+										className="bg-gray-200 dark:bg-gray-700 py-1 px-2 rounded-md"
+									>
 										{cast}
 									</li>
 								))}
 							</ul>
-							<div className="mt-4 text-lg">
+							<div className="mt-4 text-lg dark:text-slate-50">
 								<span className="font-bold">Directed By: </span>{" "}
 								{show.movie.director}
 							</div>
 						</div>
-						<h3>Movie Rating</h3>
-						<div className="flex items-center">
-							<div className=" text-lg md:text-lg mt-1 flex gap-2">
-								<span>Rating:</span>
+						<h3 className="mt-4 text-lg font-semibold dark:text-slate-50">
+							Movie Rating
+						</h3>
+						<div className="flex items-center mt-2">
+							<div className=" text-lg flex gap-2">
+								<span className="dark:text-slate-50">Rating:</span>
 								<span className="">
 									{movieRating.averageRating > 0 ? (
 										<AverageRating rating={movieRating.averageRating} />
@@ -146,16 +151,18 @@ function SingleShow() {
 									)}
 								</span>
 							</div>
-							<div className=" ml-2 text-sm md:text-base mt-1">
+							<div className=" ml-2 text-sm dark:text-slate-50">
 								{movieRating.reviewCount > 0
 									? `${movieRating.reviewCount} reviews`
 									: "No Reviews"}
 							</div>
 						</div>
-						<h3>Theater Rating</h3>
-						<div className="flex items-center">
-							<div className=" text-lg md:text-lg mt-1 flex gap-2">
-								<span>Rating:</span>
+						<h3 className="mt-4 text-lg font-semibold dark:text-slate-50">
+							Theater Rating
+						</h3>
+						<div className="flex items-center mt-2">
+							<div className=" text-lg flex gap-2">
+								<span className="dark:text-slate-50">Rating:</span>
 								<span>
 									{theaterRating.averageRating > 0 ? (
 										<AverageRating rating={theaterRating.averageRating} />
@@ -164,7 +171,7 @@ function SingleShow() {
 									)}
 								</span>
 							</div>
-							<div className=" ml-2 text-sm md:text-base mt-1">
+							<div className=" ml-2 text-sm dark:text-slate-50">
 								{theaterRating.reviewCount > 0
 									? `${theaterRating.reviewCount} reviews`
 									: "No Reviews"}

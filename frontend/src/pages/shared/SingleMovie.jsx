@@ -6,6 +6,7 @@ import Card from "../../components/shared/Card";
 import { AuthContext } from "../../context/AuthContext";
 import AverageRating from "../../components/shared/formcomponents/AverageRating";
 import toast from "react-hot-toast";
+import Skeleton from "../../components/shared/Skeleton";
 
 function SingleMovie() {
 	const { user } = useContext(AuthContext);
@@ -47,14 +48,7 @@ function SingleMovie() {
 	}, [movieid, navigate]);
 	return (
 		<>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && movie && (
 				<Card
 					loading={loading}
@@ -64,34 +58,53 @@ function SingleMovie() {
 					btnLabel="Browse Shows"
 				>
 					<div>
-						<div className="tags flex justify-start gap-2">
-							<p className={tagsClasses}>{movie.genre}</p>
-							<p className={tagsClasses}>{movie.language}</p>
-							<p className={tagsClasses}>{movie.movieduration} mins</p>
-							<p className={tagsClasses}>
+						<div className="tags flex flex-wrap gap-2 mb-4">
+							<p
+								className={`${tagsClasses} dark:bg-gray-600 dark:text-gray-50`}
+							>
+								{movie.genre}
+							</p>
+							<p
+								className={`${tagsClasses} dark:bg-gray-600 dark:text-gray-50`}
+							>
+								{movie.language}
+							</p>
+							<p
+								className={`${tagsClasses} dark:bg-gray-600 dark:text-gray-50`}
+							>
+								{movie.movieduration} mins
+							</p>
+							<p
+								className={`${tagsClasses} dark:bg-gray-600 dark:text-gray-50`}
+							>
 								{new Date(movie.releaseDate).toLocaleDateString("en-IN")}
 							</p>
-							<p className={tagsClasses}>
+							<p
+								className={`${tagsClasses} dark:bg-gray-600 dark:text-gray-50`}
+							>
 								Rating: <span className="font-bold">{movie.rating}</span>
 							</p>
 						</div>
-						<p className="text-lg  mt-2 leading-relaxed">
+						<p className="text-lg leading-relaxed dark:text-slate-50 mb-4">
 							{movie.movieDescription}
 						</p>
-						<ul className="text-sm text-gray-600 mt-2 leading-relaxed flex gap-4 pt-4 flex-wrap">
+						<ul className="text-sm text-gray-600 dark:text-gray-300 mb-6 flex gap-4 flex-wrap">
 							{" "}
 							{movie.movieCast.map((cast, i) => (
-								<li key={i} className="bg-gray-200 py-1 px-2 rounded-md">
+								<li
+									key={i}
+									className="bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded-md"
+								>
 									{cast}
 								</li>
 							))}
 						</ul>
-						<div className="mt-4 text-lg">
+						<div className="text-base text-gray-700 dark:text-gray-300 mb-6">
 							<span className=" font-bold">Directed By: </span> {movie.director}
 						</div>
 					</div>
-					<div className="flex items-center">
-						<div className=" text-lg md:text-lg mt-1 flex gap-2">
+					<div className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-6">
+						<div className=" text-lg font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
 							<span>Rating:</span>
 							<span>
 								{movieRating.averageRating > 0 ? (
@@ -101,24 +114,24 @@ function SingleMovie() {
 								)}
 							</span>
 						</div>
-						<div className=" ml-2 text-sm md:text-base mt-1">
+						<div className=" text-sm text-gray-600 dark:text-gray-400">
 							{movieRating.reviewCount > 0
 								? `${movieRating.reviewCount} reviews`
 								: "No Reviews"}
 						</div>
 					</div>
-					<div className="flex gap-8">
+					<div className="flex gap-4">
 						{user.role === "User" && (
 							<Link
 								to={"reviews/addreview"}
-								className="p-1 rounded-md border w-32 text-center"
+								className="py-2 px-4 rounded-md border text-center bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all"
 							>
 								Add review
 							</Link>
 						)}
 						<Link
 							to={"reviews"}
-							className="p-1 rounded-md border w-32 text-center"
+							className="py-2 px-4 rounded-md border text-center bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-200 transition-all"
 						>
 							View reviews
 						</Link>
