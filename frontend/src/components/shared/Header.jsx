@@ -9,13 +9,22 @@ export default function Header() {
 
 	const [displayImage, setDisplayImage] = useState("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
 	const dropdownRef = useRef(null);
+	const logindropdownRef = useRef(null);
 	const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+	const toggleLoginDropdown = () => setIsLoginDropdownOpen((prev) => !prev);
 
 	useEffect(() => {
 		const handleClickOutside = (event) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
 				setIsDropdownOpen(false);
+			}
+			if (
+				logindropdownRef.current &&
+				!logindropdownRef.current.contains(event.target)
+			) {
+				setIsLoginDropdownOpen(false);
 			}
 		};
 		document.addEventListener("mousedown", handleClickOutside);
@@ -40,6 +49,7 @@ export default function Header() {
 	const navigate = useNavigate();
 	const handleLogOut = () => {
 		logOut();
+		setIsLoginDropdownOpen(false);
 		toast.success("Succesfully Logged Out");
 		navigate("/");
 	};
@@ -136,54 +146,69 @@ export default function Header() {
 						MBS
 					</Link>
 				</div>
+				{!isAuthenticated && (
+					<Link
+						to="/login"
+						className="btn btn-outline btn-xs sm:btn-sm md:btn-md"
+					>
+						User Login
+					</Link>
+				)}
 				<div className="flex gap-4 before:first:">
 					{isAuthenticated && user && <p>{user.loggedUserName}</p>}
 					<ThemeToggler />
-					<div className="dropdown dropdown-end">
-						<div
-							tabIndex={0}
-							role="button"
-							className="btn btn-ghost btn-circle avatar"
-						>
-							<div className="w-10 rounded-full">
-								<img alt="Tailwind CSS Navbar component" src={displayImage} />
+					{isAuthenticated && (
+						<div ref={logindropdownRef} className="dropdown dropdown-end">
+							<div
+								tabIndex={0}
+								role="button"
+								className="btn btn-ghost btn-circle avatar"
+								onClick={toggleLoginDropdown}
+							>
+								<div className="w-10 rounded-full">
+									<img alt="Tailwind CSS Navbar component" src={displayImage} />
+								</div>
 							</div>
+							{isLoginDropdownOpen && (
+								<ul
+									tabIndex={0}
+									className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+								>
+									{isAuthenticated && user && (
+										<li>
+											<Link
+												to={`/${params[user.role]}/${
+													user.loggedUserId
+												}/profile`}
+												className="justify-between"
+												onClick={() => setIsLoginDropdownOpen(false)}
+											>
+												{user.loggedUserName} Profile
+											</Link>
+										</li>
+									)}
+
+									{isAuthenticated && user && (
+										<li>
+											<Link
+												to={`/${params[user.role]}/${user.loggedUserId}/`}
+												className="justify-between"
+												onClick={() => setIsLoginDropdownOpen(false)}
+											>
+												{user.role} Dashboard
+											</Link>
+										</li>
+									)}
+
+									{isAuthenticated && (
+										<li>
+											<button onClick={handleLogOut}>LogOut</button>
+										</li>
+									)}
+								</ul>
+							)}
 						</div>
-						<ul
-							tabIndex={0}
-							className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-						>
-							{isAuthenticated && user && (
-								<li>
-									<Link
-										to={`/${params[user.role]}/${user.loggedUserId}/profile`}
-										className="justify-between"
-									>
-										{user.loggedUserName} Profile
-									</Link>
-								</li>
-							)}
-
-							{isAuthenticated && user && (
-								<li>
-									<Link
-										to={`/${params[user.role]}/${user.loggedUserId}/`}
-										className="justify-between"
-									>
-										{user.role} Dashboard
-									</Link>
-								</li>
-							)}
-
-							<li>{!isAuthenticated && <Link to="/login">Login</Link>}</li>
-
-							{isAuthenticated && (
-								<li>
-									<button onClick={handleLogOut}>LogOut</button>
-								</li>
-							)}
-						</ul>
-					</div>
+					)}
 				</div>
 			</div>
 		</header>
