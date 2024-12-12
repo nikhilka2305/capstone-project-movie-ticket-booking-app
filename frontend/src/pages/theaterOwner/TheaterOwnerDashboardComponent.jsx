@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
 import LineChart from "../../components/shared/LineChart";
 import PieChart from "../../components/shared/PieChart";
+import Skeleton from "../../components/shared/Skeleton";
 
 export function TheaterOwnerDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -137,14 +138,7 @@ export function TheaterOwnerDashboardComponent() {
 			<h1 className="text-center text-2xl my-8">
 				{ownerInfo?.username} Theater Owner Dashboard
 			</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4 t my-8">

@@ -5,6 +5,7 @@ import { Pagination } from "../../components/shared/Pagination";
 import { Link } from "react-router-dom";
 import Poster from "../../components/shared/Poster";
 import toast from "react-hot-toast";
+import Skeleton from "../../components/shared/Skeleton";
 
 function Theaters() {
 	const [theaters, setTheaters] = useState([]);
@@ -34,14 +35,7 @@ function Theaters() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center justify-start min-h-svh w-full gap-8">
 			<h1 className="text-2xl ">Theaters</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					{theaters.length === 0 && (

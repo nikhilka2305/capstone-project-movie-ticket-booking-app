@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Skeleton from "../components/shared/Skeleton";
 axios.defaults.withCredentials = true;
 export const AuthContext = createContext({
 	auth: {
@@ -109,14 +110,7 @@ export const AuthProvider = ({ children }) => {
 		<AuthContext.Provider
 			value={{ ...auth, setAuth, login, logOut, checkAuth }}
 		>
-			{auth.loading && (
-				<div className="flex w-52 flex-col gap-4 mx-auto mt-36">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{auth.loading && <Skeleton />}
 			{!auth.loading && children}
 		</AuthContext.Provider>
 	);

@@ -7,6 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { formatDate } from "../../utils/dateFormatter";
 import toast from "react-hot-toast";
 import { dayJSUTCtoIST } from "../../utils/dateFormatter";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function ManageShows() {
 	const [shows, setShows] = useState([]);
@@ -51,14 +52,7 @@ export default function ManageShows() {
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<h1 className="text-2xl mb-lg-2 my-4">Shows Available</h1>
 			<Link to="..">Go Back to Manage Theater</Link>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					{shows.length === 0 && (

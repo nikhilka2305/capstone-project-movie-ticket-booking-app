@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
 import { dayJSUTCtoIST } from "../../utils/dateFormatter";
+import Skeleton from "../../components/shared/Skeleton";
 
 function SingleShow() {
 	const [show, setShow] = useState();
@@ -88,14 +89,7 @@ function SingleShow() {
 
 	return (
 		<>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && show && (
 				<>
 					<Card

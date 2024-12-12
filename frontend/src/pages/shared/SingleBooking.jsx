@@ -7,6 +7,7 @@ import { dayJSUTCtoIST, formatDate } from "../../utils/dateFormatter";
 import { formatSeatNumber } from "../../utils/numbertoLetterID";
 import toast from "react-hot-toast";
 import Button from "../../components/shared/formcomponents/Button";
+import Skeleton from "../../components/shared/Skeleton";
 
 function SingleBooking() {
 	const [booking, setBooking] = useState();
@@ -61,14 +62,7 @@ function SingleBooking() {
 
 	return (
 		<>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && booking && (
 				<Card
 					loading={loading}

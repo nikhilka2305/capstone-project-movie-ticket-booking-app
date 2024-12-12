@@ -7,6 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import toast from "react-hot-toast";
 import axios from "axios";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function ManageUsers() {
 	const [loading, setLoading] = useState(true);
@@ -42,14 +43,7 @@ export default function ManageUsers() {
 			<Link to={`/admin/${user.loggedUserId}`}>Go Back</Link>
 			<h1 className="text-2xl mb-lg-2 my-4 text-center">Manage Users</h1>
 			<div className="flex flex-col gap-4 md:flex-row md:flex-wrap items-center justify-between w-full">
-				{loading && (
-					<div className="flex w-52 flex-col gap-4">
-						<div className="skeleton h-32 w-full"></div>
-						<div className="skeleton h-4 w-28"></div>
-						<div className="skeleton h-4 w-full"></div>
-						<div className="skeleton h-4 w-full"></div>
-					</div>
-				)}
+				{loading && <Skeleton />}
 				{!loading && (
 					<>
 						{users.length === 0 && (

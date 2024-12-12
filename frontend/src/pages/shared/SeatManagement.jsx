@@ -7,6 +7,7 @@ import { SeatSelection } from "./SeatGrid";
 import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { use } from "react";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function SeatManagement() {
 	const navigate = useNavigate();
@@ -133,14 +134,7 @@ export default function SeatManagement() {
 		<>
 			<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 				<Link to="..">Go Back to Manage Theater</Link>
-				{loading && (
-					<div className="flex w-52 flex-col gap-4">
-						<div className="skeleton h-32 w-full"></div>
-						<div className="skeleton h-4 w-28"></div>
-						<div className="skeleton h-4 w-full"></div>
-						<div className="skeleton h-4 w-full"></div>
-					</div>
-				)}
+				{loading && <Skeleton />}
 				{!loading && (
 					<>
 						<SeatClassRangeSelector

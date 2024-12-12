@@ -9,6 +9,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import toast from "react-hot-toast";
 import ForwardedInput from "../../components/shared/ForwardedInput";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function ManageSingleTheater() {
 	const {
@@ -214,14 +215,7 @@ export default function ManageSingleTheater() {
 			<h1 className="text-center text-2xl font-semibold">
 				Update Theater: {theater.theaterName}
 			</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					<div className="flex gap-4 mx-auto">

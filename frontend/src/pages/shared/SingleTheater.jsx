@@ -5,6 +5,7 @@ import Button from "../../components/shared/formcomponents/Button";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import AverageRating from "../../components/shared/formcomponents/AverageRating";
+import Skeleton from "../../components/shared/Skeleton";
 
 function SingleTheater() {
 	const { user } = useContext(AuthContext);
@@ -46,14 +47,7 @@ function SingleTheater() {
 
 	return (
 		<>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && theater && (
 				<Card
 					loading={loading}

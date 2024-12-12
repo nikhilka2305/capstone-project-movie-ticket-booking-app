@@ -10,6 +10,7 @@ import BookingCard from "../../components/shared/formcomponents/BookingCard";
 import axios from "axios";
 import toast from "react-hot-toast";
 import DisplayRating from "../../components/shared/formcomponents/DisplayRating";
+import Skeleton from "../../components/shared/Skeleton";
 // import { DisplayRating } from "../../components/shared/formcomponents/Rating";
 // import AverageRating from "../../components/shared/formcomponents/AverageRating";
 
@@ -63,14 +64,7 @@ function Reviews() {
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<Link to="..">Go Back</Link>
 			<h1 className="text-2xl mb-lg-2 my-4">User Reviews</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					{reviews.length === 0 && (

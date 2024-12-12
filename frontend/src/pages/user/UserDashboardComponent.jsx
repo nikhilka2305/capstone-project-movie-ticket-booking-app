@@ -7,6 +7,7 @@ import Poster from "../../components/shared/Poster";
 import StatsComponent from "../../components/shared/StatsComponent";
 import StatSingleComponent from "../../components/shared/StatSingleComponent";
 import toast from "react-hot-toast";
+import Skeleton from "../../components/shared/Skeleton";
 
 function UserDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -74,14 +75,7 @@ function UserDashboardComponent() {
 			<h1 className="text-center text-2xl my-8">
 				{userInfo?.username} User Dashboard
 			</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					<section className="flex flex-col gap-8 w-full justify-center items-center mx-4  md:mx-auto ">

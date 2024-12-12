@@ -8,6 +8,7 @@ import BookingCard from "../../components/shared/formcomponents/BookingCard";
 
 import toast from "react-hot-toast";
 import axios from "axios";
+import Skeleton from "../../components/shared/Skeleton";
 
 export default function ManageTheaterOwners() {
 	const navigate = useNavigate();
@@ -47,14 +48,7 @@ export default function ManageTheaterOwners() {
 				Manage Theater Owners
 			</h1>
 			<div className="flex flex-col gap-4 md:flex-row md:flex-wrap items-center justify-between w-full">
-				{loading && (
-					<div className="flex w-52 flex-col gap-4">
-						<div className="skeleton h-32 w-full"></div>
-						<div className="skeleton h-4 w-28"></div>
-						<div className="skeleton h-4 w-full"></div>
-						<div className="skeleton h-4 w-full"></div>
-					</div>
-				)}
+				{loading && <Skeleton />}
 				{!loading && (
 					<>
 						{theaterOwners.length === 0 && (

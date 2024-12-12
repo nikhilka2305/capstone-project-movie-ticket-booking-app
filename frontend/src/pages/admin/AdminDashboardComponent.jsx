@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import BarChart from "../../components/shared/BarChart";
 import LineChart from "../../components/shared/LineChart";
 import PieChart from "../../components/shared/PieChart";
+import Skeleton from "../../components/shared/Skeleton";
 
 export function AdminDashboardComponent() {
 	const { isAuthenticated, user } = useContext(AuthContext);
@@ -139,14 +140,7 @@ export function AdminDashboardComponent() {
 	return (
 		<main className="py-8 px-8 flex flex-col items-center  min-h-svh w-full">
 			<h1 className="text-center text-2xl my-8">Admin Dashboard</h1>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					<h2>Bookings & Theaters </h2>

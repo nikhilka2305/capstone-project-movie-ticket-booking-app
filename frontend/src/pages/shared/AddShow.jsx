@@ -9,6 +9,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "../../components/shared/formcomponents/Select";
 
 import { dayJSISTtoUTC } from "../../utils/dateFormatter";
+import Skeleton from "../../components/shared/Skeleton";
 
 function AddShow() {
 	const {
@@ -94,14 +95,7 @@ function AddShow() {
 			<Link to=".." className="text-center">
 				Go Back to Manage Theater
 			</Link>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<form
 					action=""

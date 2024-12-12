@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { buildFormData } from "../../utils/manageFormData";
 import SelectActors from "../../components/shared/SelectActors";
+import Skeleton from "../../components/shared/Skeleton";
 
 function Profile({ type, idtype }) {
 	const { isAuthenticated, user, setAuth, checkAuth } = useContext(AuthContext);
@@ -192,14 +193,7 @@ function Profile({ type, idtype }) {
 
 	return (
 		<>
-			{loading && (
-				<div className="flex w-52 flex-col gap-4">
-					<div className="skeleton h-32 w-full"></div>
-					<div className="skeleton h-4 w-28"></div>
-					<div className="skeleton h-4 w-full"></div>
-					<div className="skeleton h-4 w-full"></div>
-				</div>
-			)}
+			{loading && <Skeleton />}
 			{!loading && (
 				<>
 					{userData ? (
