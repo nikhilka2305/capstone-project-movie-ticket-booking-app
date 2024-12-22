@@ -4,7 +4,7 @@ const reviewSchema = joi
 		deleted: joi.boolean(),
 		userId: joi.object({ id: joi.string().hex().length(24) }),
 		userRating: joi.number().min(1).max(5).required(),
-		userReview: joi.string().min(10).max(200).required(),
+		userReview: joi.string().min(3).max(200).required(),
 	})
 	.options({ abortEarly: false });
 

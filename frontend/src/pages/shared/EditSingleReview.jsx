@@ -144,6 +144,10 @@ function EditSingleReview() {
 							register={register}
 							validationSchema={{
 								required: "Review required",
+								minLength: {
+									value: 3,
+									message: "Please enter a minimum of 3 characters",
+								},
 							}}
 							errors={errors}
 						/>
