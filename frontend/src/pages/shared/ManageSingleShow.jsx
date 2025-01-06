@@ -101,8 +101,18 @@ export default function ManageSingleShow() {
 			toast.success("Successfully Updated Show");
 			navigate("..");
 		} catch (err) {
+			let errorMessage = err.response.data.error;
+			if (errorMessage === "Validation failed") {
+				errorMessage =
+					"Enter Correct Date & Time. It must be atleast one hour from now.";
+			}
 			toast.dismiss(loadingToast);
-			toast.error("Unable to Update Show");
+
+			toast.error(
+				err?.response?.data?.error
+					? "Unable to Add Show: " + errorMessage
+					: "Unable to Add Show due to unknown error"
+			);
 		}
 	};
 
@@ -164,6 +174,19 @@ export default function ManageSingleShow() {
 							register={register}
 							validationSchema={{
 								required: "Date & Time required",
+								validate: (value) => {
+									const selectedTime = new Date(value);
+									const currentTime = new Date();
+									const oneHourFromNow = new Date(
+										currentTime.getTime() + 60 * 60 * 1000
+									);
+
+									// Validate that the selected time is at least 1 hour from now
+									if (selectedTime < oneHourFromNow) {
+										return "The show time must be at least 1 hour from now.";
+									}
+									return true; // Valid if the selected time is after the one-hour mark
+								},
 							}}
 							errors={errors}
 						/>

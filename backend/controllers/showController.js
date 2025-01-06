@@ -5,6 +5,40 @@ import { ObjectId } from "mongodb";
 import { handleShowDeletion } from "../utils/deleteCascadeManager.js";
 import HandleError from "../middleware/errorHandling.js";
 import { validateDateTime } from "../utils/validateDate.js";
+import mongoose from "mongoose";
+
+const checkOverlappingShows = async (
+	theaterId,
+	newShowTime,
+	movieLength,
+	excludeShowId = null
+) => {
+	// Calculate start and end time for the new show
+
+	const showStart = new Date(newShowTime);
+	const showEnd = new Date(
+		showStart.getTime() + movieLength * 60 * 1000 + 10 * 60 * 1000
+	); // Add movie length and buffer
+
+	const query = {
+		theater: new mongoose.Types.ObjectId(theaterId),
+		showTime: {
+			$gte: new Date(
+				showStart.getTime() - movieLength * 60 * 1000 - 10 * 60 * 1000
+			), // Buffer before the start time
+			$lte: showEnd,
+		},
+		deleted: false,
+	};
+
+	if (excludeShowId) {
+		query._id = { $ne: new mongoose.Types.ObjectId(excludeShowId) }; // Exclude the current show (for edits)
+	}
+
+	// Check for overlapping shows
+	const overlappingShow = await Show.findOne(query).lean();
+	return !!overlappingShow; // Return true if an overlapping show exists
+};
 
 export const viewShows = async (req, res, next) => {
 	const { filter, page = 1, limit = 10 } = req.query;
@@ -37,6 +71,7 @@ export const viewShows = async (req, res, next) => {
 			const shows = await Show.find(filterConditions)
 				.populate("movie", "movieName movieId posterImage")
 				.populate("theater", "theaterName seats seatClasses owner")
+				.sort({ showTime: 1 }) // Add sorting here;
 				.skip(skip)
 				.limit(limit);
 			const totalShows = await Show.countDocuments(filterConditions);
@@ -50,7 +85,8 @@ export const viewShows = async (req, res, next) => {
 		} else {
 			const shows = await Show.find(filterConditions)
 				.populate("movie", "movieName posterImage")
-				.populate("theater", "theaterName seats seatClasses owner");
+				.populate("theater", "theaterName seats seatClasses owner")
+				.sort({ showTime: 1 }); // Add sorting here;
 
 			res.status(200).json(shows);
 		}
@@ -80,7 +116,7 @@ export const addShow = async (req, res, next) => {
 				404
 			);
 		const checkmovie = await Movie.findById(movie)
-			.select("movieId movieName, adminApprovalStatus")
+			.select("movieId movieName movieduration adminApprovalStatus")
 			.lean();
 		if (!checkmovie || checkmovie.adminApprovalStatus !== "Approved")
 			throw new HandleError(
@@ -96,6 +132,17 @@ export const addShow = async (req, res, next) => {
 		}
 		const validShowTime = validateDateTime(utcShowTime);
 		if (validShowTime) {
+			const overlapExists = await checkOverlappingShows(
+				theater._id,
+				utcShowTime,
+				checkmovie.movieduration
+			);
+			if (overlapExists) {
+				throw new HandleError(
+					"Show overlaps with an existing show in the theater.",
+					400
+				);
+			}
 			const show = new Show({
 				showTime: utcShowTime,
 				movie,
@@ -131,7 +178,7 @@ export const editShow = async (req, res, next) => {
 	const { showid } = req.params;
 	try {
 		const show = await Show.findOne({ showId: showid })
-			.populate("movie", "movieName")
+			.populate("movie", "movieName movieduration")
 			.populate("theater", "theaterName seats seatClasses owner");
 
 		if (!show || show.deleted)
@@ -147,10 +194,28 @@ export const editShow = async (req, res, next) => {
 			throw new Error("You are not authorized to do this");
 		}
 		const { showTime, movie } = req.body;
+
 		const parsedShowTime = new Date(showTime); // Convert to Date object
+
 		const utcShowTime = parsedShowTime.toISOString();
+
 		const validShowTime = validateDateTime(utcShowTime);
 		if (validShowTime) {
+			// Check for overlapping shows, excluding the current show
+
+			const overlapExists = await checkOverlappingShows(
+				show.theater._id,
+				utcShowTime,
+				show.movie.movieduration,
+				show._id
+			);
+
+			if (overlapExists) {
+				throw new HandleError(
+					"Show overlaps with an existing show in the theater.",
+					400
+				);
+			}
 			const updatedShow = await Show.findOneAndUpdate(
 				{ showId: showid },
 				{ showTime: utcShowTime, movie },

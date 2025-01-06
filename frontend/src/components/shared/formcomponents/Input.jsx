@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export default function Input({
 	type,
 	name,
@@ -27,6 +29,14 @@ export default function Input({
 	const getNestedError = (obj, path) => {
 		return path.split(".").reduce((acc, key) => acc?.[key], obj);
 	};
+
+	useEffect(() => {
+		if (type === "datetime-local") {
+			const currentTime = new Date();
+			const oneHourFromNow = new Date(currentTime.getTime() + 60 * 60 * 1000);
+			min = oneHourFromNow.toISOString().slice(0, 16); // Format as YYYY-MM-DDTHH:MM
+		}
+	}, [type]);
 
 	return (
 		<div className="flex flex-col justify-center px-8">
