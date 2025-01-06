@@ -14,7 +14,7 @@ const movieSchema = joi
 		language: joi.string().required(),
 		genre: joi.string().required(),
 		rating: joi.string().valid(...ratings),
-		movieDescription: joi.string().required().min(20).max(300),
+		movieDescription: joi.string().required().min(10).max(1000),
 		movieCast: joi.array().items(joi.string().min(5)).max(10),
 		director: joi.string().required().min(4),
 		// posterImage: joi.any().required(),

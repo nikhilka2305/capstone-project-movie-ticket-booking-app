@@ -141,6 +141,10 @@ export default function AddMovie() {
 							value: 30,
 							message: "Please enter a value of atleast 30",
 						},
+						max: {
+							value: 240,
+							message: "Please enter a maximum value of 240",
+						},
 					}}
 					errors={errors}
 				/>
@@ -207,6 +211,10 @@ export default function AddMovie() {
 						minLength: {
 							value: 30,
 							message: "Please enter minimum of 30 characters",
+						},
+						maxLength: {
+							value: 1000,
+							message: "Please enter a maximum of 1000 characters",
 						},
 					}}
 					errors={errors}
