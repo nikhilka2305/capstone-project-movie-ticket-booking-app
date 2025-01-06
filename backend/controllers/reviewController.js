@@ -79,8 +79,7 @@ export const viewIndividualUserReview = async (req, res, next) => {
 	const { userid } = req.params;
 	try {
 		const user = await User.findOne({ userId: userid });
-		if (!user || user.deleted)
-			throw new HandleError("No such user... Or User was removed", 404);
+		if (!user) throw new HandleError("No such user exists", 404);
 		if (
 			req.user.role !== "Admin" &&
 			!new ObjectId(req.user.loggedUserObjectId).equals(user._id)
